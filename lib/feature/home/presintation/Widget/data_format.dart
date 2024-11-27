@@ -4,7 +4,7 @@ import 'package:intl/intl.dart';
 
 class DataFormat extends StatelessWidget {
   const DataFormat({super.key});
-
+//ToDo when merge with home remove Expended in this screen
   @override
   Widget build(BuildContext context) {
     DateTime currentDate = DateTime.now();
@@ -125,13 +125,6 @@ class DataFormat extends StatelessWidget {
           Expanded(
             flex: 2,
             child: Container(
-              color: Colors.white,
-              child: const Center(
-                child: Text(
-                  'Content goes here',
-                  style: TextStyle(fontSize: 18),
-                ),
-              ),
             ),
           ),
         ],
