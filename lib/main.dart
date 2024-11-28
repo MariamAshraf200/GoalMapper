@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:mapper_app/feature/home/presintation/Widget/data_format.dart';
 
 import 'feature/home/presintation/screen/homeScreen.dart';
 
@@ -13,7 +12,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: DataFormat(),
+      home: HomeScreen(),
     );
   }
 }
