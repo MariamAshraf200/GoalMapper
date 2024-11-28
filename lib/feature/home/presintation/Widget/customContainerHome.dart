@@ -22,7 +22,7 @@ class CustomContainer extends StatelessWidget {
         padding: const EdgeInsets.all(8.0),
         child: Container(
           decoration: BoxDecoration(
-            color: isSelected ? Colors.white : Colors.grey,
+            color: isSelected ? Colors.white : Colors.deepPurple,
             borderRadius: BorderRadius.circular(30),
             boxShadow: const [
               BoxShadow(

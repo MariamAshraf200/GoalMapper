@@ -17,7 +17,7 @@ class DataFormat extends StatelessWidget {
       children: [
         // Header Container
         Container(
-          color: Colors.grey,
+          color: Colors.deepPurple,
           padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -36,7 +36,7 @@ class DataFormat extends StatelessWidget {
         // Main Content Container
         Container(
           decoration: const BoxDecoration(
-            color: Colors.grey,
+            color: Colors.deepPurple,
             borderRadius: BorderRadiusDirectional.only(
               bottomEnd: Radius.circular(30),
               bottomStart: Radius.circular(30),
@@ -101,7 +101,7 @@ class DataFormat extends StatelessWidget {
                                 style: TextStyle(
                                   fontSize: 14,
                                   fontWeight: FontWeight.bold,
-                                  color: isToday ? Colors.grey : Colors.black,
+                                  color: isToday ? Colors.deepPurpleAccent: Colors.black,
                                 ),
                               ),
                             ),
