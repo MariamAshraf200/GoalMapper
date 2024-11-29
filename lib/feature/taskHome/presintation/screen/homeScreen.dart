@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:mapper_app/feature/home/presintation/screen/reviewScreen.dart';
-import 'package:mapper_app/feature/home/presintation/screen/todoScreen.dart';
+import 'package:mapper_app/feature/taskHome/presintation/screen/doneScreen.dart';
+import 'package:mapper_app/feature/taskHome/presintation/screen/todoScreen.dart';
 import '../Widget/customContainerHome.dart';
 import '../Widget/data_format.dart';
 import 'AddNewTaskScreen.dart';
@@ -18,7 +18,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   // Placeholder content for each section
   final List<Widget> content = [
-    TodoScreen(),
+    TaskListScreen(),
     InProgressScreen(),
     ReviewScreen(),
     ];

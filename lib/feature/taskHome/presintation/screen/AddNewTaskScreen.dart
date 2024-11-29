@@ -48,26 +48,26 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
         ),
         child: Padding(
           padding: EdgeInsets.symmetric(
-            horizontal: screenWidth * 0.03, // Further reduced horizontal padding
-            vertical: screenHeight * 0.01, // Further reduced vertical padding
+            horizontal: screenWidth * 0.03,
+            vertical: screenHeight * 0.01,
           ),
           child: SingleChildScrollView(
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.start, // Adjusted alignment
+              mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 CustomTextField(
                   controller: titleController,
                   hintText: 'Add title of task',
                   title: 'Task Title',
                 ),
-                SizedBox(height: screenHeight * 0.01), // Further reduced space
+                SizedBox(height: screenHeight * 0.01),
                 CustomTextField(
                   controller: descriptionController,
                   hintText: 'Description',
                   description: true,
                   title: 'Description',
                 ),
-                SizedBox(height: screenHeight * 0.01), // Further reduced space
+                SizedBox(height: screenHeight * 0.01),
                 CustomTextField(
                   controller: dateController,
                   hintText: 'dd/mm/yyyy',
@@ -82,7 +82,6 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                       lastDate: DateTime(2100),
                     );
 
-                    // If a date is selected, update the controller
                     if (selectedDate != null) {
                       dateController.text = DateFormat('dd/MM/yyyy').format(selectedDate);
                     }
@@ -95,13 +94,11 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                   title: 'Time',
                   suffixIcon: const Icon(Icons.access_time),
                   onTap: () async {
-                    // Show the time picker
                     TimeOfDay? selectedTime = await showTimePicker(
                       context: context,
                       initialTime: TimeOfDay.now(),
                     );
 
-                    // If a time is selected, update the controller
                     if (selectedTime != null) {
                       final now = DateTime.now();
                       final selectedDateTime = DateTime(
@@ -116,17 +113,17 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                     }
                   },
                 ),
-                SizedBox(height: screenHeight * 0.015), // Reduced space before priority
+                SizedBox(height: screenHeight * 0.015),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     CustomContainer(
                       text: 'Low',
                       backgroundColor: selectedPriority == 'Low' ? Colors.green.shade800 : Colors.green,
-                      borderRadius: 25, // Slightly reduced border radius
+                      borderRadius: 25,
                       textStyle: TextStyle(
                         color: selectedPriority == 'Low' ? Colors.black : Colors.white,
-                        fontSize: 14, // Reduced font size
+                        fontSize: 14,
                         fontWeight: FontWeight.bold,
                       ),
                       onTap: () => togglePriority('Low'),
@@ -137,7 +134,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                       borderRadius: 25,
                       textStyle: TextStyle(
                         color: selectedPriority == 'Medium' ? Colors.black : Colors.white,
-                        fontSize: 14, // Reduced font size
+                        fontSize: 14,
                         fontWeight: FontWeight.bold,
                       ),
                       onTap: () => togglePriority('Medium'),
@@ -145,10 +142,10 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                     CustomContainer(
                       text: 'High',
                       backgroundColor: selectedPriority == 'High' ? Colors.red.shade800 : Colors.red,
-                      borderRadius: 25, // Slightly reduced border radius
+                      borderRadius: 25,
                       textStyle: TextStyle(
                         color: selectedPriority == 'High' ? Colors.black : Colors.white,
-                        fontSize: 14, // Reduced font size
+                        fontSize: 14,
                         fontWeight: FontWeight.bold,
                       ),
                       onTap: () => togglePriority('High'),

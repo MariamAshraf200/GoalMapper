@@ -59,11 +59,13 @@ class DataFormat extends StatelessWidget {
                         color: Colors.white,
                       ),
                     ),
-                    const Spacer(),
-                    const Icon(
-                      CupertinoIcons.arrow_down_right,
-                      color: Colors.white,
-                      size: 18,
+                    const Padding(
+                      padding: EdgeInsets.all(8.0),
+                      child: Icon(
+                        CupertinoIcons.arrow_down_right,
+                        color: Colors.white,
+                        size: 18,
+                      ),
                     ),
                   ],
                 ),
