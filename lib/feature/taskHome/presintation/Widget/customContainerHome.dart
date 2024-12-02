@@ -39,14 +39,14 @@ class CustomContainer extends StatelessWidget {
                 Text(
                   label,
                   style: TextStyle(
-                    fontSize: 18,
+                    fontSize: 15,
                     color: isSelected?  Colors.black :Colors.white ,
                   ),
                 ),
                 Text(
                   '$number',
                   style: TextStyle(
-                    fontSize: 24,
+                    fontSize: 16,
                     color: isSelected?  Colors.black :Colors.white ,
                   ),
                 ),
