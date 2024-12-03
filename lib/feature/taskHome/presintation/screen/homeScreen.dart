@@ -1,13 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:mapper_app/feature/taskHome/presintation/screen/doneScreen.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:mapper_app/core/di.dart';
 import 'package:mapper_app/feature/taskHome/presintation/screen/todoScreen.dart';
+import '../../domain/entity/taskEntity.dart';
 import '../Widget/customContainerHome.dart';
 import '../Widget/data_format.dart';
+import '../bloc/bloc.dart';
+import '../bloc/event.dart';
+import '../bloc/state.dart';
 import 'AddNewTaskScreen.dart';
+import 'doneScreen.dart';
 import 'inProgressScreen.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({Key? key}) : super(key: key);
+  const HomeScreen({super.key});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -15,20 +21,25 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   int selectedIndex = 0;
+  List<TaskEntity> filteredTasks = [];
 
-  // Placeholder content for each section
-  final List<Widget> content = [
-    TaskListScreen(),
-    InProgressScreen(),
-    ReviewScreen(),
-    ];
+  @override
+  void initState() {
+    super.initState();
+    sl<TaskBloc>().add(GetTasksEvent());
+  }
+
+  void filterTasks(List<TaskEntity> tasks, String status) {
+    setState(() {
+      filteredTasks = tasks.where((task) => task.status == status).toList();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Column(
         children: [
-          // Top section
           const DataFormat(),
           // Container row
           Row(
@@ -37,7 +48,7 @@ class _HomeScreenState extends State<HomeScreen> {
               Expanded(
                 child: CustomContainer(
                   label: 'To Do',
-                  number: 3,
+                  number: filteredTasks.where((task) => task.status == 'To Do').length,
                   isSelected: selectedIndex == 0,
                   onTap: () {
                     setState(() {
@@ -49,7 +60,7 @@ class _HomeScreenState extends State<HomeScreen> {
               Expanded(
                 child: CustomContainer(
                   label: 'In Progress',
-                  number: 5,
+                  number: filteredTasks.where((task) => task.status == 'In Progress').length,
                   isSelected: selectedIndex == 1,
                   onTap: () {
                     setState(() {
@@ -61,7 +72,7 @@ class _HomeScreenState extends State<HomeScreen> {
               Expanded(
                 child: CustomContainer(
                   label: 'Done',
-                  number: 8,
+                  number: filteredTasks.where((task) => task.status == 'Done').length,
                   isSelected: selectedIndex == 2,
                   onTap: () {
                     setState(() {
@@ -72,7 +83,56 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ],
           ),
-          Expanded(child: content[selectedIndex]),
+          Expanded(
+            child: selectedIndex == 0
+                ? BlocBuilder<TaskBloc, TaskState>(
+              bloc: sl<TaskBloc>(),
+              builder: (context, state) {
+                if (state is TaskLoading) {
+                  return const Center(child: CircularProgressIndicator());
+                } else if (state is TaskLoaded) {
+                  filterTasks(state.tasks, 'To Do');
+                  return TaskListScreen(tasks: filteredTasks);
+                } else if (state is TaskError) {
+                  return Center(child: Text(state.message));
+                } else {
+                  return const Center(child: Text('Unknown Error'));
+                }
+              },
+            )
+                : selectedIndex == 1
+                ? BlocBuilder<TaskBloc, TaskState>(
+              bloc: sl<TaskBloc>(),
+              builder: (context, state) {
+                if (state is TaskLoading) {
+                  return const Center(child: CircularProgressIndicator());
+                } else if (state is TaskLoaded) {
+                  filterTasks(state.tasks, 'In Progress');
+                  return InProgressScreen(tasks: filteredTasks);
+                } else if (state is TaskError) {
+                  return Center(child: Text(state.message));
+                } else {
+                  return const Center(child: Text('Unknown Error'));
+                }
+              },
+            )
+                : BlocBuilder<TaskBloc, TaskState>(
+              bloc: sl<TaskBloc>(),
+              builder: (context, state) {
+                if (state is TaskLoading) {
+                  return const Center(child: CircularProgressIndicator());
+                } else if (state is TaskLoaded) {
+                  // Filter tasks based on 'Done' status
+                  filterTasks(state.tasks, 'Done');
+                  return DoneScreen(tasks: filteredTasks);
+                } else if (state is TaskError) {
+                  return Center(child: Text(state.message));
+                } else {
+                  return const Center(child: Text('Unknown Error'));
+                }
+              },
+            ),
+          ),
           const SizedBox(height: 20),
         ],
       ),
@@ -84,10 +144,10 @@ class _HomeScreenState extends State<HomeScreen> {
                 topRight: Radius.circular(50),
                 bottomRight: Radius.elliptical(50, 50))),
         onPressed: () {
-          Navigator.pushReplacement(
+          Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) =>  AddTaskScreen(),
+              builder: (context) => AddTaskScreen(),
             ),
           );
         },

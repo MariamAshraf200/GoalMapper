@@ -1,27 +1,25 @@
 import 'package:hive/hive.dart';
-
-import '../../domain/entity/taskEntity.dart';
-
+import '../model/taskModel.dart';
 
 abstract class TaskLocalDataSource {
-  Future<void> addTask(TaskEntity task);
-  Future<List<TaskEntity>> getAllTasks();
+  Future<void> addTask(TaskModel task);
+  Future<List<TaskModel>> getAllTasks();
   Future<void> deleteTask(String id);
-  Future<void> updateTask(TaskEntity task);
+  Future<void> updateTask(TaskModel task);
 }
 
 class HiveTaskLocalDataSource implements TaskLocalDataSource {
-  final Box<TaskEntity> taskBox;
+  final Box<TaskModel> taskBox;
 
   HiveTaskLocalDataSource(this.taskBox);
 
   @override
-  Future<void> addTask(TaskEntity task) async {
+  Future<void> addTask(TaskModel task) async {
     await taskBox.put(task.id, task);
   }
 
   @override
-  Future<List<TaskEntity>> getAllTasks() async {
+  Future<List<TaskModel>> getAllTasks() async {
     return taskBox.values.toList();
   }
 
@@ -31,7 +29,7 @@ class HiveTaskLocalDataSource implements TaskLocalDataSource {
   }
 
   @override
-  Future<void> updateTask(TaskEntity task) async {
+  Future<void> updateTask(TaskModel task) async {
     await taskBox.put(task.id, task);
   }
 }

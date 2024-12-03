@@ -1,3 +1,4 @@
+
 class TaskEntity {
   final String id;
   final String title;
@@ -5,6 +6,7 @@ class TaskEntity {
   final String date;
   final String time;
   final String priority;
+  final String status;
 
   TaskEntity({
     required this.id,
@@ -13,5 +15,8 @@ class TaskEntity {
     required this.date,
     required this.time,
     required this.priority,
+    required this.status,
   });
+
+
 }

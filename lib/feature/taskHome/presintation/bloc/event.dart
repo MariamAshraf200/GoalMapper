@@ -1,37 +1,52 @@
-
 import 'package:equatable/equatable.dart';
+import 'package:mapper_app/feature/taskHome/domain/entity/taskEntity.dart';
 
-import '../../data/model/taskModel.dart';
-
+// Base class for TaskEvent
 abstract class TaskEvent extends Equatable {
+  const TaskEvent();
+
   @override
   List<Object?> get props => [];
 }
 
+// Event to get the list of tasks
 class GetTasksEvent extends TaskEvent {}
 
+// Event to add a new task
 class AddTaskEvent extends TaskEvent {
-  final Task task;
+  final TaskEntity task;
 
-  AddTaskEvent(this.task);
+  const AddTaskEvent(this.task);
 
   @override
   List<Object?> get props => [task];
 }
 
-class DeleteTaskEvent extends TaskEvent {
-  final int taskId;
+// Event to update an existing task
+class UpdateTaskEvent extends TaskEvent {
+  final TaskEntity task;
 
-  DeleteTaskEvent(this.taskId);
+  const UpdateTaskEvent(this.task);
+
+  @override
+  List<Object?> get props => [task];
+}
+
+// Event to delete a task by its ID
+class DeleteTaskEvent extends TaskEvent {
+  final String taskId;
+
+  const DeleteTaskEvent(this.taskId);
 
   @override
   List<Object?> get props => [taskId];
 }
 
-class UpdateTaskEvent extends TaskEvent {
-  final Task task;
+// New event to indicate a successful task addition
+class TaskAddedSuccessEvent extends TaskEvent {
+  final TaskEntity task;
 
-  UpdateTaskEvent(this.task);
+  const TaskAddedSuccessEvent(this.task);
 
   @override
   List<Object?> get props => [task];

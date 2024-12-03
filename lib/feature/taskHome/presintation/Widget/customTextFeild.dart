@@ -4,9 +4,10 @@ class CustomTextField extends StatelessWidget {
   final TextEditingController controller;
   final String hintText;
   final Widget? suffixIcon;
-  final bool description; // New variable to control size
+  final bool description;
   final String title;
-  final VoidCallback? onTap; // New onTap parameter
+  final VoidCallback? onTap;
+  final String? Function(String?)? validator;
 
   const CustomTextField({
     Key? key,
@@ -15,7 +16,8 @@ class CustomTextField extends StatelessWidget {
     required this.title,
     this.suffixIcon,
     this.description = false,
-    this.onTap, // Initialize onTap
+    this.onTap,
+    this.validator, // Accept validator parameter
   }) : super(key: key);
 
   @override
@@ -33,13 +35,14 @@ class CustomTextField extends StatelessWidget {
             ),
           ),
           GestureDetector(
-            onTap: onTap, // Trigger the onTap callback if provided
-            child: AbsorbPointer( // Prevents the TextField from handling taps if onTap is used
+            onTap: onTap,
+            child: AbsorbPointer(
               absorbing: onTap != null,
-              child: TextField(
+              child: TextFormField(
                 controller: controller,
                 maxLines: description ? 5 : 1,
                 minLines: description ? 3 : 1,
+                validator: validator, // Apply the validator
                 decoration: InputDecoration(
                   filled: true,
                   fillColor: Colors.grey[300],

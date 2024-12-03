@@ -1,31 +1,25 @@
+import '../../domain/entity/taskEntity.dart';
 
-import 'package:equatable/equatable.dart';
-
-import '../../data/model/taskModel.dart';
-
-abstract class TaskState extends Equatable {
-  @override
-  List<Object?> get props => [];
-}
+abstract class TaskState {}
 
 class TaskInitial extends TaskState {}
 
 class TaskLoading extends TaskState {}
 
 class TaskLoaded extends TaskState {
-  final List<Task> tasks;
+  final List<TaskEntity> tasks;
 
-  TaskLoaded(this.tasks);
-
-  @override
-  List<Object?> get props => [tasks];
+  TaskLoaded({required this.tasks});
 }
 
 class TaskError extends TaskState {
   final String message;
 
-  TaskError(this.message);
+  TaskError({required this.message});
+}
 
-  @override
-  List<Object?> get props => [message];
+class TaskAddedSuccess extends TaskState {
+  final String message;
+
+  TaskAddedSuccess({required this.message});
 }
