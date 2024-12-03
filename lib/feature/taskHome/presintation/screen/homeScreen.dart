@@ -1,16 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:mapper_app/core/di.dart';
-import 'package:mapper_app/feature/taskHome/presintation/screen/todoScreen.dart';
-import '../../domain/entity/taskEntity.dart';
+import 'AddNewTaskScreen.dart';
 import '../Widget/customContainerHome.dart';
 import '../Widget/data_format.dart';
-import '../bloc/bloc.dart';
-import '../bloc/event.dart';
-import '../bloc/state.dart';
-import 'AddNewTaskScreen.dart';
-import 'doneScreen.dart';
-import 'inProgressScreen.dart';
+import 'allTaskScreen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -21,19 +13,6 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   int selectedIndex = 0;
-  List<TaskEntity> filteredTasks = [];
-
-  @override
-  void initState() {
-    super.initState();
-    sl<TaskBloc>().add(GetTasksEvent());
-  }
-
-  void filterTasks(List<TaskEntity> tasks, String status) {
-    setState(() {
-      filteredTasks = tasks.where((task) => task.status == status).toList();
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -41,6 +20,29 @@ class _HomeScreenState extends State<HomeScreen> {
       body: Column(
         children: [
           const DataFormat(),
+          // Button to navigate to "See All Tasks"
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+            child: ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => AllTasksScreen()),
+                );
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.deepPurple,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(30),
+                ),
+                padding: const EdgeInsets.symmetric(vertical: 12.0),
+              ),
+              child: const Text(
+                'See All Tasks',
+                style: TextStyle(color: Colors.white, fontSize: 16),
+              ),
+            ),
+          ),
           // Container row
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -48,7 +50,7 @@ class _HomeScreenState extends State<HomeScreen> {
               Expanded(
                 child: CustomContainer(
                   label: 'To Do',
-                  number: filteredTasks.where((task) => task.status == 'To Do').length,
+                  number: 0, // Replace with actual count if needed
                   isSelected: selectedIndex == 0,
                   onTap: () {
                     setState(() {
@@ -60,7 +62,7 @@ class _HomeScreenState extends State<HomeScreen> {
               Expanded(
                 child: CustomContainer(
                   label: 'In Progress',
-                  number: filteredTasks.where((task) => task.status == 'In Progress').length,
+                  number: 0, // Replace with actual count if needed
                   isSelected: selectedIndex == 1,
                   onTap: () {
                     setState(() {
@@ -72,7 +74,7 @@ class _HomeScreenState extends State<HomeScreen> {
               Expanded(
                 child: CustomContainer(
                   label: 'Done',
-                  number: filteredTasks.where((task) => task.status == 'Done').length,
+                  number: 0, // Replace with actual count if needed
                   isSelected: selectedIndex == 2,
                   onTap: () {
                     setState(() {
@@ -83,57 +85,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ],
           ),
-          Expanded(
-            child: selectedIndex == 0
-                ? BlocBuilder<TaskBloc, TaskState>(
-              bloc: sl<TaskBloc>(),
-              builder: (context, state) {
-                if (state is TaskLoading) {
-                  return const Center(child: CircularProgressIndicator());
-                } else if (state is TaskLoaded) {
-                  filterTasks(state.tasks, 'To Do');
-                  return TaskListScreen(tasks: filteredTasks);
-                } else if (state is TaskError) {
-                  return Center(child: Text(state.message));
-                } else {
-                  return const Center(child: Text('Unknown Error'));
-                }
-              },
-            )
-                : selectedIndex == 1
-                ? BlocBuilder<TaskBloc, TaskState>(
-              bloc: sl<TaskBloc>(),
-              builder: (context, state) {
-                if (state is TaskLoading) {
-                  return const Center(child: CircularProgressIndicator());
-                } else if (state is TaskLoaded) {
-                  filterTasks(state.tasks, 'In Progress');
-                  return InProgressScreen(tasks: filteredTasks);
-                } else if (state is TaskError) {
-                  return Center(child: Text(state.message));
-                } else {
-                  return const Center(child: Text('Unknown Error'));
-                }
-              },
-            )
-                : BlocBuilder<TaskBloc, TaskState>(
-              bloc: sl<TaskBloc>(),
-              builder: (context, state) {
-                if (state is TaskLoading) {
-                  return const Center(child: CircularProgressIndicator());
-                } else if (state is TaskLoaded) {
-                  // Filter tasks based on 'Done' status
-                  filterTasks(state.tasks, 'Done');
-                  return DoneScreen(tasks: filteredTasks);
-                } else if (state is TaskError) {
-                  return Center(child: Text(state.message));
-                } else {
-                  return const Center(child: Text('Unknown Error'));
-                }
-              },
-            ),
-          ),
-          const SizedBox(height: 20),
+          const Spacer(),
         ],
       ),
       floatingActionButton: FloatingActionButton(

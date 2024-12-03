@@ -1,33 +1,60 @@
+
+import 'package:hive/hive.dart';
+
 import '../../domain/entity/taskEntity.dart';
 import '../../domain/repo_interface/repo.dart';
-import '../dataSource/localData.dart';
-import '../model/taskModel.dart';  // Task storage model (Hive model)
+import '../model/taskModel.dart';
 
 class TaskRepositoryImpl implements TaskRepository {
-  final TaskLocalDataSource localDataSource;
+  final Box<TaskModel> taskBox;
 
-  TaskRepositoryImpl(this.localDataSource);
+  TaskRepositoryImpl(this.taskBox);
 
   @override
-  Future<void> addTask(TaskEntity taskEntity) async {
-    TaskModel taskModel = TaskModel.fromEntity(taskEntity); // Convert Entity to Model
-    await localDataSource.addTask(taskModel); // Pass Model to Data Source
+  Future<List<TaskEntity>> getTasks() async {
+    try {
+      final taskModels = taskBox.values.toList();
+      return taskModels.map((taskModel) => taskModel.toEntity()).toList();
+    } catch (e) {
+      throw Exception("Error loading tasks from Hive: $e");
+    }
   }
 
   @override
-  Future<void> deleteTask(String id) async {
-    await localDataSource.deleteTask(id); // Directly interact with local data source
+  Future<void> addTask(TaskEntity task) async {
+    try {
+      final taskModel = TaskModel.fromEntity(task);
+      await taskBox.add(taskModel);
+    } catch (e) {
+      throw Exception("Error adding task to Hive: $e");
+    }
   }
 
   @override
-  Future<List<TaskEntity>> getAllTasks() async {
-    List<TaskModel> taskModels = await localDataSource.getAllTasks();  // Get List of Models
-    return taskModels.map((taskModel) => taskModel.toEntity()).toList(); // Convert to List of Entities
+  Future<void> updateTask(TaskEntity task) async {
+    try {
+      final taskIndex = taskBox.values.toList().indexWhere((model) => model.id == task.id);
+      if (taskIndex != -1) {
+        await taskBox.putAt(taskIndex, TaskModel.fromEntity(task));
+      } else {
+        throw Exception("Task not found");
+      }
+    } catch (e) {
+      throw Exception("Error updating task in Hive: $e");
+    }
   }
 
   @override
-  Future<void> updateTask(TaskEntity taskEntity) async {
-    TaskModel taskModel = TaskModel.fromEntity(taskEntity); // Convert Entity to Model
-    await localDataSource.updateTask(taskModel); // Pass Model to Data Source
+  Future<void> deleteTask(String taskId) async {
+    try {
+      final taskIndex = taskBox.values.toList().indexWhere((model) => model.id == taskId);
+      if (taskIndex != -1) {
+        await taskBox.deleteAt(taskIndex);
+      } else {
+        throw Exception("Task not found");
+      }
+    } catch (e) {
+      throw Exception("Error deleting task from Hive: $e");
+    }
   }
 }

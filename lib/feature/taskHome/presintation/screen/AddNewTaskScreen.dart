@@ -1,7 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
+import '../../../../core/di.dart';
+import '../../data/model/taskModel.dart';
 import '../Widget/customContainerAddnewTask.dart';
 import '../Widget/customTextFeild.dart';
+import '../../domain/entity/taskEntity.dart';
+import '../bloc/bloc.dart';
+import '../bloc/event.dart';
 
 class AddTaskScreen extends StatefulWidget {
   @override
@@ -22,21 +29,45 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
     });
   }
 
-  // Validation function
   String? _validateTextField(String? value) {
     if (value == null || value.isEmpty) {
       return 'This field cannot be empty';
     }
     return null;
+
+  }void printAllTasks() {
+    final taskBox = sl<Box<TaskModel>>();
+    print('Box length: ${taskBox.length}');
+    final tasks = taskBox.values.toList();
+
+    if (tasks.isEmpty) {
+      print("No tasks found in Hive.");
+    } else {
+      print("All tasks in Hive:");
+      for (var task in tasks) {
+        print('ID: ${task.id}, Title: ${task.title}, Description: ${task.description}, '
+            'Date: ${task.date}, Time: ${task.time}, Priority: ${task.priority}, Status: ${task.status}');
+      }
+    }
   }
+
 
   void _saveTask() {
     if (_formKey.currentState?.validate() ?? false) {
-      print('Title: ${titleController.text}');
-      print('Description: ${descriptionController.text}');
-      print('Date: ${dateController.text}');
-      print('Time: ${timeController.text}');
-      print('Priority: $selectedPriority');
+      final newTask = TaskEntity(
+        id: DateTime.now().millisecondsSinceEpoch.toString(),
+        title: titleController.text,
+        description: descriptionController.text,
+        date: dateController.text,
+        time: timeController.text,
+        priority: selectedPriority, status: '',
+      );
+
+      context.read<TaskBloc>().add(AddTaskEvent(newTask));
+      printAllTasks();
+      print('Task added: $newTask');
+
+      print('Task Saved sucssesfully');
       Navigator.pop(context);
     }
   }
@@ -81,7 +112,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                     controller: titleController,
                     hintText: 'Add title of task',
                     title: 'Task Title',
-                    validator: _validateTextField, // Adding validator
+                    validator: _validateTextField,
                   ),
                   SizedBox(height: screenHeight * 0.01),
                   CustomTextField(

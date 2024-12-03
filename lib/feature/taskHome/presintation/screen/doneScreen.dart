@@ -10,7 +10,6 @@ class DoneScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Filter tasks that are marked as "Done"
     final doneTasks = tasks.where((task) => task.status == 'Done').toList();
 
     return Scaffold(
