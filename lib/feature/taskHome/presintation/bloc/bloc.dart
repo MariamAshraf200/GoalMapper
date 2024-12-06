@@ -1,169 +1,87 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:hive_flutter/hive_flutter.dart';
 import 'package:mapper_app/feature/taskHome/presintation/bloc/state.dart';
+
+import '../../../../core/hiveServices.dart';
 import '../../data/model/taskModel.dart';
 import '../../domain/usecse/addUsecase.dart';
 import '../../domain/usecse/deleteUsecase.dart';
 import '../../domain/usecse/getUsecase.dart';
 import '../../domain/usecse/updateUsecase.dart';
 import 'event.dart';
-import '../../domain/entity/taskEntity.dart';
+
 
 class TaskBloc extends Bloc<TaskEvent, TaskState> {
-  late Box<TaskEntity> taskBox;
-  GetAllTasksUseCase getAllTasksUseCase;
-  UpdateTaskUseCase updateTaskUseCase;
-  AddTaskUseCase addTaskUseCase;
-  DeleteTaskUseCase deleteTaskUseCase;
+  final GetAllTasksUseCase getAllTasksUseCase;
+  final AddTaskUseCase addTaskUseCase;
+  final UpdateTaskUseCase updateTaskUseCase;
+  final DeleteTaskUseCase deleteTaskUseCase;
+  final hiveService = HiveService();
 
-  TaskBloc(
-      {required this.getAllTasksUseCase,
-      required this.addTaskUseCase,
-      required  this.updateTaskUseCase,
-      required this.deleteTaskUseCase})
-      : super(TaskInitial()) {
-    on<GetTasksEvent>(_onGetTasksEvent);
-    on<AddTaskEvent>(_onAddTaskEvent);
-    on<UpdateTaskEvent>(_onUpdateTaskEvent);
-    on<DeleteTaskEvent>(_onDeleteTaskEvent);
-    on<MarkTaskAsDoneEvent>(_onMarkTaskAsDoneEvent);
-    on<ChangeTaskStatusEvent>(_onChangeTaskStatusEvent);
-    on<ClearAllTasksEvent>(_onClearAllTasksEvent);
+  TaskBloc({
+    required this.getAllTasksUseCase,
+    required this.addTaskUseCase,
+    required this.updateTaskUseCase,
+    required this.deleteTaskUseCase,
+  }) : super(TaskInitial()) {
+    on<GetAllTasksEvent>(_onGetAllTasks);
+    on<AddTaskEvent>(_onAddTask);
+    on<UpdateTaskEvent>(_onUpdateTask);
+    on<DeleteTaskEvent>(_onDeleteTask);
   }
 
-  Future<void> _onGetTasksEvent(
-      GetTasksEvent event, Emitter<TaskState> emit) async {
+  Future<void> _onGetAllTasks(
+      GetAllTasksEvent event,
+      Emitter<TaskState> emit,
+      ) async {
     emit(TaskLoading());
     try {
-      final tasks = taskBox.values.toList();
-      if (event.status != null) {
-        final filteredTasks =
-            tasks.where((task) => task.status == event.status).toList();
-        emit(TaskLoaded(tasks: filteredTasks));
-      } else {
-        if (tasks.isNotEmpty) {
-          emit(TaskLoaded(tasks: tasks));
-        } else {
-          emit(TaskError(message: "No tasks found"));
-        }
-      }
-    } catch (_) {
-      emit(TaskError(message: "An error occurred while loading tasks"));
+      final tasks = await getAllTasksUseCase();
+      emit(TaskLoaded(tasks));
+    } catch (e) {
+      emit(TaskError("Failed to load tasks: $e"));
     }
   }
-
-  Future<void> _onAddTaskEvent(AddTaskEvent event, Emitter<TaskState> emit) async {
+  Future<void> _onAddTask(AddTaskEvent event, Emitter<TaskState> emit) async {
     emit(TaskLoading());
     try {
-      await taskBox.add(TaskModel(
-        id: event.task.id,
+      final taskModel = TaskModel(
         title: event.task.title,
         description: event.task.description,
         date: event.task.date,
         time: event.task.time,
-        priority: event.task.priority,
-        status: event.task.status,
-      ) as TaskEntity);
+        priority: event.task.priority, id: '', status: '',
+      );
 
-      print("Task added to Hive successfully.");
-
-      // Fetch all tasks from Hive after adding
-      final tasks = taskBox.values.toList();
-      print("Number of tasks in Hive: ${tasks.length}"); // Debugging line
-      emit(TaskLoaded(tasks: tasks));
+      await hiveService.addTask(taskModel); // Save task to Hive.
+      emit(const TaskActionSuccess('Task add Sucessfully'));
     } catch (e) {
-      print("Error while adding task: $e"); // Debugging line
-      emit(TaskError(message: "An error occurred while adding a task"));
+      emit(TaskError(e.toString()));
     }
   }
 
-
-  Future<void> _onUpdateTaskEvent(
-      UpdateTaskEvent event, Emitter<TaskState> emit) async {
-    emit(TaskLoading());
+  Future<void> _onUpdateTask(
+      UpdateTaskEvent event,
+      Emitter<TaskState> emit,
+      ) async {
     try {
-      final taskIndex =
-          taskBox.values.toList().indexWhere((task) => task.id == event.taskId);
-      if (taskIndex != -1) {
-        await taskBox.putAt(taskIndex, event.updatedTask);
-        final tasks = taskBox.values.toList();
-        emit(TaskLoaded(tasks: tasks));
-      } else {
-        emit(TaskError(message: "Task not found for updating"));
-      }
-    } catch (_) {
-      emit(TaskError(message: "An error occurred while updating the task"));
+      await updateTaskUseCase(event.task);
+      emit(const TaskActionSuccess("Task updated successfully."));
+      add(GetAllTasksEvent()); // Refresh the task list
+    } catch (e) {
+      emit(TaskError("Failed to update task: $e"));
     }
   }
 
-  Future<void> _onDeleteTaskEvent(
-      DeleteTaskEvent event, Emitter<TaskState> emit) async {
-    emit(TaskLoading());
+  Future<void> _onDeleteTask(
+      DeleteTaskEvent event,
+      Emitter<TaskState> emit,
+      ) async {
     try {
-      final taskIndex =
-          taskBox.values.toList().indexWhere((task) => task.id == event.taskId);
-      if (taskIndex != -1) {
-        await taskBox.deleteAt(taskIndex);
-        final tasks = taskBox.values.toList();
-        emit(TaskLoaded(tasks: tasks));
-      } else {
-        emit(TaskError(message: "Task not found for deletion"));
-      }
-    } catch (_) {
-      emit(TaskError(message: "An error occurred while deleting the task"));
-    }
-  }
-
-  Future<void> _onMarkTaskAsDoneEvent(
-      MarkTaskAsDoneEvent event, Emitter<TaskState> emit) async {
-    emit(TaskLoading());
-    try {
-      final taskIndex =
-          taskBox.values.toList().indexWhere((task) => task.id == event.taskId);
-      if (taskIndex != -1) {
-        final task = taskBox.getAt(taskIndex)!;
-        final updatedTask = task.copyWith(status: 'Done');
-        await taskBox.putAt(taskIndex, updatedTask);
-
-        final tasks = taskBox.values.toList();
-        emit(TaskLoaded(tasks: tasks));
-      } else {
-        emit(TaskError(message: "Task not found to mark as done"));
-      }
-    } catch (_) {
-      emit(TaskError(message: "An error occurred while marking task as done"));
-    }
-  }
-
-  Future<void> _onChangeTaskStatusEvent(
-      ChangeTaskStatusEvent event, Emitter<TaskState> emit) async {
-    emit(TaskLoading());
-    try {
-      final taskIndex =
-          taskBox.values.toList().indexWhere((task) => task.id == event.taskId);
-      if (taskIndex != -1) {
-        final task = taskBox.getAt(taskIndex)!;
-        final updatedTask = task.copyWith(status: event.newStatus);
-        await taskBox.putAt(taskIndex, updatedTask);
-
-        final tasks = taskBox.values.toList();
-        emit(TaskLoaded(tasks: tasks));
-      } else {
-        emit(TaskError(message: "Task not found to change status"));
-      }
-    } catch (_) {
-      emit(TaskError(message: "An error occurred while changing task status"));
-    }
-  }
-
-  Future<void> _onClearAllTasksEvent(
-      ClearAllTasksEvent event, Emitter<TaskState> emit) async {
-    emit(TaskLoading());
-    try {
-      await taskBox.clear();
-      emit(TaskLoaded(tasks: []));
-    } catch (_) {
-      emit(TaskError(message: "An error occurred while clearing tasks"));
+      await deleteTaskUseCase(event.taskId);
+      emit(const TaskActionSuccess("Task deleted successfully."));
+      add(GetAllTasksEvent()); // Refresh the task list
+    } catch (e) {
+      emit(TaskError("Failed to delete task: $e"));
     }
   }
 }

@@ -7,7 +7,7 @@ class TaskCard extends StatelessWidget {
   final String date;
   final String time;
   final String priority;
-  final Color priorityColor;
+  final Color? priorityColor;
   final VoidCallback onClicked;
 
   const TaskCard({
@@ -17,7 +17,7 @@ class TaskCard extends StatelessWidget {
     required this.date,
     required this.time,
     required this.priority,
-    required this.priorityColor,
+    this.priorityColor,
     required this.onClicked,
   }) : super(key: key);
 
@@ -117,7 +117,7 @@ class TaskCard extends StatelessWidget {
                   vertical: 6.0,
                 ),
                 decoration: BoxDecoration(
-                  color: priorityColor,
+                  color: priorityColor!,
                   borderRadius: BorderRadius.circular(12.0),
                 ),
                 child: Text(

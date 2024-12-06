@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 
-class CustomContainer extends StatelessWidget {
+class CustomContainerHome extends StatelessWidget {
   final String label;
   final int number;
   final bool isSelected;
   final VoidCallback onTap;
 
-  const CustomContainer({
+  const CustomContainerHome({
     Key? key,
     required this.label,
     required this.number,

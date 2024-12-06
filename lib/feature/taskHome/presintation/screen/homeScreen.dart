@@ -48,7 +48,7 @@ class _HomeScreenState extends State<HomeScreen> {
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               Expanded(
-                child: CustomContainer(
+                child: CustomContainerHome(
                   label: 'To Do',
                   number: 0, // Replace with actual count if needed
                   isSelected: selectedIndex == 0,
@@ -60,7 +60,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
               Expanded(
-                child: CustomContainer(
+                child: CustomContainerHome(
                   label: 'In Progress',
                   number: 0, // Replace with actual count if needed
                   isSelected: selectedIndex == 1,
@@ -72,7 +72,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
               Expanded(
-                child: CustomContainer(
+                child: CustomContainerHome(
                   label: 'Done',
                   number: 0, // Replace with actual count if needed
                   isSelected: selectedIndex == 2,

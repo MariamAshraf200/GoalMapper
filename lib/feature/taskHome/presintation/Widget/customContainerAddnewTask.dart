@@ -1,7 +1,7 @@
 
 import 'package:flutter/material.dart';
 
-class CustomContainer extends StatelessWidget {
+class CustomContainerNewTask extends StatelessWidget {
   final String text;
   final TextStyle? textStyle;
   final Alignment alignment;
@@ -9,7 +9,7 @@ class CustomContainer extends StatelessWidget {
   final double borderRadius;
   final Function()? onTap;
 
-  const CustomContainer({
+  const CustomContainerNewTask({
     Key? key,
     required this.text,
     this.textStyle,

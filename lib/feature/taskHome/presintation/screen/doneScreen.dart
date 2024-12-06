@@ -26,7 +26,6 @@ class DoneScreen extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 16),
-          // Iterate through the filtered tasks and display each one
           ...doneTasks.map((task) => TaskCard(
             title: task.title,
             description: task.description,

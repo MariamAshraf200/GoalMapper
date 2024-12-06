@@ -13,19 +13,18 @@ import '../feature/taskHome/presintation/bloc/bloc.dart';
 final sl = GetIt.instance;
 Future<void> init() async {
   try {
-
     final taskBox = Hive.box<TaskModel>('tasks');
     print('Box registered with GetIt: ${taskBox.isOpen}');
     sl.registerSingleton<Box<TaskModel>>(taskBox);
 
     // Data Sources
     sl.registerLazySingleton<TaskLocalDataSource>(
-          () => HiveTaskLocalDataSource(sl()),
+      () => HiveTaskLocalDataSource(sl()),
     );
 
     // Repositories
     sl.registerLazySingleton<TaskRepository>(
-          () => TaskRepositoryImpl(sl()),
+      () => TaskRepositoryImpl(sl()),
     );
 
     // Use Cases
@@ -34,13 +33,13 @@ Future<void> init() async {
     sl.registerLazySingleton(() => DeleteTaskUseCase(sl()));
     sl.registerLazySingleton(() => UpdateTaskUseCase(sl()));
 
-    // Bloc
+    // Register Bloc
     sl.registerFactory(() => TaskBloc(
-      getAllTasksUseCase: sl(),
-      addTaskUseCase: sl(),
-      updateTaskUseCase: sl(),
-      deleteTaskUseCase: sl(),
-    ));
+          getAllTasksUseCase: sl(),
+          addTaskUseCase: sl(),
+          updateTaskUseCase: sl(),
+          deleteTaskUseCase: sl(),
+        ));
   } catch (e) {
     print("Error during DI initialization: $e");
   }
