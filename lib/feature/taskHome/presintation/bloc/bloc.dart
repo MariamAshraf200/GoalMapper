@@ -49,7 +49,7 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
         description: event.task.description,
         date: event.task.date,
         time: event.task.time,
-        priority: event.task.priority, id: '', status: '',
+        priority: event.task.priority, id:event.task.id, status: '',
       );
 
       await hiveService.addTask(taskModel); // Save task to Hive.

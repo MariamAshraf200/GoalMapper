@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:uuid/uuid.dart';
 import '../../domain/entity/taskEntity.dart';
 import '../Widget/customContainerTask.dart';
 
@@ -6,10 +7,13 @@ class TaskListScreen extends StatelessWidget {
   final List<TaskEntity> tasks; // Accept tasks as a parameter.
 
   // Constructor to pass tasks
-  const TaskListScreen({Key? key, required this.tasks}) : super(key: key);
+   TaskListScreen({Key? key, required this.tasks}) : super(key: key);
+  final uuid = Uuid();
 
   @override
   Widget build(BuildContext context) {
+    String uniqueTaskId = uuid.v4();
+
     return Scaffold(
       body: ListView(
         padding: const EdgeInsets.all(16.0),
@@ -31,11 +35,10 @@ class TaskListScreen extends StatelessWidget {
             date: task.date,
             time: task.time,
             priority: task.priority,
-            priorityColor: _getPriorityColor(task.priority), // Example of how to assign a color based on priority
-            onClicked: () {
-              // Define what happens when a task is clicked
-            },
-          )).toList(),
+            priorityColor: _getPriorityColor(task.priority), onViewClicked: () {  }, taskId: uniqueTaskId, // Example of how to assign a color based on priority
+
+
+          )),
         ],
       ),
     );

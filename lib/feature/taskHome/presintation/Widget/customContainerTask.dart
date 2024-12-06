@@ -1,25 +1,35 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+import '../bloc/bloc.dart';
+import '../bloc/event.dart';
 
 class TaskCard extends StatelessWidget {
+  final String taskId;
   final String title;
   final String description;
   final String date;
   final String time;
   final String priority;
   final Color? priorityColor;
-  final VoidCallback onClicked;
+  final VoidCallback onViewClicked;
 
   const TaskCard({
     Key? key,
+    required this.taskId,
     required this.title,
     required this.description,
     required this.date,
     required this.time,
     required this.priority,
     this.priorityColor,
-    required this.onClicked,
+    required this.onViewClicked,
   }) : super(key: key);
+
+  void _deleteTask(BuildContext context) {
+    context.read<TaskBloc>().add(DeleteTaskEvent(taskId));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -40,7 +50,6 @@ class TaskCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Title and Arrow Button Row
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -54,21 +63,40 @@ class TaskCard extends StatelessWidget {
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
-              // Arrow Button
-              Container(
-                decoration: const BoxDecoration(
-                  color: Colors.black,
-                  shape: BoxShape.circle,
-                ),
-                child: IconButton(
-                  onPressed: onClicked,
-                  icon: const Icon(CupertinoIcons.arrow_up_right, color: Colors.white),
-                ),
+              Row(
+                children: [
+                  Container(
+                    decoration: const BoxDecoration(
+                      color: Colors.black,
+                      shape: BoxShape.circle,
+                    ),
+                    child: IconButton(
+                      onPressed: onViewClicked,
+                      icon: const Icon(
+                        CupertinoIcons.arrow_up_right,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 8.0),
+                  Container(
+                    decoration: const BoxDecoration(
+                      color: Colors.red,
+                      shape: BoxShape.circle,
+                    ),
+                    child: IconButton(
+                      onPressed: () => _deleteTask(context),
+                      icon: const Icon(
+                        Icons.delete,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
           const SizedBox(height: 8.0),
-          // Description
           Text(
             description,
             style: const TextStyle(
@@ -110,14 +138,13 @@ class TaskCard extends StatelessWidget {
                   ),
                 ],
               ),
-              // Priority Button
               Container(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 12.0,
                   vertical: 6.0,
                 ),
                 decoration: BoxDecoration(
-                  color: priorityColor!,
+                  color: priorityColor,
                   borderRadius: BorderRadius.circular(12.0),
                 ),
                 child: Text(
