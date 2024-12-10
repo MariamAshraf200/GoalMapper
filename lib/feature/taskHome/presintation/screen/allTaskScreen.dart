@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mapper_app/feature/taskHome/presintation/Widget/customContainerTask.dart';
-import 'package:uuid/uuid.dart';
 import '../../../../core/di.dart';
 import '../bloc/bloc.dart';
 import '../bloc/event.dart';
 import '../bloc/state.dart';
 
 class AllTasksScreen extends StatelessWidget {
-  AllTasksScreen({super.key});
+  AllTasksScreen( {super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -40,7 +39,7 @@ class AllTasksScreen extends StatelessWidget {
                       time: task.time,
                       priority: task.priority,
                       onViewClicked: () {},
-                      taskId: task.id,
+                      taskId: task.id, status: task.status,
                     ),
                   ); //ToDo);
                 },

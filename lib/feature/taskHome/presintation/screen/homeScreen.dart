@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:mapper_app/feature/taskHome/presintation/screen/todoScreen.dart';
 import 'AddNewTaskScreen.dart';
 import '../Widget/customContainerHome.dart';
 import '../Widget/data_format.dart';
 import 'allTaskScreen.dart';
+import 'inProgressScreen.dart';
+import 'doneScreen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -14,13 +17,18 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   int selectedIndex = 0;
 
+  final List<Widget> _screens = [
+    const TaskListScreen(status: 'to do',),
+    const InProgressScreen(),
+     DoneScreen(),
+  ];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Column(
         children: [
           const DataFormat(),
-          // Button to navigate to "See All Tasks"
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
             child: ElevatedButton(
@@ -43,14 +51,13 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
           ),
-          // Container row
+          // Container row with task status selection
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               Expanded(
                 child: CustomContainerHome(
                   label: 'To Do',
-                  number: 0, // Replace with actual count if needed
                   isSelected: selectedIndex == 0,
                   onTap: () {
                     setState(() {
@@ -62,7 +69,6 @@ class _HomeScreenState extends State<HomeScreen> {
               Expanded(
                 child: CustomContainerHome(
                   label: 'In Progress',
-                  number: 0, // Replace with actual count if needed
                   isSelected: selectedIndex == 1,
                   onTap: () {
                     setState(() {
@@ -74,7 +80,6 @@ class _HomeScreenState extends State<HomeScreen> {
               Expanded(
                 child: CustomContainerHome(
                   label: 'Done',
-                  number: 0, // Replace with actual count if needed
                   isSelected: selectedIndex == 2,
                   onTap: () {
                     setState(() {
@@ -85,7 +90,10 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ],
           ),
-          const Spacer(),
+          // Display the selected screen based on selectedIndex
+          Expanded(
+            child: _screens[selectedIndex],
+          ),
         ],
       ),
       floatingActionButton: FloatingActionButton(

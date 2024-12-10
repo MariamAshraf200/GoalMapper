@@ -11,6 +11,14 @@ abstract class TaskEvent extends Equatable {
 
 class GetAllTasksEvent extends TaskEvent {}
 
+
+class GetTasksByStatusEvent extends TaskEvent {
+  final String status;
+
+  const GetTasksByStatusEvent(this.status);
+}
+
+
 class AddTaskEvent extends TaskEvent {
   final TaskEntity task;
 
@@ -36,4 +44,9 @@ class DeleteTaskEvent extends TaskEvent {
 
   @override
   List<Object?> get props => [taskId];
+}
+
+class UpdateTaskStatusEvent extends TaskEvent {
+  final TaskEntity task;
+  UpdateTaskStatusEvent(this.task);
 }

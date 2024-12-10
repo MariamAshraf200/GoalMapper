@@ -13,6 +13,7 @@ class TaskCard extends StatelessWidget {
   final String date;
   final String time;
   final String priority;
+  final String status;
   final Color? priorityColor;
   final VoidCallback onViewClicked;
 
@@ -24,12 +25,26 @@ class TaskCard extends StatelessWidget {
     required this.date,
     required this.time,
     required this.priority,
+    required this.status,
     this.priorityColor,
     required this.onViewClicked,
   }) : super(key: key);
 
   void _deleteTask(BuildContext context) {
     context.read<TaskBloc>().add(DeleteTaskEvent(taskId));
+  }
+
+  Icon getIconForStatus(String status) {
+    switch (status.toLowerCase()) {
+      case 'to do':
+        return const Icon(CupertinoIcons.arrow_up_right, color: Colors.white);
+      case 'in progress':
+        return const Icon(Icons.hourglass_top, color: Colors.white);
+      case 'done':
+        return const Icon(Icons.check_circle, color: Colors.white);
+      default:
+        return const Icon(Icons.help_outline, color: Colors.white);
+    }
   }
 
   @override
@@ -47,7 +62,7 @@ class TaskCard extends StatelessWidget {
                 date: date,
                 time: time,
                 priority: priority,
-                status: '',
+                status: status,
               ),
             ),
           ),
@@ -92,10 +107,7 @@ class TaskCard extends StatelessWidget {
                       ),
                       child: IconButton(
                         onPressed: onViewClicked,
-                        icon: const Icon(
-                          CupertinoIcons.arrow_up_right,
-                          color: Colors.white,
-                        ),
+                        icon: getIconForStatus(status),
                       ),
                     ),
                     const SizedBox(width: 8.0),

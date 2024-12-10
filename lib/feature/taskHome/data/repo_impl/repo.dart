@@ -4,7 +4,6 @@ import 'package:hive/hive.dart';
 import '../../domain/entity/taskEntity.dart';
 import '../../domain/repo_interface/repo.dart';
 import '../model/taskModel.dart';
-
 class TaskRepositoryImpl implements TaskRepository {
   final Box<TaskModel> taskBox;
 
@@ -17,6 +16,18 @@ class TaskRepositoryImpl implements TaskRepository {
       return taskModels.map((taskModel) => taskModel.toEntity()).toList();
     } catch (e) {
       throw Exception("Error loading tasks from Hive: $e");
+    }
+  }
+
+  @override
+  Future<List<TaskEntity>> getTasksByStatus(String status) async {
+    try {
+      final taskModels = taskBox.values
+          .where((taskModel) => taskModel.status == status)
+          .toList();
+      return taskModels.map((taskModel) => taskModel.toEntity()).toList();
+    } catch (e) {
+      throw Exception("Error loading tasks with status '$status' from Hive: $e");
     }
   }
 
@@ -57,4 +68,7 @@ class TaskRepositoryImpl implements TaskRepository {
       throw Exception("Error deleting task from Hive: $e");
     }
   }
+
+
+
 }

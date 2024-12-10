@@ -2,14 +2,12 @@ import 'package:flutter/material.dart';
 
 class CustomContainerHome extends StatelessWidget {
   final String label;
-  final int number;
   final bool isSelected;
   final VoidCallback onTap;
 
   const CustomContainerHome({
     Key? key,
     required this.label,
-    required this.number,
     this.isSelected = false,
     required this.onTap,
   }) : super(key: key);
@@ -43,13 +41,7 @@ class CustomContainerHome extends StatelessWidget {
                     color: isSelected?  Colors.black :Colors.white ,
                   ),
                 ),
-                Text(
-                  '$number',
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: isSelected?  Colors.black :Colors.white ,
-                  ),
-                ),
+
               ],
             ),
           ),

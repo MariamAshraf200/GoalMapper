@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:mapper_app/feature/taskHome/data/model/taskModel.dart';
 
 import '../../domain/entity/taskEntity.dart';
 
@@ -41,5 +42,14 @@ class TaskActionSuccess extends TaskState {
 }
 
 
+class TaskAddSuccess extends TaskState {
+  final String message;
+final TaskModel task;
 
+  TaskAddSuccess(this.message, this.task);
+
+
+  @override
+  List<Object?> get props => [message,task];
+}
 

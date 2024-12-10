@@ -6,6 +6,7 @@ abstract class TaskLocalDataSource {
   Future<List<TaskModel>> getAllTasks();
   Future<void> deleteTask(String id);
   Future<void> updateTask(TaskModel task);
+
 }
 
 class HiveTaskLocalDataSource implements TaskLocalDataSource {
@@ -32,4 +33,9 @@ class HiveTaskLocalDataSource implements TaskLocalDataSource {
   Future<void> updateTask(TaskModel task) async {
     await taskBox.put(task.id, task);
   }
+
+  Future<List<TaskModel>> getTasksByStatus(String status) async {
+    return taskBox.values.where((task) => task.status == status).toList();
+  }
+
 }
