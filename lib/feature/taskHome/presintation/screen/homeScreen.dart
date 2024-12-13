@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:mapper_app/feature/taskHome/presintation/screen/todoScreen.dart';
-import 'AddNewTaskScreen.dart';
 import '../Widget/customContainerHome.dart';
 import '../Widget/data_format.dart';
 import 'allTaskScreen.dart';
@@ -18,10 +17,11 @@ class _HomeScreenState extends State<HomeScreen> {
   int selectedIndex = 0;
 
   final List<Widget> _screens = [
-    const TaskListScreen(status: 'to do',),
+    const TaskListScreen(),
     const InProgressScreen(),
-     DoneScreen(),
+    const DoneScreen(),
   ];
+
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +35,7 @@ class _HomeScreenState extends State<HomeScreen> {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => AllTasksScreen()),
+                  MaterialPageRoute(builder: (context) => const AllTasksScreen()),
                 );
               },
               style: ElevatedButton.styleFrom(
@@ -96,27 +96,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ],
       ),
-      floatingActionButton: FloatingActionButton(
-        shape: const OutlineInputBorder(
-            borderSide: BorderSide(color: Colors.white),
-            borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(50),
-                topRight: Radius.circular(50),
-                bottomRight: Radius.elliptical(50, 50))),
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => AddTaskScreen(),
-            ),
-          );
-        },
-        backgroundColor: Colors.deepPurple,
-        child: const Icon(
-          Icons.add,
-          color: Colors.white,
-        ),
-      ),
     );
   }
 }
+

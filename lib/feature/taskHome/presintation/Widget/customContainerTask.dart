@@ -47,6 +47,20 @@ class TaskCard extends StatelessWidget {
     }
   }
 
+  // Helper function to get priority color
+  Color _getPriorityColor(String priority) {
+    switch (priority) {
+      case 'High':
+        return Colors.red;
+      case 'Medium':
+        return Colors.orange;
+      case 'Low':
+        return Colors.green;
+      default:
+        return Colors.grey;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -176,7 +190,7 @@ class TaskCard extends StatelessWidget {
                     vertical: 6.0,
                   ),
                   decoration: BoxDecoration(
-                    color: priorityColor,
+                    color: _getPriorityColor(priority),
                     borderRadius: BorderRadius.circular(12.0),
                   ),
                   child: Text(

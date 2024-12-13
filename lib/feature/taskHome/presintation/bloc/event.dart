@@ -45,8 +45,9 @@ class DeleteTaskEvent extends TaskEvent {
   @override
   List<Object?> get props => [taskId];
 }
-
 class UpdateTaskStatusEvent extends TaskEvent {
-  final TaskEntity task;
-  UpdateTaskStatusEvent(this.task);
+  final String taskId;
+  final String newStatus;
+
+  UpdateTaskStatusEvent(this.taskId, this.newStatus);
 }

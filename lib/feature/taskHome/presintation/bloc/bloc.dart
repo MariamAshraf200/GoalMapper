@@ -6,6 +6,7 @@ import '../../domain/usecse/addUsecase.dart';
 import '../../domain/usecse/deleteUsecase.dart';
 import '../../domain/usecse/getTaskBystatus.dart';
 import '../../domain/usecse/getUsecase.dart';
+import '../../domain/usecse/updateStatues.dart';
 import '../../domain/usecse/updateUsecase.dart';
 import 'event.dart';
 
@@ -14,6 +15,7 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
   final GetTasksByStatusUseCase getTasksByStatusUseCase;
   final AddTaskUseCase addTaskUseCase;
   final UpdateTaskUseCase updateTaskUseCase;
+  final UpdateTaskStatusUseCase updateTaskStatusUseCase;
   final DeleteTaskUseCase deleteTaskUseCase;
   final hiveService = HiveService();
 
@@ -22,19 +24,22 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
     required this.getTasksByStatusUseCase,
     required this.addTaskUseCase,
     required this.updateTaskUseCase,
+    required this.updateTaskStatusUseCase,
     required this.deleteTaskUseCase,
   }) : super(TaskInitial()) {
     on<GetAllTasksEvent>(_onGetAllTasks);
     on<GetTasksByStatusEvent>(_onGetTasksByStatus);
     on<AddTaskEvent>(_onAddTask);
     on<UpdateTaskEvent>(_onUpdateTask);
+    on<UpdateTaskStatusEvent>(_onUpdateTaskStatus);
+
     on<DeleteTaskEvent>(_onDeleteTask);
   }
 
   Future<void> _onGetAllTasks(
-      GetAllTasksEvent event,
-      Emitter<TaskState> emit,
-      ) async {
+    GetAllTasksEvent event,
+    Emitter<TaskState> emit,
+  ) async {
     emit(TaskLoading());
     try {
       final tasks = await getAllTasksUseCase();
@@ -45,9 +50,9 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
   }
 
   Future<void> _onGetTasksByStatus(
-      GetTasksByStatusEvent event,
-      Emitter<TaskState> emit,
-      ) async {
+    GetTasksByStatusEvent event,
+    Emitter<TaskState> emit,
+  ) async {
     emit(TaskLoading());
     try {
       final tasks = await getTasksByStatusUseCase(event.status);
@@ -78,22 +83,38 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
   }
 
   Future<void> _onUpdateTask(
-      UpdateTaskEvent event,
-      Emitter<TaskState> emit,
-      ) async {
+    UpdateTaskEvent event,
+    Emitter<TaskState> emit,
+  ) async {
     try {
       await updateTaskUseCase(event.task);
       emit(const TaskActionSuccess("Task updated successfully."));
-      add(GetAllTasksEvent()); // Refresh the task list
+      add(GetAllTasksEvent());
     } catch (e) {
       emit(TaskError("Failed to update task: $e"));
     }
   }
 
-  Future<void> _onDeleteTask(
-      DeleteTaskEvent event,
+  Future<void> _onUpdateTaskStatus(
+      UpdateTaskStatusEvent event,
       Emitter<TaskState> emit,
       ) async {
+    emit(TaskLoading());
+    try {
+      await updateTaskStatusUseCase(event.taskId, event.newStatus);
+      emit(const TaskActionSuccess("Task status updated successfully"));
+      add(GetAllTasksEvent());
+    } catch (e) {
+      emit(TaskError("Failed to update task status: $e"));
+    }
+  }
+
+
+
+  Future<void> _onDeleteTask(
+    DeleteTaskEvent event,
+    Emitter<TaskState> emit,
+  ) async {
     try {
       await deleteTaskUseCase(event.taskId);
       emit(const TaskActionSuccess("Task deleted successfully."));
@@ -102,5 +123,4 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
       emit(TaskError("Failed to delete task: $e"));
     }
   }
-
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:mapper_app/feature/taskHome/presintation/screen/todoScreen.dart';
 import 'package:uuid/uuid.dart';
 import '../../domain/entity/taskEntity.dart';
 import '../Widget/customContainerAddnewTask.dart';
@@ -8,6 +9,7 @@ import '../Widget/customTextFeild.dart';
 import '../bloc/bloc.dart';
 import '../bloc/event.dart';
 import '../bloc/state.dart';
+
 class AddTaskScreen extends StatefulWidget {
   final TaskEntity? existingTask;
 
@@ -54,10 +56,28 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
     });
   }
 
+  // Method to return color based on priority
+  Color _getPriorityColor(String priority) {
+    switch (priority) {
+      case 'High':
+        return Colors.red;
+      case 'Medium':
+        return Colors.orange;
+      case 'Low':
+        return Colors.green;
+      default:
+        return Colors.grey;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        shape: const OutlineInputBorder(
+            borderRadius: BorderRadius.only(
+                bottomLeft: Radius.circular(50),
+                bottomRight: Radius.circular(50))),
         backgroundColor: Colors.deepPurple,
         title: const Center(
           child: Text(
@@ -157,14 +177,14 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                   validator: _validateTextField,
                 ),
                 const SizedBox(height: 16.0),
-                // Priority Selector
+                // Priority Selector with color changes
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: ['Low', 'Medium', 'High'].map((priority) {
                     return CustomContainerNewTask(
                       text: priority,
                       backgroundColor: selectedPriority == priority
-                          ? Colors.grey.shade800
+                          ? _getPriorityColor(priority)
                           : Colors.grey,
                       borderRadius: 25,
                       textStyle: TextStyle(
@@ -195,6 +215,13 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                       } else {
                         context.read<TaskBloc>().add(AddTaskEvent(task));
                       }
+
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const TaskListScreen(),
+                        ),
+                      );
                     }
                   },
                   style: ElevatedButton.styleFrom(
@@ -203,10 +230,10 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                       borderRadius: BorderRadius.circular(12.0),
                     ),
                   ),
-                  child: Text(widget.existingTask != null
-                      ? 'Update Task'
-                      : 'Save Task',
-                      style: const TextStyle(color: Colors.white)),
+                  child: Text(
+                    widget.existingTask != null ? 'Update Task' : 'Save Task',
+                    style: const TextStyle(color: Colors.white),
+                  ),
                 ),
               ],
             ),
