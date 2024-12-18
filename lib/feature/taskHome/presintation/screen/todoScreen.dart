@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../Widget/customContainerTask.dart';
 import '../bloc/bloc.dart';
-import 'AddNewTaskScreen.dart';
+import 'AddNewAndUpdateTaskScreen.dart';
 import '../bloc/state.dart';
 import '../bloc/event.dart';
 
@@ -87,7 +87,7 @@ class TaskListScreen extends StatelessWidget {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => const AddTaskScreen(),
+              builder: (context) => const AddTaskAndUpdateScreen(),
             ),
           );
         },

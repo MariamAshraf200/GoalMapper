@@ -1,5 +1,6 @@
 import 'package:get_it/get_it.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:mapper_app/feature/taskHome/domain/usecse/getTaskByDateUsecase.dart';
 import 'package:mapper_app/feature/taskHome/domain/usecse/getTaskBystatus.dart';
 import 'package:mapper_app/feature/taskHome/domain/usecse/updateStatues.dart';
 import '../feature/taskHome/data/dataSource/localData.dart';
@@ -36,6 +37,7 @@ Future<void> init() async {
     sl.registerLazySingleton(() => UpdateTaskUseCase(sl()));
     sl.registerLazySingleton(() => GetTasksByStatusUseCase(sl()));
     sl.registerLazySingleton(() => UpdateTaskStatusUseCase(sl()));
+    sl.registerLazySingleton(() => GetTasksByDateUseCase(sl()));
 
     // Register Bloc
     sl.registerFactory(() => TaskBloc(
@@ -43,7 +45,9 @@ Future<void> init() async {
           addTaskUseCase: sl(),
           updateTaskUseCase: sl(),
           deleteTaskUseCase: sl(),
-          getTasksByStatusUseCase: sl(), updateTaskStatusUseCase: sl(),
+          getTasksByStatusUseCase: sl(),
+          updateTaskStatusUseCase: sl(),
+      getTasksByDateUseCase: sl()
         ));
   } catch (e) {
     print("Error during DI initialization: $e");

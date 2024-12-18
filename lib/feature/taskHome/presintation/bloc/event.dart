@@ -11,13 +11,11 @@ abstract class TaskEvent extends Equatable {
 
 class GetAllTasksEvent extends TaskEvent {}
 
-
 class GetTasksByStatusEvent extends TaskEvent {
   final String status;
 
   const GetTasksByStatusEvent(this.status);
 }
-
 
 class AddTaskEvent extends TaskEvent {
   final TaskEntity task;
@@ -45,9 +43,19 @@ class DeleteTaskEvent extends TaskEvent {
   @override
   List<Object?> get props => [taskId];
 }
+
 class UpdateTaskStatusEvent extends TaskEvent {
   final String taskId;
   final String newStatus;
 
   UpdateTaskStatusEvent(this.taskId, this.newStatus);
+}
+
+class GetTasksByDateEvent extends TaskEvent {
+  final String date; // Assuming date is in String format
+
+  const GetTasksByDateEvent(this.date);
+
+  @override
+  List<Object?> get props => [date];
 }

@@ -1,4 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:mapper_app/feature/taskHome/domain/usecse/getTaskByDateUsecase.dart';
 import 'package:mapper_app/feature/taskHome/presintation/bloc/state.dart';
 import '../../../../core/hiveServices.dart';
 import '../../data/model/taskModel.dart';
@@ -17,7 +18,8 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
   final UpdateTaskUseCase updateTaskUseCase;
   final UpdateTaskStatusUseCase updateTaskStatusUseCase;
   final DeleteTaskUseCase deleteTaskUseCase;
-  final hiveService = HiveService();
+  final GetTasksByDateUseCase getTasksByDateUseCase;
+  final HiveService hiveService = HiveService();
 
   TaskBloc({
     required this.getAllTasksUseCase,
@@ -26,20 +28,22 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
     required this.updateTaskUseCase,
     required this.updateTaskStatusUseCase,
     required this.deleteTaskUseCase,
+    required this.getTasksByDateUseCase,
+
   }) : super(TaskInitial()) {
     on<GetAllTasksEvent>(_onGetAllTasks);
     on<GetTasksByStatusEvent>(_onGetTasksByStatus);
+    on<GetTasksByDateEvent>(_onGetTasksByDate); // New event
     on<AddTaskEvent>(_onAddTask);
     on<UpdateTaskEvent>(_onUpdateTask);
     on<UpdateTaskStatusEvent>(_onUpdateTaskStatus);
-
     on<DeleteTaskEvent>(_onDeleteTask);
   }
 
   Future<void> _onGetAllTasks(
-    GetAllTasksEvent event,
-    Emitter<TaskState> emit,
-  ) async {
+      GetAllTasksEvent event,
+      Emitter<TaskState> emit,
+      ) async {
     emit(TaskLoading());
     try {
       final tasks = await getAllTasksUseCase();
@@ -50,9 +54,9 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
   }
 
   Future<void> _onGetTasksByStatus(
-    GetTasksByStatusEvent event,
-    Emitter<TaskState> emit,
-  ) async {
+      GetTasksByStatusEvent event,
+      Emitter<TaskState> emit,
+      ) async {
     emit(TaskLoading());
     try {
       final tasks = await getTasksByStatusUseCase(event.status);
@@ -60,7 +64,21 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
     } catch (e) {
       emit(TaskError("Failed to load tasks by status: $e"));
     }
+  }Future<void> _onGetTasksByDate(
+      GetTasksByDateEvent event,
+      Emitter<TaskState> emit,
+      ) async {
+    emit(TaskLoading());
+    try {
+      final tasks = await getTasksByDateUseCase(event.date);
+      print('Fetched tasks: $tasks'); // Debugging: Check if tasks are fetched correctly
+      emit(TaskLoaded(tasks));
+    } catch (e) {
+      emit(TaskError("Failed to load tasks by date: $e"));
+      print(e);
+    }
   }
+
 
   Future<void> _onAddTask(AddTaskEvent event, Emitter<TaskState> emit) async {
     emit(TaskLoading());
@@ -83,9 +101,9 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
   }
 
   Future<void> _onUpdateTask(
-    UpdateTaskEvent event,
-    Emitter<TaskState> emit,
-  ) async {
+      UpdateTaskEvent event,
+      Emitter<TaskState> emit,
+      ) async {
     try {
       await updateTaskUseCase(event.task);
       emit(const TaskActionSuccess("Task updated successfully."));
@@ -109,12 +127,10 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
     }
   }
 
-
-
   Future<void> _onDeleteTask(
-    DeleteTaskEvent event,
-    Emitter<TaskState> emit,
-  ) async {
+      DeleteTaskEvent event,
+      Emitter<TaskState> emit,
+      ) async {
     try {
       await deleteTaskUseCase(event.taskId);
       emit(const TaskActionSuccess("Task deleted successfully."));

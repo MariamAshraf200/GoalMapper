@@ -1,5 +1,6 @@
 // repo_interface/task_repo.dart
 
+import '../../data/model/taskModel.dart';
 import '../entity/taskEntity.dart';
 
 abstract class TaskRepository {
@@ -8,6 +9,7 @@ abstract class TaskRepository {
   Future<void> addTask(TaskEntity task);
   Future<void> updateTask(TaskEntity task);
   Future<void> deleteTask(String taskId);
+  Future<List<TaskEntity>> getTasksByDate(String date);
 
   Future<void> updateTaskStatus(String taskId, String newStatus);
 }

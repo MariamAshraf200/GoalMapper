@@ -1,5 +1,6 @@
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:mapper_app/feature/taskHome/domain/entity/taskEntity.dart';
 import '../feature/taskHome/data/model/taskModel.dart';
 
 class HiveService {
@@ -24,6 +25,14 @@ class HiveService {
   List<TaskModel> getTasks() {
     final taskBox = Hive.box<TaskModel>(_taskBoxName);
     return taskBox.values.toList();
+  }
+
+  /// Retrieve tasks based on a specific date
+  List<TaskModel> getTasksByDate(String date) {
+    final taskBox = Hive.box<TaskModel>(_taskBoxName);
+    return taskBox.values
+        .where((task) => task.date == date)
+        .toList();
   }
 
   /// Delete a task by index

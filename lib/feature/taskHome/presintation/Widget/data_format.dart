@@ -1,9 +1,8 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class DataFormat extends StatelessWidget {
-  const DataFormat({Key? key}) : super(key: key);
+  const DataFormat({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -15,109 +14,73 @@ class DataFormat extends StatelessWidget {
 
     return Column(
       children: [
-        // Header Container
-        Container(
-          color: Colors.deepPurple,
+        Padding(
           padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
             children: [
-              IconButton(
-                icon: const Icon(Icons.menu, color: Colors.white),
-                onPressed: () {},
-              ),
-              IconButton(
-                icon: const Icon(Icons.account_circle, color: Colors.white),
-                onPressed: () {},
-              ),
-            ],
-          ),
-        ),
-        // Main Content Container
-        Container(
-          decoration: const BoxDecoration(
-            color: Colors.deepPurple,
-            borderRadius: BorderRadiusDirectional.only(
-              bottomEnd: Radius.circular(30),
-              bottomStart: Radius.circular(30),
-            ),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                // Month Name Row
-                Row(
-                  children: [
-                    Text(
-                      DateFormat('MMMM').format(currentDate),
-                      style: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
-                    ),
-                    const Padding(
-                      padding: EdgeInsets.all(8.0),
-                      child: Icon(
-                        CupertinoIcons.arrow_down_right,
-                        color: Colors.white,
-                        size: 18,
-                      ),
-                    ),
-                  ],
+              Text(
+                DateFormat('MMMM').format(currentDate),  // Month display
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.teal[400],
                 ),
-                // Weekday and Date Row
-                Center(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 12.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: weekDays.map((date) {
-                        bool isToday = date.day == currentDate.day &&
-                            date.month == currentDate.month &&
-                            date.year == currentDate.year;
+              ),
+              // Weekday and Date Row
+              Center(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 12.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: weekDays.map((date) {
+                      bool isToday = date.day == currentDate.day &&
+                          date.month == currentDate.month &&
+                          date.year == currentDate.year;
 
-                        return Column(
+                      return GestureDetector(
+                        onTap: () {
+                          // Handle date selection (could be passed to the parent widget)
+                          print('Selected Date: ${DateFormat('yyyy-MM-dd').format(date)}');
+                        },
+                        child: Column(
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             Text(
-                              DateFormat('EEE').format(date),
+                              DateFormat('EEE').format(date),  // Weekday (e.g., Mon, Tue)
                               style: TextStyle(
                                 fontSize: 14,
                                 fontWeight: FontWeight.bold,
-                                color: isToday ? Colors.white : Colors.black,
+                                color: isToday ? Colors.teal[400] : Colors.black,
                               ),
                             ),
                             const SizedBox(height: 4),
                             Container(
                               decoration: BoxDecoration(
-                                color: isToday ? Colors.white : Colors.grey[200],
+                                color: isToday ? Colors.teal[200] : Colors.grey[200],
                                 shape: BoxShape.circle,
                               ),
                               padding: const EdgeInsets.all(10),
                               child: Text(
-                                DateFormat('d').format(date),
+                                DateFormat('d').format(date),  // Day of the month (e.g., 1, 2, 3)
                                 style: TextStyle(
                                   fontSize: 14,
                                   fontWeight: FontWeight.bold,
-                                  color: isToday ? Colors.deepPurpleAccent: Colors.black,
+                                  color: isToday ? Colors.white : Colors.black,
                                 ),
                               ),
                             ),
                           ],
-                        );
-                      }).toList(),
-                    ),
+                        ),
+                      );
+                    }).toList(),
                   ),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ],
     );
-  }
-}
+  }}

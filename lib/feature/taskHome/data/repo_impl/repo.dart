@@ -1,5 +1,4 @@
 import 'package:hive/hive.dart';
-
 import '../../domain/entity/taskEntity.dart';
 import '../../domain/repo_interface/repo.dart';
 import '../model/taskModel.dart';
@@ -33,6 +32,18 @@ class TaskRepositoryImpl implements TaskRepository {
   }
 
   @override
+  Future<List<TaskEntity>> getTasksByDate(String date) async {
+    try {
+      final taskModels = taskBox.values
+          .where((taskModel) => taskModel.date == date)
+          .toList();
+      return taskModels.map((taskModel) => taskModel.toEntity()).toList();
+    } catch (e) {
+      throw Exception("Error loading tasks with date '$date' from Hive: $e");
+    }
+  }
+
+  @override
   Future<void> addTask(TaskEntity task) async {
     try {
       final taskModel = TaskModel.fromEntity(task);
@@ -46,7 +57,7 @@ class TaskRepositoryImpl implements TaskRepository {
   Future<void> updateTask(TaskEntity task) async {
     try {
       final taskIndex =
-          taskBox.values.toList().indexWhere((model) => model.id == task.id);
+      taskBox.values.toList().indexWhere((model) => model.id == task.id);
       if (taskIndex != -1) {
         await taskBox.putAt(taskIndex, TaskModel.fromEntity(task));
       } else {
@@ -60,7 +71,7 @@ class TaskRepositoryImpl implements TaskRepository {
   Future<void> updateTaskStatus(String taskId, String newStatus) async {
     try {
       final taskIndex =
-          taskBox.values.toList().indexWhere((model) => model.id == taskId);
+      taskBox.values.toList().indexWhere((model) => model.id == taskId);
 
       if (taskIndex != -1) {
         final existingTask = taskBox.getAt(taskIndex);
@@ -70,7 +81,7 @@ class TaskRepositoryImpl implements TaskRepository {
             id: existingTask.id,
             title: existingTask.title, // Keep the existing title
             description:
-                existingTask.description, // Keep the existing description
+            existingTask.description, // Keep the existing description
             date: existingTask.date, // Keep the existing date
             time: existingTask.time, // Keep the existing time
             priority: existingTask.priority, // Keep the existing priority
@@ -92,7 +103,7 @@ class TaskRepositoryImpl implements TaskRepository {
   Future<void> deleteTask(String taskId) async {
     try {
       final taskIndex =
-          taskBox.values.toList().indexWhere((model) => model.id == taskId);
+      taskBox.values.toList().indexWhere((model) => model.id == taskId);
       if (taskIndex != -1) {
         await taskBox.deleteAt(taskIndex);
       } else {

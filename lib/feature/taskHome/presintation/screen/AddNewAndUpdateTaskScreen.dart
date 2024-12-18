@@ -10,16 +10,16 @@ import '../bloc/bloc.dart';
 import '../bloc/event.dart';
 import '../bloc/state.dart';
 
-class AddTaskScreen extends StatefulWidget {
+class AddTaskAndUpdateScreen extends StatefulWidget {
   final TaskEntity? existingTask;
 
-  const AddTaskScreen({super.key, this.existingTask});
+  const AddTaskAndUpdateScreen({super.key, this.existingTask});
 
   @override
-  _AddTaskScreenState createState() => _AddTaskScreenState();
+  _AddTaskAndUpdateScreenState createState() => _AddTaskAndUpdateScreenState();
 }
 
-class _AddTaskScreenState extends State<AddTaskScreen> {
+class _AddTaskAndUpdateScreenState extends State<AddTaskAndUpdateScreen> {
   final TextEditingController titleController = TextEditingController();
   final TextEditingController descriptionController = TextEditingController();
   final TextEditingController timeController = TextEditingController();
@@ -215,7 +215,6 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                       } else {
                         context.read<TaskBloc>().add(AddTaskEvent(task));
                       }
-
                       Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(

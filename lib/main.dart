@@ -5,6 +5,7 @@ import 'package:mapper_app/feature/taskHome/presintation/bloc/bloc.dart';
 import 'core/di.dart';
 import 'core/hiveServices.dart';
 import 'feature/taskHome/presintation/screen/homeScreen.dart';
+import 'feature/taskHome/presintation/screen/taskTrack.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -28,7 +29,7 @@ class MyApp extends StatelessWidget {
       create: (context) => sl<TaskBloc>(),
       child: const MaterialApp(
         debugShowCheckedModeBanner: false,
-        home: HomeScreen(),
+        home: TaskTrack(),
       ),
     );
   }
