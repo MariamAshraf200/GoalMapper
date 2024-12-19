@@ -1,0 +1,6 @@
+1 add category to model and complete code for it
+2 run project from scratch issue => no tasks founded
+3 alert code
+4 remove colored priority from task card or handle it
+5 choose add task screen as a screen or bottom Sheet
+6 add hour in day in my task screen

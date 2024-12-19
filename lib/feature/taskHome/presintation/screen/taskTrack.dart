@@ -1,40 +1,53 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import '../../../../core/customColor.dart';
 import '../Widget/customContainerTask.dart';
 import '../Widget/data_format.dart';
-import '../bloc/bloc.dart'; // Assuming this includes the TaskBloc
-import '../bloc/state.dart'; // Assuming this includes TaskState
+import '../bloc/bloc.dart';
+import '../bloc/state.dart';
 import '../bloc/event.dart';
-import 'AddNewAndUpdateTaskScreen.dart'; // Assuming this includes TaskEvent
+import 'AddNewAndUpdateTaskScreen.dart';
 
-class TaskTrack extends StatelessWidget {
-  const TaskTrack({super.key});
+class TaskTrack extends StatefulWidget {
+   const TaskTrack({super.key});
+  @override
+  _TaskTrackState createState() => _TaskTrackState();
+}
+
+class _TaskTrackState extends State<TaskTrack> {
+  late String selectedDate;
+  CustomColor color = CustomColor();
+
+  @override
+  void initState() {
+    super.initState();
+    selectedDate = DateFormat('dd/MM/yyyy').format(DateTime.now());
+    context.read<TaskBloc>().add(GetTasksByDateEvent(selectedDate));
+  }
+
+  void _onDateSelected(DateTime date) {
+    final formattedDate = DateFormat('dd/MM/yyyy').format(date);
+    setState(() {
+      selectedDate = formattedDate;
+    });
+    context.read<TaskBloc>().add(GetTasksByDateEvent(formattedDate));
+  }
 
   @override
   Widget build(BuildContext context) {
-    final String currentDate = DateFormat('dd/MM/yyyy').format(DateTime.now());
-
-    // Fetch all tasks on initial build with current date
-    context.read<TaskBloc>().add(GetTasksByDateEvent(currentDate));
-
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Task Tracker'),
-        backgroundColor: Colors.teal[400],
-      ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
         child: SingleChildScrollView(
           child: Column(
             children: [
-              // Title and Add Task button
               Row(
                 children: [
                   Expanded(
                     child: Text(
                       'My Tasks',
-                      style: TextStyle(color: Colors.teal[400], fontSize: 30),
+                      style: TextStyle(color: color.secondaryColor, fontSize: 30),
                     ),
                   ),
                   Padding(
@@ -48,43 +61,46 @@ class TaskTrack extends StatelessWidget {
                           ),
                         );
                       },
-                      icon: Icon(Icons.add, color: Colors.teal[400]),
+                      icon: Icon(Icons.add, color: color.secondaryColor),
                     ),
                   ),
                 ],
               ),
 
-              const DataFormat(),
+              DataFormat(
+                selectedDate: selectedDate,
+                onDateSelected: _onDateSelected,
+              ),
 
+              // Tasks Display
               BlocBuilder<TaskBloc, TaskState>(
                 builder: (context, state) {
                   if (state is TaskLoading) {
                     return const Center(child: CircularProgressIndicator());
                   } else if (state is TaskLoaded) {
-                    final today = DateTime.now(); // Get today's date
-                    final tasksForToday = state.tasks.where((task) {
+                    final tasksForSelectedDate = state.tasks.where((task) {
                       DateTime taskDate = _parseTaskDate(task.date);
-                      return _isSameDay(taskDate, today);
+                      return _isSameDay(taskDate, _parseTaskDate(selectedDate));
                     }).toList();
 
-                    return tasksForToday.isEmpty
+                    return tasksForSelectedDate.isEmpty
                         ? const Center(
                       child: Text(
-                        "No tasks for today.",
+                        "No tasks for this date.",
                         style: TextStyle(fontSize: 18),
                       ),
                     )
                         : Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          "You have ${tasksForToday.length} task(s) today",
+                          "You have ${tasksForSelectedDate.length} task.",
                           style: const TextStyle(
-                            fontSize: 20.0,
-                            fontWeight: FontWeight.bold,
+                            fontSize: 15.0,
                           ),
                         ),
                         const SizedBox(height: 16),
-                        ...tasksForToday.map(
+                        ...tasksForSelectedDate.map(
                               (task) => TaskCard(
                             title: task.title,
                             description: task.description,
@@ -111,7 +127,7 @@ class TaskTrack extends StatelessWidget {
                                   ),
                                 );
                               }
-                            },
+                            },// category: task.category,
                           ),
                         ),
                       ],
@@ -134,18 +150,14 @@ class TaskTrack extends StatelessWidget {
     );
   }
 
-  // Helper method to safely parse task date string
   DateTime _parseTaskDate(String dateString) {
     try {
-      // Try parsing the task date based on the format 'dd/MM/yyyy'
       return DateFormat('dd/MM/yyyy').parseStrict(dateString);
     } catch (e) {
-      // Return a default date if parsing fails
       return DateTime.now();
     }
   }
 
-  // Helper method to check if two dates are on the same day (ignores time)
   bool _isSameDay(DateTime date1, DateTime date2) {
     return date1.year == date2.year &&
         date1.month == date2.month &&

@@ -1,17 +1,39 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-class DataFormat extends StatelessWidget {
-  const DataFormat({super.key});
+import '../../../../core/customColor.dart';
+
+class DataFormat extends StatefulWidget {
+  final String selectedDate;
+  final Function(DateTime) onDateSelected;
+
+  const DataFormat({
+    Key? key,
+    required this.selectedDate,
+    required this.onDateSelected,
+  }) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    final DateTime currentDate = DateTime.now();
-    final List<DateTime> weekDays = List.generate(
+  State<DataFormat> createState() => _DataFormatState();
+}
+
+class _DataFormatState extends State<DataFormat> {
+  late DateTime currentDate;
+  late List<DateTime> weekDays;
+  CustomColor color = CustomColor();
+
+  @override
+  void initState() {
+    super.initState();
+    currentDate = DateTime.now();
+    weekDays = List.generate(
       7,
           (index) => currentDate.add(Duration(days: index - currentDate.weekday + 1)),
     );
+  }
 
+  @override
+  Widget build(BuildContext context) {
     return Column(
       children: [
         Padding(
@@ -21,11 +43,11 @@ class DataFormat extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                DateFormat('MMMM').format(currentDate),  // Month display
+                DateFormat('MMMM').format(currentDate),
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
-                  color: Colors.teal[400],
+                  color: color.secondaryColor,
                 ),
               ),
               // Weekday and Date Row
@@ -39,35 +61,49 @@ class DataFormat extends StatelessWidget {
                           date.month == currentDate.month &&
                           date.year == currentDate.year;
 
+                      bool isSelected = widget.selectedDate ==
+                          DateFormat('yyyy-MM-dd').format(date);
+
                       return GestureDetector(
                         onTap: () {
-                          // Handle date selection (could be passed to the parent widget)
-                          print('Selected Date: ${DateFormat('yyyy-MM-dd').format(date)}');
+                          widget.onDateSelected(date);
                         },
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             Text(
-                              DateFormat('EEE').format(date),  // Weekday (e.g., Mon, Tue)
+                              DateFormat('EEE').format(date), // Weekday (e.g., Mon, Tue)
                               style: TextStyle(
                                 fontSize: 14,
                                 fontWeight: FontWeight.bold,
-                                color: isToday ? Colors.teal[400] : Colors.black,
+                                color: isSelected
+                                    ? color.basicColor
+                                    : isToday
+                                    ? color.secondaryColor
+                                    : color.primaryColor,
                               ),
                             ),
                             const SizedBox(height: 4),
                             Container(
                               decoration: BoxDecoration(
-                                color: isToday ? Colors.teal[200] : Colors.grey[200],
+                                color: isSelected
+                                    ? color.secondaryColor
+                                    : isToday
+                                    ? color.secondaryColor
+                                    : color.additionalColor,
                                 shape: BoxShape.circle,
                               ),
                               padding: const EdgeInsets.all(10),
                               child: Text(
-                                DateFormat('d').format(date),  // Day of the month (e.g., 1, 2, 3)
+                                DateFormat('d').format(date),
                                 style: TextStyle(
                                   fontSize: 14,
                                   fontWeight: FontWeight.bold,
-                                  color: isToday ? Colors.white : Colors.black,
+                                  color: isSelected
+                                      ? color.basicColor
+                                      : isToday
+                                      ? color.basicColor
+                                      : color.primaryColor,
                                 ),
                               ),
                             ),
@@ -83,4 +119,5 @@ class DataFormat extends StatelessWidget {
         ),
       ],
     );
-  }}
+  }
+}

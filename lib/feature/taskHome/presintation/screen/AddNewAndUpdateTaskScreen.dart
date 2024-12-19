@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:mapper_app/feature/taskHome/presintation/screen/todoScreen.dart';
 import 'package:uuid/uuid.dart';
+import '../../../../core/customColor.dart';
 import '../../domain/entity/taskEntity.dart';
 import '../Widget/customContainerAddnewTask.dart';
 import '../Widget/customTextFeild.dart';
@@ -26,7 +27,18 @@ class _AddTaskAndUpdateScreenState extends State<AddTaskAndUpdateScreen> {
   final TextEditingController dateController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   String selectedPriority = '';
+  String selectedCategory = '';
   late String uniqueTaskId;
+  CustomColor color = CustomColor();
+  bool allowNotifications = false;
+
+  final List<String> categories = [
+    'Work',
+    'Personal',
+    'Shopping',
+    'Fitness',
+    'Other'
+  ]; // List of categories
 
   @override
   void initState() {
@@ -56,36 +68,13 @@ class _AddTaskAndUpdateScreenState extends State<AddTaskAndUpdateScreen> {
     });
   }
 
-  // Method to return color based on priority
   Color _getPriorityColor(String priority) {
-    switch (priority) {
-      case 'High':
-        return Colors.red;
-      case 'Medium':
-        return Colors.orange;
-      case 'Low':
-        return Colors.green;
-      default:
-        return Colors.grey;
-    }
+    return selectedPriority == priority ? Colors.deepPurple : Colors.grey;
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        shape: const OutlineInputBorder(
-            borderRadius: BorderRadius.only(
-                bottomLeft: Radius.circular(50),
-                bottomRight: Radius.circular(50))),
-        backgroundColor: Colors.deepPurple,
-        title: const Center(
-          child: Text(
-            'Task Manager',
-            style: TextStyle(color: Colors.white),
-          ),
-        ),
-      ),
       body: _buildBody(),
     );
   }
@@ -115,123 +104,208 @@ class _AddTaskAndUpdateScreenState extends State<AddTaskAndUpdateScreen> {
           padding: const EdgeInsets.all(16.0),
           child: SingleChildScrollView(
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                CustomTextField(
+                const Text('Manage your Task',
+                    style: TextStyle(fontWeight: FontWeight.w400, fontSize: 25)),
+                TextField(
                   controller: titleController,
-                  hintText: 'Add title of task',
-                  title: 'Task Title',
-                  validator: _validateTextField,
-                ),
-                const SizedBox(height: 16.0),
-                CustomTextField(
-                  controller: descriptionController,
-                  hintText: 'Description',
-                  description: true,
-                  title: 'Description',
-                  validator: _validateTextField,
-                ),
-                const SizedBox(height: 16.0),
-                CustomTextField(
-                  controller: dateController,
-                  hintText: 'dd/mm/yyyy',
-                  title: 'Date',
-                  suffixIcon: const Icon(Icons.date_range),
-                  onTap: () async {
-                    DateTime? selectedDate = await showDatePicker(
-                      context: context,
-                      initialDate: DateTime.now(),
-                      firstDate: DateTime(2000),
-                      lastDate: DateTime(2100),
-                    );
-                    if (selectedDate != null) {
-                      dateController.text =
-                          DateFormat('dd/MM/yyyy').format(selectedDate);
-                    }
-                  },
-                  validator: _validateTextField,
-                ),
-                const SizedBox(height: 16.0),
-                CustomTextField(
-                  controller: timeController,
-                  hintText: 'hh:mm AM/PM',
-                  title: 'Time',
-                  suffixIcon: const Icon(Icons.access_time),
-                  onTap: () async {
-                    TimeOfDay? selectedTime = await showTimePicker(
-                      context: context,
-                      initialTime: TimeOfDay.now(),
-                    );
-                    if (selectedTime != null) {
-                      final now = DateTime.now();
-                      final selectedDateTime = DateTime(
-                        now.year,
-                        now.month,
-                        now.day,
-                        selectedTime.hour,
-                        selectedTime.minute,
-                      );
-                      timeController.text =
-                          DateFormat('hh:mm a').format(selectedDateTime);
-                    }
-                  },
-                  validator: _validateTextField,
-                ),
-                const SizedBox(height: 16.0),
-                // Priority Selector with color changes
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: ['Low', 'Medium', 'High'].map((priority) {
-                    return CustomContainerNewTask(
-                      text: priority,
-                      backgroundColor: selectedPriority == priority
-                          ? _getPriorityColor(priority)
-                          : Colors.grey,
-                      borderRadius: 25,
-                      textStyle: TextStyle(
-                        color: selectedPriority == priority
-                            ? Colors.white
-                            : Colors.black,
-                      ),
-                      onTap: () => togglePriority(priority),
-                    );
-                  }).toList(),
-                ),
-                const SizedBox(height: 24.0),
-                ElevatedButton(
-                  onPressed: () {
-                    if (_formKey.currentState!.validate()) {
-                      final task = TaskEntity(
-                        title: titleController.text,
-                        description: descriptionController.text,
-                        date: dateController.text,
-                        time: timeController.text,
-                        priority: selectedPriority,
-                        id: uniqueTaskId,
-                        status: 'to do',
-                      );
-
-                      if (widget.existingTask != null) {
-                        context.read<TaskBloc>().add(UpdateTaskEvent(task));
-                      } else {
-                        context.read<TaskBloc>().add(AddTaskEvent(task));
-                      }
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const TaskListScreen(),
-                        ),
-                      );
-                    }
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.deepPurple,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12.0),
-                    ),
+                  decoration: const InputDecoration(
+                    hintText: "Add task title",
+                    enabledBorder: OutlineInputBorder(borderSide: BorderSide.none),
                   ),
-                  child: Text(
-                    widget.existingTask != null ? 'Update Task' : 'Save Task',
-                    style: const TextStyle(color: Colors.white),
+                ),
+                Column(
+                  children: [
+                    CustomTextField(
+                      controller: descriptionController,
+                      hintText: 'Description',
+                      description: true,
+                      validator: _validateTextField,
+                    ),
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          IconButton(
+                            onPressed: () {},
+                            icon: const Icon(Icons.record_voice_over_sharp),
+                          ),
+                          IconButton(
+                            onPressed: () {},
+                            icon: const Icon(Icons.text_fields),
+                          ),
+                          IconButton(
+                            onPressed: () {},
+                            icon: const Icon(Icons.person_add),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                Row(
+                  children: [
+                    Expanded(
+                      child: Column(
+                        children: [
+                          const Text('Date'),
+                          CustomTextField(
+                            controller: dateController,
+                            hintText: 'dd/mm/yyyy',
+                            suffixIcon: const Icon(Icons.date_range),
+                            onTap: () async {
+                              DateTime? selectedDate = await showDatePicker(
+                                context: context,
+                                initialDate: DateTime.now(),
+                                firstDate: DateTime(2000),
+                                lastDate: DateTime(2100),
+                              );
+                              if (selectedDate != null) {
+                                dateController.text =
+                                    DateFormat('dd/MM/yyyy').format(selectedDate);
+                              }
+                            },
+                            validator: _validateTextField,
+                          ),
+                        ],
+                      ),
+                    ),
+                    Expanded(
+                      child: Column(
+                        children: [
+                          const Text('Time'),
+                          CustomTextField(
+                            controller: timeController,
+                            hintText: 'hh:mm AM/PM',
+                            suffixIcon: const Icon(Icons.access_time),
+                            onTap: () async {
+                              TimeOfDay? selectedTime = await showTimePicker(
+                                context: context,
+                                initialTime: TimeOfDay.now(),
+                              );
+                              if (selectedTime != null) {
+                                final now = DateTime.now();
+                                final selectedDateTime = DateTime(
+                                  now.year,
+                                  now.month,
+                                  now.day,
+                                  selectedTime.hour,
+                                  selectedTime.minute,
+                                );
+                                timeController.text =
+                                    DateFormat('hh:mm a').format(selectedDateTime);
+                              }
+                            },
+                            validator: _validateTextField,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+
+                // Category Dropdown
+                Padding(
+                  padding: const EdgeInsets.only(top: 16.0),
+                  child: DropdownButtonFormField<String>(
+                    value: selectedCategory.isNotEmpty ? selectedCategory : null,
+                    hint: const Text('Select Category'),
+                    items: categories
+                        .map((category) => DropdownMenuItem(
+                      value: category,
+                      child: Text(category),
+                    ))
+                        .toList(),
+                    onChanged: (value) {
+                      setState(() {
+                        selectedCategory = value!;
+                      });
+                    },
+                    validator: (value) =>
+                    value == null || value.isEmpty ? 'Please select a category' : null,
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(15.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: ['Low', 'Medium', 'High'].map((priority) {
+                      return CustomContainerNewTask(
+                        text: priority,
+                        backgroundColor: _getPriorityColor(priority),
+                        borderRadius: 25,
+                        textStyle: TextStyle(
+                          color: selectedPriority == priority
+                              ? color.basicColor
+                              : color.primaryColor,
+                        ),
+                        onTap: () => togglePriority(priority),
+                      );
+                    }).toList(),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
+                    children: [
+                      const Expanded(child: Text('Allow Alert')),
+                      Switch(
+                        value: allowNotifications,
+                        onChanged: (value) {
+                          setState(() {
+                            allowNotifications = value;
+                          });
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: SizedBox(
+                    width: double.infinity,
+                    height: 40,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        if (_formKey.currentState!.validate()) {
+                          final task = TaskEntity(
+                            title: titleController.text,
+                            description: descriptionController.text,
+                            date: dateController.text,
+                            time: timeController.text,
+                            priority: selectedPriority,
+                            //category: selectedCategory,
+                            id: uniqueTaskId,
+                            status: 'to do',
+                          );
+
+                          if (widget.existingTask != null) {
+                            context.read<TaskBloc>().add(UpdateTaskEvent(task));
+                          } else {
+                            context.read<TaskBloc>().add(AddTaskEvent(task));
+                          }
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const TaskListScreen(),
+                            ),
+                          );
+                        }
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: color.secondaryColor,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12.0),
+                        ),
+                      ),
+                      child: Text(
+                        widget.existingTask != null ? 'Update Task' : 'Save Task',
+                        style: const TextStyle(color: Colors.white),
+                      ),
+                    ),
                   ),
                 ),
               ],
