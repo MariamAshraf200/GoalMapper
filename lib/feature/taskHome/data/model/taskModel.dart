@@ -37,8 +37,8 @@ class TaskModel {
     required this.status,
   });
 
-  TaskEntity toEntity() {
-    return TaskEntity(
+  TaskDetails toEntity() {
+    return TaskDetails(
       id: id,
       title: title,
       description: description,
@@ -49,7 +49,7 @@ class TaskModel {
     );
   }
 
-  factory TaskModel.fromEntity(TaskEntity entity) {
+  factory TaskModel.fromEntity(TaskDetails entity) {
     return TaskModel(
       id: entity.id,
       title: entity.title,

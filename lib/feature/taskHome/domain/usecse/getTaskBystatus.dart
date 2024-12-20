@@ -6,7 +6,7 @@ class GetTasksByStatusUseCase {
 
   GetTasksByStatusUseCase(this.repository);
 
-  Future<List<TaskEntity>> call(String status) async {
+  Future<List<TaskDetails>> call(String status) async {
     return await repository.getTasksByStatus(status);
   }
 }

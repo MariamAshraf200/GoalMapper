@@ -6,7 +6,7 @@ class GetTasksByDateUseCase {
 
   GetTasksByDateUseCase(this.repository);
 
-  Future<List<TaskEntity>> call(String date) async {
+  Future<List<TaskDetails>> call(String date) async {
     return await repository.getTasksByDate(date);
   }
 }

@@ -12,7 +12,7 @@ import '../bloc/event.dart';
 import '../bloc/state.dart';
 
 class AddTaskAndUpdateScreen extends StatefulWidget {
-  final TaskEntity? existingTask;
+  final TaskDetails? existingTask;
 
   const AddTaskAndUpdateScreen({super.key, this.existingTask});
 
@@ -271,7 +271,7 @@ class _AddTaskAndUpdateScreenState extends State<AddTaskAndUpdateScreen> {
                     child: ElevatedButton(
                       onPressed: () {
                         if (_formKey.currentState!.validate()) {
-                          final task = TaskEntity(
+                          final task = TaskDetails(
                             title: titleController.text,
                             description: descriptionController.text,
                             date: dateController.text,
@@ -287,12 +287,12 @@ class _AddTaskAndUpdateScreenState extends State<AddTaskAndUpdateScreen> {
                           } else {
                             context.read<TaskBloc>().add(AddTaskEvent(task));
                           }
-                          Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const TaskListScreen(),
-                            ),
-                          );
+                          // Navigator.pushReplacement(
+                          //   context,
+                          //   MaterialPageRoute(
+                          //     builder: (context) => const TaskListScreen(),
+                          //   ),
+                          // );
                         }
                       },
                       style: ElevatedButton.styleFrom(

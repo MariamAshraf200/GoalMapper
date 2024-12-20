@@ -6,7 +6,7 @@ class AddTaskUseCase {
 
   AddTaskUseCase(this.repository);
 
-  Future<void> call(TaskEntity task) async {
+  Future<void> call(TaskDetails task) async {
     return await repository.addTask(task);
   }
 }

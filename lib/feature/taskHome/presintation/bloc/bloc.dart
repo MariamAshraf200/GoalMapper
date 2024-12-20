@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mapper_app/feature/taskHome/domain/usecse/getTaskByDateUsecase.dart';
 import 'package:mapper_app/feature/taskHome/presintation/bloc/state.dart';
@@ -64,18 +65,25 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
     } catch (e) {
       emit(TaskError("Failed to load tasks by status: $e"));
     }
-  }Future<void> _onGetTasksByDate(
+  }
+
+
+  Future<void> _onGetTasksByDate(
       GetTasksByDateEvent event,
       Emitter<TaskState> emit,
       ) async {
     emit(TaskLoading());
     try {
       final tasks = await getTasksByDateUseCase(event.date);
-      print('Fetched tasks: $tasks'); // Debugging: Check if tasks are fetched correctly
+      if (kDebugMode) {
+        print('Fetched tasks: $tasks');
+      } // Debugging: Check if tasks are fetched correctly
       emit(TaskLoaded(tasks));
     } catch (e) {
       emit(TaskError("Failed to load tasks by date: $e"));
-      print(e);
+      if (kDebugMode) {
+        print(e);
+      }
     }
   }
 

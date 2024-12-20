@@ -9,7 +9,7 @@ class TaskRepositoryImpl implements TaskRepository {
   TaskRepositoryImpl(this.taskBox);
 
   @override
-  Future<List<TaskEntity>> getTasks() async {
+  Future<List<TaskDetails>> getTasks() async {
     try {
       final taskModels = taskBox.values.toList();
       return taskModels.map((taskModel) => taskModel.toEntity()).toList();
@@ -19,7 +19,7 @@ class TaskRepositoryImpl implements TaskRepository {
   }
 
   @override
-  Future<List<TaskEntity>> getTasksByStatus(String status) async {
+  Future<List<TaskDetails>> getTasksByStatus(String status) async {
     try {
       final taskModels = taskBox.values
           .where((taskModel) => taskModel.status == status)
@@ -32,7 +32,7 @@ class TaskRepositoryImpl implements TaskRepository {
   }
 
   @override
-  Future<List<TaskEntity>> getTasksByDate(String date) async {
+  Future<List<TaskDetails>> getTasksByDate(String date) async {
     try {
       final taskModels = taskBox.values
           .where((taskModel) => taskModel.date == date)
@@ -44,7 +44,7 @@ class TaskRepositoryImpl implements TaskRepository {
   }
 
   @override
-  Future<void> addTask(TaskEntity task) async {
+  Future<void> addTask(TaskDetails task) async {
     try {
       final taskModel = TaskModel.fromEntity(task);
       await taskBox.add(taskModel);
@@ -54,7 +54,7 @@ class TaskRepositoryImpl implements TaskRepository {
   }
 
   @override
-  Future<void> updateTask(TaskEntity task) async {
+  Future<void> updateTask(TaskDetails task) async {
     try {
       final taskIndex =
       taskBox.values.toList().indexWhere((model) => model.id == task.id);

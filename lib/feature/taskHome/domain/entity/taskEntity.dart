@@ -1,13 +1,13 @@
-class TaskEntity {
+class TaskDetails {
   final String id;
   final String title;
   final String description;
   final String date;
   final String time;
   final String priority;
-  final String status;
+   String status;
 
-  TaskEntity({
+  TaskDetails({
     required this.id,
     required this.title,
     required this.description,
@@ -17,7 +17,7 @@ class TaskEntity {
     required this.status,
   });
 
-  TaskEntity copyWith({
+  TaskDetails copyWith({
     String? id,
     String? title,
     String? description,
@@ -26,7 +26,7 @@ class TaskEntity {
     String? priority,
     String? status,
   }) {
-    return TaskEntity(
+    return TaskDetails(
       id: id ?? this.id,
       title: title ?? this.title,
       description: description ?? this.description,
