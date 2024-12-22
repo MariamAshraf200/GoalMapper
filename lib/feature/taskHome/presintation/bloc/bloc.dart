@@ -84,6 +84,7 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
     emit(TaskLoading());
     try {
       final taskModel = TaskModel(
+        category: event.task.category,
         title: event.task.title,
         description: event.task.description,
         date: event.task.date,

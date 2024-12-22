@@ -57,7 +57,7 @@ class _TaskTrackState extends State<TaskTrack> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => const AddTaskAndUpdateScreen(),
+                            builder: (context) =>  AddTaskAndUpdateScreen(),
                           ),
                         );
                       },
@@ -127,7 +127,7 @@ class _TaskTrackState extends State<TaskTrack> {
                                   ),
                                 );
                               }
-                            },// category: task.category,
+                            }, category: task.category,// category: task.category,
                           ),
                         ),
                       ],

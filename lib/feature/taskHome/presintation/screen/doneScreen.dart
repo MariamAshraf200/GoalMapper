@@ -48,7 +48,7 @@ class DoneScreen extends StatelessWidget {
                           priority: task.priority,
                           taskId: task.id,
                           status: task.status,
-                          onViewClicked: () {},
+                          onViewClicked: () {}, category: task.category,
                         ),
                       ),
                     ],

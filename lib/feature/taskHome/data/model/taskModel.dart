@@ -26,6 +26,9 @@ class TaskModel {
   @HiveField(6)
   final String status;
 
+  @HiveField(7)
+  final String category;
+
   // Constructor
   const TaskModel({
     required this.id,
@@ -35,6 +38,7 @@ class TaskModel {
     required this.time,
     required this.priority,
     required this.status,
+    required this.category, // Add category to constructor
   });
 
   TaskEntity toEntity() {
@@ -46,6 +50,7 @@ class TaskModel {
       time: time,
       priority: priority,
       status: status,
+      category: category,
     );
   }
 
@@ -58,7 +63,7 @@ class TaskModel {
       time: entity.time,
       priority: entity.priority,
       status: entity.status,
+      category: entity.category,
     );
   }
-
 }

@@ -15,7 +15,7 @@ class CustomTextField extends StatelessWidget {
     this.suffixIcon,
     this.description = false,
     this.onTap,
-    this.validator,
+    this.validator, required bool readOnly,
   }) : super(key: key);
 
   @override

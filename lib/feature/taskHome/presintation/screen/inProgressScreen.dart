@@ -65,7 +65,7 @@ class InProgressScreen extends StatelessWidget {
                                         "Failed to update task status: $e")),
                               );
                             }
-                          },
+                          }, category: task.category,
                         ),
                       ),
                     ],

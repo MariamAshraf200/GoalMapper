@@ -1,4 +1,7 @@
-1 add category to model and complete code for it
+1 add category to model and complete code for it => old category not appear in bottom sheet
+
+
+
 2 run project from scratch issue => no tasks founded
 3 alert code
 4 remove colored priority from task card or handle it

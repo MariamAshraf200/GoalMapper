@@ -6,6 +6,7 @@ class TaskEntity {
   final String time;
   final String priority;
   final String status;
+  final String category; // New field for category
 
   TaskEntity({
     required this.id,
@@ -15,6 +16,7 @@ class TaskEntity {
     required this.time,
     required this.priority,
     required this.status,
+    required this.category, // Add category to the constructor
   });
 
   TaskEntity copyWith({
@@ -25,6 +27,7 @@ class TaskEntity {
     String? time,
     String? priority,
     String? status,
+    String? category, // Add category to copyWith method
   }) {
     return TaskEntity(
       id: id ?? this.id,
@@ -34,6 +37,7 @@ class TaskEntity {
       time: time ?? this.time,
       priority: priority ?? this.priority,
       status: status ?? this.status,
+      category: category ?? this.category, // Update category
     );
   }
 }

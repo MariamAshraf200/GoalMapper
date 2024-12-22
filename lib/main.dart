@@ -4,7 +4,6 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:mapper_app/feature/taskHome/presintation/bloc/bloc.dart';
 import 'core/di.dart';
 import 'core/hiveServices.dart';
-import 'feature/taskHome/presintation/screen/homeScreen.dart';
 import 'feature/taskHome/presintation/screen/taskTrack.dart';
 
 Future<void> main() async {
@@ -27,7 +26,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => sl<TaskBloc>(),
-      child: MaterialApp(
+      child: const MaterialApp(
         debugShowCheckedModeBanner: false,
         home: TaskTrack(),
       ),

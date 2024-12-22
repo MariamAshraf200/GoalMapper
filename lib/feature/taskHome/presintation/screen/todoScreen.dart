@@ -61,7 +61,7 @@ class TaskListScreen extends StatelessWidget {
                       }
                     },
                     taskId: task.id,
-                    status: task.status,
+                    status: task.status, category: task.category,
                   )),
                 ],
             );
@@ -87,7 +87,7 @@ class TaskListScreen extends StatelessWidget {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => const AddTaskAndUpdateScreen(),
+              builder: (context) =>  AddTaskAndUpdateScreen(),
             ),
           );
         },

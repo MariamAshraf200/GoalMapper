@@ -1,6 +1,9 @@
+import 'dart:ui';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
 import '../../domain/entity/taskEntity.dart';
 import '../bloc/bloc.dart';
 import '../bloc/event.dart';
@@ -14,6 +17,7 @@ class TaskCard extends StatelessWidget {
   final String time;
   final String priority;
   final String status;
+  final String category; // New category field
   final Color? priorityColor;
   final VoidCallback onViewClicked;
 
@@ -26,6 +30,7 @@ class TaskCard extends StatelessWidget {
     required this.time,
     required this.priority,
     required this.status,
+    required this.category, // Add category to constructor
     this.priorityColor,
     required this.onViewClicked,
   }) : super(key: key);
@@ -93,6 +98,7 @@ class TaskCard extends StatelessWidget {
                   time: time,
                   priority: priority,
                   status: status,
+                  category: category, // Pass category to screen
                 ),
               ),
             ),
@@ -191,6 +197,15 @@ class TaskCard extends StatelessWidget {
                     ),
                   ),
                 ],
+              ),
+              const SizedBox(height: 8.0), // Add some space between priority and category
+              Text(
+                category, // Display the category here
+                style: const TextStyle(
+                  fontSize: 14.0,
+                  color: Colors.blue, // You can customize the color for category
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ],
           ),

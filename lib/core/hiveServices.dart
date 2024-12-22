@@ -1,18 +1,21 @@
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:mapper_app/feature/taskHome/domain/entity/taskEntity.dart';
-import '../feature/taskHome/data/model/taskModel.dart';
+import 'package:mapper_app/feature/taskHome/data/model/taskModel.dart';
+import 'package:mapper_app/feature/taskHome/data/model/categoryModel.dart'; // Import the category model
 
 class HiveService {
   static const String _taskBoxName = 'tasks';
+  static const String _categoryBoxName = 'categories'; // Box name for categories
 
-  /// Initialize Hive and open the tasks box
+  /// Initialize Hive and open the task and category boxes
   Future<void> initHive() async {
-    // Register the adapter for TaskModel
+    // Register the adapters for TaskModel and CategoryModel
     Hive.registerAdapter(TaskModelAdapter());
+    Hive.registerAdapter(CategoryModelAdapter());
 
-    // Open the box for tasks
+    // Open the boxes
     await Hive.openBox<TaskModel>(_taskBoxName);
+    await Hive.openBox<CategoryModel>(_categoryBoxName);
   }
 
   /// Add a new task to Hive
@@ -48,6 +51,27 @@ class HiveService {
     final taskBox = Hive.box<TaskModel>(_taskBoxName);
     if (index < taskBox.length) {
       await taskBox.putAt(index, updatedTask);
+    }
+  }
+
+  /// Add a new category to Hive
+  Future<void> addCategory(String categoryName) async {
+    final categoryBox = Hive.box<CategoryModel>(_categoryBoxName);
+    final category = CategoryModel(categoryName: categoryName);
+    await categoryBox.add(category);
+  }
+
+  /// Retrieve all categories from Hive
+  List<CategoryModel> getCategories() {
+    final categoryBox = Hive.box<CategoryModel>(_categoryBoxName);
+    return categoryBox.values.toList();
+  }
+
+  /// Delete a category by index
+  Future<void> deleteCategory(int index) async {
+    final categoryBox = Hive.box<CategoryModel>(_categoryBoxName);
+    if (index < categoryBox.length) {
+      await categoryBox.deleteAt(index);
     }
   }
 

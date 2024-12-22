@@ -78,6 +78,7 @@ class TaskRepositoryImpl implements TaskRepository {
 
         if (existingTask != null) {
           final updatedTask = TaskModel(
+            category: existingTask.category,
             id: existingTask.id,
             title: existingTask.title, // Keep the existing title
             description:

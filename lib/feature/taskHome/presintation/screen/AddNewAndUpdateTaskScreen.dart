@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
-import 'package:mapper_app/feature/taskHome/presintation/screen/todoScreen.dart';
 import 'package:uuid/uuid.dart';
 import '../../../../core/customColor.dart';
 import '../../domain/entity/taskEntity.dart';
-import '../Widget/customContainerAddnewTask.dart';
 import '../Widget/customTextFeild.dart';
 import '../bloc/bloc.dart';
 import '../bloc/event.dart';
@@ -25,20 +23,12 @@ class _AddTaskAndUpdateScreenState extends State<AddTaskAndUpdateScreen> {
   final TextEditingController descriptionController = TextEditingController();
   final TextEditingController timeController = TextEditingController();
   final TextEditingController dateController = TextEditingController();
+  final TextEditingController categoryController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   String selectedPriority = '';
-  String selectedCategory = '';
   late String uniqueTaskId;
   CustomColor color = CustomColor();
   bool allowNotifications = false;
-
-  final List<String> categories = [
-    'Work',
-    'Personal',
-    'Shopping',
-    'Fitness',
-    'Other'
-  ]; // List of categories
 
   @override
   void initState() {
@@ -50,9 +40,54 @@ class _AddTaskAndUpdateScreenState extends State<AddTaskAndUpdateScreen> {
       timeController.text = widget.existingTask!.time;
       selectedPriority = widget.existingTask!.priority;
       uniqueTaskId = widget.existingTask!.id;
+      categoryController.text = widget.existingTask!.category;
     } else {
       uniqueTaskId = const Uuid().v4();
     }
+  }
+
+  // Bottom sheet to allow user to enter or select category
+  void _showCategoryBottomSheet() {
+    categoryController.text = widget.existingTask?.category ?? '';
+
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16.0)),
+      ),
+      builder: (context) {
+        return Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            children: [
+              // TextField to allow user to enter a custom category
+              TextField(
+                controller: categoryController,
+                decoration: const InputDecoration(
+                  hintText: 'Enter category',
+                  labelText: 'Category',
+                  border: OutlineInputBorder(),
+                ),
+                onChanged: (value) {},
+              ),
+              const SizedBox(height: 16),
+
+              ElevatedButton(
+                onPressed: () {
+                  if (categoryController.text.isNotEmpty) {
+                    setState(() {
+                      categoryController.text = categoryController.text;
+                    });
+                    Navigator.pop(context);
+                  }
+                },
+                child: const Text('Save Category'),
+              ),
+            ],
+          ),
+        );
+      },
+    );
   }
 
   String? _validateTextField(String? value) {
@@ -60,16 +95,6 @@ class _AddTaskAndUpdateScreenState extends State<AddTaskAndUpdateScreen> {
       return 'This field cannot be empty';
     }
     return null;
-  }
-
-  void togglePriority(String priority) {
-    setState(() {
-      selectedPriority = priority;
-    });
-  }
-
-  Color _getPriorityColor(String priority) {
-    return selectedPriority == priority ? Colors.deepPurple : Colors.grey;
   }
 
   @override
@@ -108,6 +133,8 @@ class _AddTaskAndUpdateScreenState extends State<AddTaskAndUpdateScreen> {
               children: [
                 const Text('Manage your Task',
                     style: TextStyle(fontWeight: FontWeight.w400, fontSize: 25)),
+
+                // Title TextField
                 TextField(
                   controller: titleController,
                   decoration: const InputDecoration(
@@ -115,198 +142,112 @@ class _AddTaskAndUpdateScreenState extends State<AddTaskAndUpdateScreen> {
                     enabledBorder: OutlineInputBorder(borderSide: BorderSide.none),
                   ),
                 ),
-                Column(
-                  children: [
-                    CustomTextField(
-                      controller: descriptionController,
-                      hintText: 'Description',
-                      description: true,
-                      validator: _validateTextField,
-                    ),
-                    Align(
-                      alignment: Alignment.centerRight,
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: [
-                          IconButton(
-                            onPressed: () {},
-                            icon: const Icon(Icons.record_voice_over_sharp),
-                          ),
-                          IconButton(
-                            onPressed: () {},
-                            icon: const Icon(Icons.text_fields),
-                          ),
-                          IconButton(
-                            onPressed: () {},
-                            icon: const Icon(Icons.person_add),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
+
+                // Description TextField
+                CustomTextField(
+                  controller: descriptionController,
+                  hintText: 'Description',
+                  description: true,
+                  validator: _validateTextField,
+                  readOnly: false,
                 ),
+
+                // Category TextField with bottom sheet interaction
+                CustomTextField(
+                  controller: categoryController,
+                  hintText: 'Select or Enter Category',
+                  suffixIcon: const Icon(Icons.category),
+                  onTap: _showCategoryBottomSheet,
+                  readOnly: false,
+                  validator: _validateTextField,
+                ),
+
+                // Date and Time Inputs
                 Row(
                   children: [
                     Expanded(
-                      child: Column(
-                        children: [
-                          const Text('Date'),
-                          CustomTextField(
-                            controller: dateController,
-                            hintText: 'dd/mm/yyyy',
-                            suffixIcon: const Icon(Icons.date_range),
-                            onTap: () async {
-                              DateTime? selectedDate = await showDatePicker(
-                                context: context,
-                                initialDate: DateTime.now(),
-                                firstDate: DateTime(2000),
-                                lastDate: DateTime(2100),
-                              );
-                              if (selectedDate != null) {
-                                dateController.text =
-                                    DateFormat('dd/MM/yyyy').format(selectedDate);
-                              }
-                            },
-                            validator: _validateTextField,
-                          ),
-                        ],
+                      child: CustomTextField(
+                        controller: dateController,
+                        hintText: 'dd/mm/yyyy',
+                        suffixIcon: const Icon(Icons.date_range),
+                        onTap: () async {
+                          DateTime? selectedDate = await showDatePicker(
+                            context: context,
+                            initialDate: DateTime.now(),
+                            firstDate: DateTime(2000),
+                            lastDate: DateTime(2100),
+                          );
+                          if (selectedDate != null) {
+                            dateController.text =
+                                DateFormat('dd/MM/yyyy').format(selectedDate);
+                          }
+                        },
+                        validator: _validateTextField,
+                        readOnly: false,
                       ),
                     ),
                     Expanded(
-                      child: Column(
-                        children: [
-                          const Text('Time'),
-                          CustomTextField(
-                            controller: timeController,
-                            hintText: 'hh:mm AM/PM',
-                            suffixIcon: const Icon(Icons.access_time),
-                            onTap: () async {
-                              TimeOfDay? selectedTime = await showTimePicker(
-                                context: context,
-                                initialTime: TimeOfDay.now(),
-                              );
-                              if (selectedTime != null) {
-                                final now = DateTime.now();
-                                final selectedDateTime = DateTime(
-                                  now.year,
-                                  now.month,
-                                  now.day,
-                                  selectedTime.hour,
-                                  selectedTime.minute,
-                                );
-                                timeController.text =
-                                    DateFormat('hh:mm a').format(selectedDateTime);
-                              }
-                            },
-                            validator: _validateTextField,
-                          ),
-                        ],
+                      child: CustomTextField(
+                        controller: timeController,
+                        hintText: 'hh:mm AM/PM',
+                        suffixIcon: const Icon(Icons.access_time),
+                        onTap: () async {
+                          TimeOfDay? selectedTime = await showTimePicker(
+                            context: context,
+                            initialTime: TimeOfDay.now(),
+                          );
+                          if (selectedTime != null) {
+                            final now = DateTime.now();
+                            final selectedDateTime = DateTime(
+                              now.year,
+                              now.month,
+                              now.day,
+                              selectedTime.hour,
+                              selectedTime.minute,
+                            );
+                            timeController.text =
+                                DateFormat('hh:mm a').format(selectedDateTime);
+                          }
+                        },
+                        validator: _validateTextField,
+                        readOnly: false,
                       ),
                     ),
                   ],
                 ),
 
-                // Category Dropdown
-                Padding(
-                  padding: const EdgeInsets.only(top: 16.0),
-                  child: DropdownButtonFormField<String>(
-                    value: selectedCategory.isNotEmpty ? selectedCategory : null,
-                    hint: const Text('Select Category'),
-                    items: categories
-                        .map((category) => DropdownMenuItem(
-                      value: category,
-                      child: Text(category),
-                    ))
-                        .toList(),
-                    onChanged: (value) {
-                      setState(() {
-                        selectedCategory = value!;
-                      });
-                    },
-                    validator: (value) =>
-                    value == null || value.isEmpty ? 'Please select a category' : null,
-                  ),
+                // Switch for Notifications
+                SwitchListTile(
+                  title: const Text("Enable Notifications"),
+                  value: allowNotifications,
+                  onChanged: (bool value) {
+                    setState(() {
+                      allowNotifications = value;
+                    });
+                  },
                 ),
-                Padding(
-                  padding: const EdgeInsets.all(15.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: ['Low', 'Medium', 'High'].map((priority) {
-                      return CustomContainerNewTask(
-                        text: priority,
-                        backgroundColor: _getPriorityColor(priority),
-                        borderRadius: 25,
-                        textStyle: TextStyle(
-                          color: selectedPriority == priority
-                              ? color.basicColor
-                              : color.primaryColor,
-                        ),
-                        onTap: () => togglePriority(priority),
-                      );
-                    }).toList(),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Row(
-                    children: [
-                      const Expanded(child: Text('Allow Alert')),
-                      Switch(
-                        value: allowNotifications,
-                        onChanged: (value) {
-                          setState(() {
-                            allowNotifications = value;
-                          });
-                        },
-                      ),
-                    ],
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: SizedBox(
-                    width: double.infinity,
-                    height: 40,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        if (_formKey.currentState!.validate()) {
-                          final task = TaskEntity(
-                            title: titleController.text,
-                            description: descriptionController.text,
-                            date: dateController.text,
-                            time: timeController.text,
-                            priority: selectedPriority,
-                            //category: selectedCategory,
-                            id: uniqueTaskId,
-                            status: 'to do',
-                          );
 
-                          if (widget.existingTask != null) {
-                            context.read<TaskBloc>().add(UpdateTaskEvent(task));
-                          } else {
-                            context.read<TaskBloc>().add(AddTaskEvent(task));
-                          }
-                          Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const TaskListScreen(),
-                            ),
-                          );
-                        }
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: color.secondaryColor,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12.0),
-                        ),
-                      ),
-                      child: Text(
-                        widget.existingTask != null ? 'Update Task' : 'Save Task',
-                        style: const TextStyle(color: Colors.white),
-                      ),
-                    ),
-                  ),
+                // Save or Update Task Button
+                ElevatedButton(
+                  onPressed: () {
+                    final task = TaskEntity(
+                      title: titleController.text,
+                      description: descriptionController.text,
+                      date: dateController.text,
+                      time: timeController.text,
+                      priority: selectedPriority,
+                      category: categoryController.text,
+                      id: uniqueTaskId,
+                      status: 'to do',
+                    );
+
+                    if (widget.existingTask != null) {
+                      context.read<TaskBloc>().add(UpdateTaskEvent(task));
+                    } else {
+                      context.read<TaskBloc>().add(AddTaskEvent(task));
+                    }
+                  },
+                  child: Text(widget.existingTask != null ? 'Update Task' : 'Save Task'),
                 ),
               ],
             ),

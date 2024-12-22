@@ -45,7 +45,7 @@ class AllTasksScreen extends StatelessWidget {
                       priority: task.priority,
                       onViewClicked: () {},
                       taskId: task.id,
-                      status: task.status,
+                      status: task.status, category: task.category,
                     ),
                   );
                 },
