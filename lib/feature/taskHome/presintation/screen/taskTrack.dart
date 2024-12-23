@@ -4,9 +4,9 @@ import 'package:intl/intl.dart';
 import '../../../../core/customColor.dart';
 import '../Widget/customContainerTask.dart';
 import '../Widget/data_format.dart';
-import '../bloc/bloc.dart';
-import '../bloc/state.dart';
-import '../bloc/event.dart';
+import '../bloc/taskBloc/bloc.dart';
+import '../bloc/taskBloc/state.dart';
+import '../bloc/taskBloc/event.dart';
 import 'AddNewAndUpdateTaskScreen.dart';
 
 class TaskTrack extends StatefulWidget {

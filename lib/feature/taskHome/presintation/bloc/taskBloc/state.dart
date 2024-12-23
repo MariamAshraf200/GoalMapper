@@ -1,7 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:mapper_app/feature/taskHome/data/model/taskModel.dart';
 
-import '../../domain/entity/taskEntity.dart';
+import '../../../domain/entity/taskEntity.dart';
 
 abstract class TaskState extends Equatable {
   const TaskState();

@@ -1,14 +1,14 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:mapper_app/feature/taskHome/domain/usecse/getTaskByDateUsecase.dart';
-import 'package:mapper_app/feature/taskHome/presintation/bloc/state.dart';
-import '../../../../core/hiveServices.dart';
-import '../../data/model/taskModel.dart';
-import '../../domain/usecse/addUsecase.dart';
-import '../../domain/usecse/deleteUsecase.dart';
-import '../../domain/usecse/getTaskBystatus.dart';
-import '../../domain/usecse/getUsecase.dart';
-import '../../domain/usecse/updateStatues.dart';
-import '../../domain/usecse/updateUsecase.dart';
+import 'package:mapper_app/feature/taskHome/domain/usecse/task/getTaskByDateUsecase.dart';
+import 'package:mapper_app/feature/taskHome/presintation/bloc/taskBloc/state.dart';
+import '../../../../../core/hiveServices.dart';
+import '../../../data/model/taskModel.dart';
+import '../../../domain/usecse/task/addUsecase.dart';
+import '../../../domain/usecse/task/deleteUsecase.dart';
+import '../../../domain/usecse/task/getTaskBystatus.dart';
+import '../../../domain/usecse/task/getUsecase.dart';
+import '../../../domain/usecse/task/updateStatues.dart';
+import '../../../domain/usecse/task/updateUsecase.dart';
 import 'event.dart';
 
 class TaskBloc extends Bloc<TaskEvent, TaskState> {

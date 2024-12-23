@@ -5,8 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../domain/entity/taskEntity.dart';
-import '../bloc/bloc.dart';
-import '../bloc/event.dart';
+import '../bloc/taskBloc/bloc.dart';
+import '../bloc/taskBloc/event.dart';
 import '../screen/AddNewAndUpdateTaskScreen.dart';
 
 class TaskCard extends StatelessWidget {

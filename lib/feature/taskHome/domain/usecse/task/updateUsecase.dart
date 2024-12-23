@@ -1,5 +1,5 @@
-import '../entity/taskEntity.dart';
-import '../repo_interface/repo.dart';
+import '../../entity/taskEntity.dart';
+import '../../repo_interface/repoTask.dart';
 
 class UpdateTaskUseCase {
   final TaskRepository repository;

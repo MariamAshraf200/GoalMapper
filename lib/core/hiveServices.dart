@@ -55,9 +55,9 @@ class HiveService {
   }
 
   /// Add a new category to Hive
-  Future<void> addCategory(String categoryName) async {
+  Future<void> addCategory(String categoryName, String id) async {
     final categoryBox = Hive.box<CategoryModel>(_categoryBoxName);
-    final category = CategoryModel(categoryName: categoryName);
+    final category = CategoryModel(categoryName: categoryName, id: id);
     await categoryBox.add(category);
   }
 

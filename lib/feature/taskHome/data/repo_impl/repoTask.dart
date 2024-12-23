@@ -1,6 +1,6 @@
 import 'package:hive/hive.dart';
 import '../../domain/entity/taskEntity.dart';
-import '../../domain/repo_interface/repo.dart';
+import '../../domain/repo_interface/repoTask.dart';
 import '../model/taskModel.dart';
 
 class TaskRepositoryImpl implements TaskRepository {
@@ -80,13 +80,13 @@ class TaskRepositoryImpl implements TaskRepository {
           final updatedTask = TaskModel(
             category: existingTask.category,
             id: existingTask.id,
-            title: existingTask.title, // Keep the existing title
+            title: existingTask.title,
             description:
-            existingTask.description, // Keep the existing description
-            date: existingTask.date, // Keep the existing date
-            time: existingTask.time, // Keep the existing time
-            priority: existingTask.priority, // Keep the existing priority
-            status: newStatus, // Update the status
+            existingTask.description,
+            date: existingTask.date,
+            time: existingTask.time,
+            priority: existingTask.priority,
+            status: newStatus,
           );
 
           // Replace the old task in the Hive box with the updated one

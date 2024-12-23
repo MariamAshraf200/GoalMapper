@@ -10,14 +10,14 @@ class CustomContainerNewTask extends StatelessWidget {
   final Function()? onTap;
 
   const CustomContainerNewTask({
-    Key? key,
+    super.key,
     required this.text,
     this.textStyle,
     this.alignment = Alignment.center,
     this.backgroundColor = Colors.grey,
     this.borderRadius = 20.0,
     this.onTap,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

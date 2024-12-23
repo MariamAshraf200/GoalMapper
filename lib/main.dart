@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:mapper_app/feature/taskHome/presintation/bloc/bloc.dart';
+import 'package:mapper_app/feature/taskHome/presintation/bloc/taskBloc/bloc.dart';
 import 'core/di.dart';
 import 'core/hiveServices.dart';
+import 'feature/taskHome/presintation/bloc/catogeryBloc/CatogeryBloc.dart';
 import 'feature/taskHome/presintation/screen/taskTrack.dart';
 
 Future<void> main() async {
@@ -24,8 +25,15 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => sl<TaskBloc>(),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<TaskBloc>(
+          create: (context) => sl<TaskBloc>(),
+        ),
+        BlocProvider<CategoryBloc>(
+          create: (context) => sl<CategoryBloc>(),
+        ),
+      ],
       child: const MaterialApp(
         debugShowCheckedModeBanner: false,
         home: TaskTrack(),

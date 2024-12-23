@@ -1,5 +1,5 @@
 
-import '../repo_interface/repo.dart';
+import '../../repo_interface/repoTask.dart';
 
 class DeleteTaskUseCase {
   final TaskRepository repository;
