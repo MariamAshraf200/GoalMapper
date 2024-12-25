@@ -5,8 +5,9 @@ import '../../../../core/constants/app_colors.dart';
 
 import '../../../../core/customColor.dart';
 import '../../../../core/util/widgets/custom_card.dart';
-import '../Widget/customContainerTask.dart';
+import '../Widget/task_item_card.dart';
 import '../Widget/data_format.dart';
+import '../Widget/task_items.dart';
 import '../bloc/bloc.dart';
 import '../bloc/state.dart';
 import '../bloc/event.dart';
@@ -152,4 +153,5 @@ class _TaskTrackState extends State<TaskTrack> {
         date1.month == date2.month &&
         date1.day == date2.day;
   }
+
 }

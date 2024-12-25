@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:mapper_app/feature/taskHome/presintation/Widget/customContainerTask.dart';
+import 'package:mapper_app/feature/taskHome/presintation/Widget/task_item_card.dart';
 import '../bloc/bloc.dart';
 import '../bloc/event.dart';
 import '../bloc/state.dart';
