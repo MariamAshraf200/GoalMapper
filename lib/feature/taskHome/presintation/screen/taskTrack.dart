@@ -47,7 +47,8 @@ class _TaskTrackState extends State<TaskTrack> {
                   Expanded(
                     child: Text(
                       'My Tasks',
-                      style: TextStyle(color: color.secondaryColor, fontSize: 30),
+                      style: TextStyle(color: color.secondaryColor, fontSize: 30,fontFamily: 'JellyBall',
+                      ),
                     ),
                   ),
                   Padding(

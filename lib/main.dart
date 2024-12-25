@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:mapper_app/feature/MainScreen/presentation/screen/homeScreen.dart';
 import 'package:mapper_app/feature/taskHome/presintation/bloc/taskBloc/bloc.dart';
 import 'core/di.dart';
 import 'core/hiveServices.dart';
 import 'feature/taskHome/presintation/bloc/catogeryBloc/CatogeryBloc.dart';
-import 'feature/taskHome/presintation/screen/taskTrack.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -36,7 +36,7 @@ class MyApp extends StatelessWidget {
       ],
       child: const MaterialApp(
         debugShowCheckedModeBanner: false,
-        home: TaskTrack(),
+        home: HomeScreen(),
       ),
     );
   }
