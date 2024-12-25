@@ -183,6 +183,39 @@ class _DataFormatState extends State<DataFormat> {
         curve: Curves.easeInOut,
       );
     }
+    _scrollController = ScrollController();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _centerSelectedDate();
+    });
+  }
+
+  @override
+
+  void didUpdateWidget(covariant DataFormat oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _centerSelectedDate();
+    });
+  }
+
+  void _centerSelectedDate() {
+    int selectedIndex = weekDays.indexWhere((date) =>
+    widget.selectedDate == DateFormat('dd/MM/yyyy').format(date));
+    if (selectedIndex != -1) {
+      double screenWidth = MediaQuery.of(context).size.width;
+      double itemWidth = 56.0; // Estimated width of each item including padding
+      double scrollOffset = (selectedIndex * itemWidth) - (screenWidth / 2) + (itemWidth / 2);
+
+      _scrollController.animateTo(
+        scrollOffset.clamp(
+          _scrollController.position.maxScrollExtent,
+          _scrollController.position.maxScrollExtent,
+        ),
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+      );
+    }
   }
 
   @override
@@ -200,6 +233,46 @@ class _DataFormatState extends State<DataFormat> {
 
             return Padding(
               padding: const EdgeInsets.symmetric(horizontal: 3.0), // Add spacing between items
+              child: GestureDetector(
+                onTap: () {
+                  widget.onDateSelected(date);
+                },
+                child: Container(
+                  padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 20),
+                  decoration: BoxDecoration(
+                    color: isSelected ? AppColors.secondaryColor : AppColors.secondBackgroundColor,
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: Row(
+                    children: [
+                      Text(
+                        DateFormat('EEE').format(date), // Weekday
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                          color: isSelected ? Colors.white : Colors.black,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      if (isSelected)
+                        Text(
+                          DateFormat(',d MMM').format(date), // Day and Month
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                            color: isSelected ? Colors.white : Colors.black ,
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
+              ),
+            );
+          }).toList(),
+        ),
+      ),
+            return Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8.0), // Add spacing between items
               child: GestureDetector(
                 onTap: () {
                   widget.onDateSelected(date);
