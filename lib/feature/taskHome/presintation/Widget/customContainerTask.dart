@@ -15,9 +15,11 @@ class TaskCard extends StatelessWidget {
   final String description;
   final String date;
   final String time;
+  final String endTime;
+
   final String priority;
   final String status;
-  final String category; // New category field
+  final String category;
   final Color? priorityColor;
   final VoidCallback onViewClicked;
 
@@ -28,6 +30,8 @@ class TaskCard extends StatelessWidget {
     required this.description,
     required this.date,
     required this.time,
+    required this.endTime,
+
     required this.priority,
     required this.status,
     required this.category, // Add category to constructor
@@ -96,6 +100,7 @@ class TaskCard extends StatelessWidget {
                   description: description,
                   date: date,
                   time: time,
+                  endTime:endTime ,
                   priority: priority,
                   status: status,
                   category: category, // Pass category to screen

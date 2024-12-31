@@ -85,6 +85,7 @@ class TaskRepositoryImpl implements TaskRepository {
             existingTask.description,
             date: existingTask.date,
             time: existingTask.time,
+            endTime: existingTask.endTime,
             priority: existingTask.priority,
             status: newStatus,
           );

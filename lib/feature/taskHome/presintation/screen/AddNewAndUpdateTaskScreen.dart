@@ -28,6 +28,7 @@ class _AddTaskAndUpdateScreenState extends State<AddTaskAndUpdateScreen> {
   final TextEditingController titleController = TextEditingController();
   final TextEditingController descriptionController = TextEditingController();
   final TextEditingController timeController = TextEditingController();
+  final TextEditingController endTimeController = TextEditingController();
   final TextEditingController dateController = TextEditingController();
   final TextEditingController categoryController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
@@ -143,7 +144,6 @@ class _AddTaskAndUpdateScreenState extends State<AddTaskAndUpdateScreen> {
       Navigator.pop(context);
     }
   }
-
   Widget _buildFormBody(List<CategoryModel> categories) {
     return Form(
       key: _formKey,
@@ -155,7 +155,6 @@ class _AddTaskAndUpdateScreenState extends State<AddTaskAndUpdateScreen> {
             children: [
               const Text('Manage your Task',
                   style: TextStyle(fontWeight: FontWeight.w400, fontSize: 25)),
-              // Title TextField
               TextField(
                 controller: titleController,
                 decoration: const InputDecoration(
@@ -180,7 +179,14 @@ class _AddTaskAndUpdateScreenState extends State<AddTaskAndUpdateScreen> {
                 validator: _validateTextField,
                 readOnly: false,
               ),
-              _buildDateAndTimeFields(),
+              const SizedBox(height: 16),
+              _buildDateAndTimeFields(),  // Date and Time Fields
+              const SizedBox(height: 16),
+              const Text(
+                'Priority',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+              _buildPrioritySelector(), // Moved Priority below
               SwitchListTile(
                 title: const Text("Enable Notifications"),
                 value: allowNotifications,
@@ -197,6 +203,39 @@ class _AddTaskAndUpdateScreenState extends State<AddTaskAndUpdateScreen> {
       ),
     );
   }
+
+  Widget _buildPrioritySelector() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: [
+        _buildPriorityChip('Low'),
+        _buildPriorityChip('Medium'),
+        _buildPriorityChip('High'),
+      ],
+    );
+  }
+
+  Widget _buildPriorityChip(String priority) {
+    return ChoiceChip(
+      label: Text(priority),
+      selected: selectedPriority == priority,
+      onSelected: (bool selected) {
+        setState(() {
+          if (selected) {
+            selectedPriority = priority;
+          }
+        });
+      },
+      labelStyle: TextStyle(
+        color: selectedPriority == priority ? Colors.white : Colors.black,
+      ),
+      backgroundColor: Colors.grey.shade200,
+      avatar: selectedPriority == priority
+          ? Icon(Icons.check)
+          : null,
+    );
+  }
+
 
   Widget _buildSpeechAndUserIcons() {
     return Row(
@@ -220,33 +259,47 @@ class _AddTaskAndUpdateScreenState extends State<AddTaskAndUpdateScreen> {
       ],
     );
   }
-
   Widget _buildDateAndTimeFields() {
-    return Row(
+    return Column(
       children: [
-        Expanded(
-          child: CustomTextField(
-            controller: dateController,
-            hintText: 'dd/mm/yyyy',
-            suffixIcon: const Icon(Icons.date_range),
-            onTap: _pickDate,
-            validator: _validateTextField,
-            readOnly: false,
-          ),
+        Row(
+          children: [
+            Expanded(
+              child: CustomTextField(
+                controller: timeController,
+                hintText: 'Start Time (hh:mm AM/PM)',
+                suffixIcon: const Icon(Icons.access_time),
+                onTap: _pickStartTime,
+                validator: _validateTextField,
+                readOnly: false,
+              ),
+            ),
+            const SizedBox(width: 8),
+            Expanded(
+              child: CustomTextField(
+                controller: endTimeController,
+                hintText: 'End Time (hh:mm AM/PM)',
+                suffixIcon: const Icon(Icons.access_time),
+                onTap: _pickEndTime,
+                validator: _validateTextField,
+                readOnly: false,
+              ),
+            ),
+          ],
         ),
-        Expanded(
-          child: CustomTextField(
-            controller: timeController,
-            hintText: 'hh:mm AM/PM',
-            suffixIcon: const Icon(Icons.access_time),
-            onTap: _pickTime,
-            validator: _validateTextField,
-            readOnly: false,
-          ),
+        const SizedBox(height: 16),
+        CustomTextField(
+          controller: dateController,
+          hintText: 'dd/mm/yyyy',
+          suffixIcon: const Icon(Icons.date_range),
+          onTap: _pickDate,
+          validator: _validateTextField,
+          readOnly: false,
         ),
       ],
     );
   }
+
 
   Future<void> _pickDate() async {
     DateTime? selectedDate = await showDatePicker(
@@ -260,7 +313,7 @@ class _AddTaskAndUpdateScreenState extends State<AddTaskAndUpdateScreen> {
     }
   }
 
-  Future<void> _pickTime() async {
+  Future<void> _pickStartTime() async {
     TimeOfDay? selectedTime = await showTimePicker(
       context: context,
       initialTime: TimeOfDay.now(),
@@ -277,6 +330,25 @@ class _AddTaskAndUpdateScreenState extends State<AddTaskAndUpdateScreen> {
       timeController.text = DateFormat('hh:mm a').format(selectedDateTime);
     }
   }
+  Future<void> _pickEndTime() async {
+    TimeOfDay? selectedTime = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay.now(),
+    );
+    if (selectedTime != null) {
+      final now = DateTime.now();
+      final selectedDateTime = DateTime(
+        now.year,
+        now.month,
+        now.day,
+        selectedTime.hour,
+        selectedTime.minute,
+      );
+      endTimeController.text = DateFormat('hh:mm a').format(selectedDateTime);
+    }
+  }
+
+
 
   Widget _buildSaveButton() {
     return SizedBox(
@@ -289,6 +361,7 @@ class _AddTaskAndUpdateScreenState extends State<AddTaskAndUpdateScreen> {
               description: descriptionController.text,
               date: dateController.text,
               time: timeController.text,
+              endTime: endTimeController.text,
               priority: selectedPriority,
               category: categoryController.text,
               id: uniqueTaskId,

@@ -4,7 +4,20 @@ import '../../data/model/categoryModel.dart';
 void showCategoryBottomSheet(BuildContext context,
     TextEditingController categoryController, List<CategoryModel> categories) {
   final TextEditingController customCategoryController =
-      TextEditingController();
+  TextEditingController();
+
+// remove duplicated
+  final uniqueCategories = categories
+      .map((category) => category.categoryName)
+      .toSet()
+      .map((name) {
+    final originalCategory = categories.firstWhere(
+          (category) => category.categoryName == name,
+    );
+    return CategoryModel(id: originalCategory.id, categoryName: name);
+  })
+      .toList();
+
 
   showModalBottomSheet(
     context: context,
@@ -30,9 +43,9 @@ void showCategoryBottomSheet(BuildContext context,
                   mainAxisSpacing: 5.0,
                   childAspectRatio: 4,
                 ),
-                itemCount: categories.length,
+                itemCount: uniqueCategories.length,
                 itemBuilder: (context, index) {
-                  final category = categories[index];
+                  final category = uniqueCategories[index];
                   return GestureDetector(
                     onTap: () {
                       categoryController.text = category.categoryName;
@@ -63,7 +76,7 @@ void showCategoryBottomSheet(BuildContext context,
                 prefixIcon: Icon(Icons.category),
               ),
               onSubmitted: (value) {
-                categoryController.text = value;
+                  categoryController.text = value;
                 Navigator.pop(context);
               },
             ),

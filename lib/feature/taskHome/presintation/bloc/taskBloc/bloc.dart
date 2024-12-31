@@ -89,6 +89,7 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
         description: event.task.description,
         date: event.task.date,
         time: event.task.time,
+        endTime: event.task.endTime,
         priority: event.task.priority,
         id: event.task.id,
         status: event.task.status,

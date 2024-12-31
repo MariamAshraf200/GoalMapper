@@ -107,6 +107,7 @@ class _TaskTrackState extends State<TaskTrack> {
                             description: task.description,
                             date: task.date,
                             time: task.time,
+                            endTime: task.endTime,
                             priority: task.priority,
                             taskId: task.id,
                             status: task.status,
@@ -128,7 +129,7 @@ class _TaskTrackState extends State<TaskTrack> {
                                   ),
                                 );
                               }
-                            }, category: task.category,// category: task.category,
+                            }, category: task.category,
                           ),
                         ),
                       ],
