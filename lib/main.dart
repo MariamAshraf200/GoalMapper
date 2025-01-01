@@ -1,8 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
-import 'feature/home/presintation/screen/homeScreen.dart';
+import 'core/di.dart';
+import 'core/hiveServices.dart';
+import 'feature/taskHome/presintation/bloc/catogeryBloc/CatogeryBloc.dart';
+import 'feature/taskHome/presintation/bloc/taskBloc/bloc.dart';
+import 'feature/taskHome/presintation/screen/taskTrack.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await Hive.initFlutter();
+
+  final hiveService = HiveService();
+  await hiveService.initHive();
+
+  await init();
+
   runApp(const MyApp());
 }
 
@@ -11,8 +26,19 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: HomeScreen(),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<TaskBloc>(
+          create: (context) => sl<TaskBloc>(),
+        ),
+        BlocProvider<CategoryBloc>(
+          create: (context) => sl<CategoryBloc>(),
+        ),
+      ],
+      child: const MaterialApp(
+        debugShowCheckedModeBanner: false,
+        home: TaskTrack(),
+      ),
     );
   }
 }
