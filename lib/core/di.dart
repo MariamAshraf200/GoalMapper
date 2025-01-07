@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:get_it/get_it.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:mapper_app/feature/taskHome/domain/usecse/task/getTaskByDateUsecase.dart';
@@ -25,11 +26,15 @@ final sl = GetIt.instance;
 Future<void> init() async {
   try {
     final taskBox = Hive.box<TaskModel>('tasks');
-    print('Box registered with GetIt: ${taskBox.isOpen}');
+    if (kDebugMode) {
+      print('Box registered with GetIt: ${taskBox.isOpen}');
+    }
     sl.registerSingleton<Box<TaskModel>>(taskBox);
 
     final categoryBox = await Hive.openBox<CategoryModel>('categories');
-    print('Category box registered: ${categoryBox.isOpen}');
+    if (kDebugMode) {
+      print('Category box registered: ${categoryBox.isOpen}');
+    }
     sl.registerSingleton<Box<CategoryModel>>(categoryBox);
 
     // Data Sources

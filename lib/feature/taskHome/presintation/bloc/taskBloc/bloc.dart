@@ -1,4 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
 import 'package:mapper_app/feature/taskHome/domain/usecse/task/getTaskByDateUsecase.dart';
 import 'package:mapper_app/feature/taskHome/presintation/bloc/taskBloc/state.dart';
 import '../../../../../core/hiveServices.dart';
@@ -64,14 +65,20 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
     } catch (e) {
       emit(TaskError("Failed to load tasks by status: $e"));
     }
-  }Future<void> _onGetTasksByDate(
+  }
+
+
+  Future<void> _onGetTasksByDate(
       GetTasksByDateEvent event,
       Emitter<TaskState> emit,
       ) async {
     emit(TaskLoading());
     try {
+     // print('Requested date: ${event.date}');
+
       final tasks = await getTasksByDateUseCase(event.date);
-      print('Fetched tasks: $tasks'); // Debugging: Check if tasks are fetched correctly
+
+    //  print('Raw fetched tasks: $tasks'); // Should now print detailed task information
       emit(TaskLoaded(tasks));
     } catch (e) {
       emit(TaskError("Failed to load tasks by date: $e"));
@@ -93,13 +100,25 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
         id: event.task.id,
         status: event.task.status,
       );
+      print("Task to add: $taskModel"); // Debug: Print the task details
 
       await hiveService.addTask(taskModel);
+
+      final allTasks = await hiveService.getTasks();
+      print("All tasks in Hive: $allTasks"); // Debug: Print all tasks in Hive
+
+      // Fetch updated tasks
+      final formattedDate = DateFormat('dd/MM/yyyy').format(DateTime.now());
+      add(GetTasksByDateEvent(formattedDate));
+
       emit(TaskAddSuccess('Task added successfully', taskModel));
     } catch (e) {
+      print("Error adding task: $e"); // Debug: Print any errors
       emit(TaskError(e.toString()));
     }
   }
+
+
 
   Future<void> _onUpdateTask(
       UpdateTaskEvent event,

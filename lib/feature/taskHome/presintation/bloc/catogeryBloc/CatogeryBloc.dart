@@ -19,13 +19,35 @@ class CategoryBloc extends Bloc<CategoryEvent, CategoryState> {
     required this.deleteCategoryUseCase,
   }) : super(CategoryInitial()) {
 
+
+    // on<LoadCategoriesEvent>((event, emit) async {
+    //   emit(CategoryLoading()); // Start with loading state
+    //   try {
+    //     final categories = await getAllCategoriesUseCase();
+    //     if (categories.isEmpty) {
+    //       emit(CategoryError('No categories found.'));
+    //     } else {
+    //       emit(CategoryLoaded(categories)); // Emit loaded state with categories
+    //     }
+    //   } catch (e) {
+    //     emit(CategoryError(e.toString())); // Emit error state if fetching fails
+    //   }
+    // });
+
     on<LoadCategoriesEvent>((event, emit) async {
-      emit(CategoryLoading());
+      emit(CategoryLoading()); // Start with loading state
       try {
         final categories = await getAllCategoriesUseCase();
-        emit(CategoryLoaded(categories));
+        if (categories.isEmpty) {
+          // Add a default category if none exist
+          var defaultCategory = CategoryModel(id: '1', categoryName: 'General');
+          await addCategoryUseCase(defaultCategory);
+          emit(CategoryLoaded([defaultCategory])); // Emit default category
+        } else {
+          emit(CategoryLoaded(categories)); // Emit loaded state with categories
+        }
       } catch (e) {
-        emit(CategoryError(e.toString()));
+        emit(CategoryError(e.toString())); // Emit error state if fetching fails
       }
     });
 

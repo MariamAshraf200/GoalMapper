@@ -15,7 +15,7 @@ import '../bloc/taskBloc/event.dart';
 import '../bloc/taskBloc/state.dart';
 
 class AddTaskAndUpdateScreen extends StatefulWidget {
-  final TaskEntity? existingTask;
+  final TaskDetails? existingTask;
 
   const AddTaskAndUpdateScreen({super.key, this.existingTask});
 
@@ -31,6 +31,7 @@ class _AddTaskAndUpdateScreenState extends State<AddTaskAndUpdateScreen> {
   final TextEditingController categoryController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   String selectedPriority = '';
+  String selectedCategory = '';
   late String uniqueTaskId;
   CustomColor color = CustomColor();
   bool allowNotifications = false;
@@ -59,9 +60,32 @@ class _AddTaskAndUpdateScreenState extends State<AddTaskAndUpdateScreen> {
     return null;
   }
 
+  void togglePriority(String priority) {
+    setState(() {
+      selectedPriority = priority;
+    });
+  }
+
+  Color _getPriorityColor(String priority) {
+    return selectedPriority == priority ? Colors.deepPurple : Colors.grey;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: const Center(child: Text('Add New Task')),
+        leading:  IconButton(
+          tooltip: "go back",
+          icon: const Icon(
+            Icons.arrow_back_outlined,
+            size: 35,
+          ),
+          onPressed: () {
+              Navigator.of(context).pop();
+          },
+        ),
+      ),
       body: BlocListener<TaskBloc, TaskState>(
         listener: (context, state) {
           if (state is TaskAddSuccess) {
@@ -105,9 +129,6 @@ class _AddTaskAndUpdateScreenState extends State<AddTaskAndUpdateScreen> {
                 child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                  const Text('Manage your Task',
-                      style:
-                          TextStyle(fontWeight: FontWeight.w400, fontSize: 25)),
 
                   // Title TextField
                   TextField(
@@ -119,76 +140,78 @@ class _AddTaskAndUpdateScreenState extends State<AddTaskAndUpdateScreen> {
                     ),
                   ),
 
-                  CustomTextField(
-                    controller: descriptionController,
-                    hintText: 'Description',
-                    description: true,
-                    validator: _validateTextField,
-                    readOnly: false,
-                  ),
+                  // DateFiled(
+                  //   onDateSelected: (String value) {
+                  //     selectedPriority = value;
+                  //   },
+                  //   controller: descriptionController,
+                  //   labelText: 'Description',
+                  //   validator: _validateTextField,
+                  //   readOnly: false,
+                  // ),
 
-                  CustomTextField(
-                    controller: categoryController,
-                    hintText: 'Select or Enter Category',
-                    suffixIcon: const Icon(Icons.category),
-                    onTap: () => showCategoryBottomSheet(
-                        context, categoryController, categories),
-                    readOnly: false,
-                    validator: _validateTextField,
-                  ),
+                  // DateFiled(
+                  //   controller: categoryController,
+                  //   labelText: 'Select or Enter Category',
+                  //   suffixIcon: const Icon(Icons.category),
+                  //   onTap: () => showCategoryBottomSheet(
+                  //       context, categoryController, categories),
+                  //   readOnly: false,
+                  //   validator: _validateTextField,
+                  // ),
 
-                  Row(
-                    children: [
-                      Expanded(
-                        child: CustomTextField(
-                          controller: dateController,
-                          hintText: 'dd/mm/yyyy',
-                          suffixIcon: const Icon(Icons.date_range),
-                          onTap: () async {
-                            DateTime? selectedDate = await showDatePicker(
-                              context: context,
-                              initialDate: DateTime.now(),
-                              firstDate: DateTime(2000),
-                              lastDate: DateTime(2100),
-                            );
-                            if (selectedDate != null) {
-                              dateController.text =
-                                  DateFormat('dd/MM/yyyy').format(selectedDate);
-                            }
-                          },
-                          validator: _validateTextField,
-                          readOnly: false,
-                        ),
-                      ),
-                      Expanded(
-                        child: CustomTextField(
-                          controller: timeController,
-                          hintText: 'hh:mm AM/PM',
-                          suffixIcon: const Icon(Icons.access_time),
-                          onTap: () async {
-                            TimeOfDay? selectedTime = await showTimePicker(
-                              context: context,
-                              initialTime: TimeOfDay.now(),
-                            );
-                            if (selectedTime != null) {
-                              final now = DateTime.now();
-                              final selectedDateTime = DateTime(
-                                now.year,
-                                now.month,
-                                now.day,
-                                selectedTime.hour,
-                                selectedTime.minute,
-                              );
-                              timeController.text = DateFormat('hh:mm a')
-                                  .format(selectedDateTime);
-                            }
-                          },
-                          validator: _validateTextField,
-                          readOnly: false,
-                        ),
-                      ),
-                    ],
-                  ),
+                  // Row(
+                  //   children: [
+                  //     Expanded(
+                  //       child: DateFiled(
+                  //         controller: dateController,
+                  //         labelText: 'dd/mm/yyyy',
+                  //         suffixIcon: const Icon(Icons.date_range),
+                  //         onTap: () async {
+                  //           DateTime? selectedDate = await showDatePicker(
+                  //             context: context,
+                  //             initialDate: DateTime.now(),
+                  //             firstDate: DateTime(2000),
+                  //             lastDate: DateTime(2100),
+                  //           );
+                  //           if (selectedDate != null) {
+                  //             dateController.text =
+                  //                 DateFormat('dd/MM/yyyy').format(selectedDate);
+                  //           }
+                  //         },
+                  //         validator: _validateTextField,
+                  //         readOnly: false,
+                  //       ),
+                  //     ),
+                  //     Expanded(
+                  //       child: DateFiled(
+                  //         controller: timeController,
+                  //         labelText: 'hh:mm AM/PM',
+                  //         suffixIcon: const Icon(Icons.access_time),
+                  //         onTap: () async {
+                  //           TimeOfDay? selectedTime = await showTimePicker(
+                  //             context: context,
+                  //             initialTime: TimeOfDay.now(),
+                  //           );
+                  //           if (selectedTime != null) {
+                  //             final now = DateTime.now();
+                  //             final selectedDateTime = DateTime(
+                  //               now.year,
+                  //               now.month,
+                  //               now.day,
+                  //               selectedTime.hour,
+                  //               selectedTime.minute,
+                  //             );
+                  //             timeController.text = DateFormat('hh:mm a')
+                  //                 .format(selectedDateTime);
+                  //           }
+                  //         },
+                  //         validator: _validateTextField,
+                  //         readOnly: false,
+                  //       ),
+                  //     ),
+                  //   ],
+                  // ),
 
                   SwitchListTile(
                     title: const Text("Enable Notifications"),
@@ -202,10 +225,14 @@ class _AddTaskAndUpdateScreenState extends State<AddTaskAndUpdateScreen> {
 
                   SizedBox(
                     width: double.infinity,
+                    height: 40,
                     child: ElevatedButton(
                       onPressed: () {
                         if (_formKey.currentState?.validate() ?? false) {
-                          final task = TaskEntity(
+
+                        if (_formKey.currentState!.validate()) {
+                          final task = TaskDetails(
+
                             title: titleController.text,
                             description: descriptionController.text,
                             date: dateController.text,
@@ -223,11 +250,18 @@ class _AddTaskAndUpdateScreenState extends State<AddTaskAndUpdateScreen> {
                             context.read<CategoryBloc>().add(AddCategoryEvent(categoryName:categoryController.text ));
 
                           }
+                          // Navigator.pushReplacement(
+                          //   context,
+                          //   MaterialPageRoute(
+                          //     builder: (context) => const TaskListScreen(),
+                          //   ),
+                          // );
                         }
-                      },
+                      } },
                       child: Text(widget.existingTask != null
                           ? 'Update Task'
                           : 'Add Task'),
+
                     ),
                   )
                 ]))));

@@ -15,10 +15,8 @@ class TaskInitial extends TaskState {}
 class TaskLoading extends TaskState {}
 
 class TaskLoaded extends TaskState {
-  final List<TaskEntity> tasks;
-
+  final List<TaskDetails> tasks;
   const TaskLoaded(this.tasks);
-
   @override
   List<Object?> get props => [tasks];
 }
@@ -45,9 +43,7 @@ class TaskActionSuccess extends TaskState {
 class TaskAddSuccess extends TaskState {
   final String message;
 final TaskModel task;
-
-  TaskAddSuccess(this.message, this.task);
-
+  const TaskAddSuccess(this.message, this.task);
 
   @override
   List<Object?> get props => [message,task];
