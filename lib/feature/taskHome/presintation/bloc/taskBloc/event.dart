@@ -18,7 +18,7 @@ class GetTasksByStatusEvent extends TaskEvent {
 }
 
 class AddTaskEvent extends TaskEvent {
-  final TaskEntity task;
+  final TaskDetails task;
 
   const AddTaskEvent(this.task);
 
@@ -27,7 +27,7 @@ class AddTaskEvent extends TaskEvent {
 }
 
 class UpdateTaskEvent extends TaskEvent {
-  final TaskEntity task;
+  final TaskDetails task;
 
   const UpdateTaskEvent(this.task);
 
@@ -48,7 +48,7 @@ class UpdateTaskStatusEvent extends TaskEvent {
   final String taskId;
   final String newStatus;
 
-  UpdateTaskStatusEvent(this.taskId, this.newStatus);
+  const UpdateTaskStatusEvent(this.taskId, this.newStatus);
 }
 
 class GetTasksByDateEvent extends TaskEvent {

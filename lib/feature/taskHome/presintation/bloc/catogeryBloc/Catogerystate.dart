@@ -10,6 +10,11 @@ class CategoryLoaded extends CategoryState {
   final List<CategoryModel> categories;
 
   CategoryLoaded(this.categories);
+
+  // Utility method to check if a category exists by name
+  bool containsCategory(String categoryName) {
+    return categories.any((category) => category.categoryName == categoryName);
+  }
 }
 
 class CategoryError extends CategoryState {

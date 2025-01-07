@@ -1,14 +1,17 @@
-class TaskEntity {
+
+import '../../data/model/taskModel.dart';
+
+class TaskDetails {
   final String id;
   final String title;
   final String description;
   final String date;
   final String time;
   final String priority;
-  final String status;
-  final String category; // New field for category
+  final String category;
+  String status;
 
-  TaskEntity({
+  TaskDetails({
     required this.id,
     required this.title,
     required this.description,
@@ -16,10 +19,10 @@ class TaskEntity {
     required this.time,
     required this.priority,
     required this.status,
-    required this.category, // Add category to the constructor
+    required this.category,
   });
 
-  TaskEntity copyWith({
+  TaskDetails copyWith({
     String? id,
     String? title,
     String? description,
@@ -27,9 +30,9 @@ class TaskEntity {
     String? time,
     String? priority,
     String? status,
-    String? category, // Add category to copyWith method
+    String? category,
   }) {
-    return TaskEntity(
+    return TaskDetails(
       id: id ?? this.id,
       title: title ?? this.title,
       description: description ?? this.description,
@@ -37,7 +40,12 @@ class TaskEntity {
       time: time ?? this.time,
       priority: priority ?? this.priority,
       status: status ?? this.status,
-      category: category ?? this.category, // Update category
+      category: category ?? this.category,
     );
+  }
+
+  @override
+  String toString() {
+    return 'TaskDetails(id: $id, title: $title, description: $description, date: $date, time: $time, priority: $priority, status: $status, category: $category)';
   }
 }

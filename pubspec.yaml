@@ -44,6 +44,7 @@ dependencies:
   dartz: ^0.10.1
   path_provider: ^2.0.11
   uuid: ^3.0.7
+  flutter_svg: ^2.0.10+1
 
 
 dev_dependencies:
@@ -83,6 +84,9 @@ flutter:
   # https://flutter.dev/assets-and-images/#from-packages
 
   # To add custom fonts to your application, add a fonts section here,
+  assets:
+    - assets/icons/
+    - assets/icons/svgVectors/
   # in this "flutter" section. Each entry in this list should have a
   # "family" key with the font family name, and a "fonts" key with a
   # list giving the asset and other descriptors for the font. For
