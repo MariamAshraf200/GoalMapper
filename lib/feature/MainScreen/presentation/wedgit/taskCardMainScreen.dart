@@ -1,43 +1,52 @@
-
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-class TaskCardMainScreen extends StatelessWidget {
-  final String time;
+class PlanCardCombined extends StatelessWidget {
   final String title;
-  final String description;
+  final int daysLeft;
+  final int totalDay;
+  final double completeness;
 
-  const TaskCardMainScreen({super.key, required this.time, required this.title, required this.description});
-
+  const PlanCardCombined({
+    super.key,
+    required this.title,
+    required this.daysLeft,
+    required this.totalDay,
+    required this.completeness,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Card(
       elevation: 5,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: BorderRadius.circular(12),
       ),
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Column(
-              mainAxisAlignment: MainAxisAlignment.start,
+            // Circular Progress Indicator for Days Left
+            Stack(
+              alignment: Alignment.center,
               children: [
+                SizedBox(
+                  width: 60,
+                  height: 60,
+                  child: CircularProgressIndicator(
+                    value: (totalDay - daysLeft) / totalDay, // Updated progress calculation
+                    backgroundColor: Colors.grey[300],
+                    color: Colors.deepPurple,
+                    strokeWidth: 8,
+                  ),
+                ),
+                // Days Left in the Center
                 Text(
-                  time,
+                  "$daysLeft d",
                   style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
-                    color: Colors.deepPurple,
                   ),
-                ),
-                const SizedBox(height: 8),
-                // Line
-                Container(
-                  width: 2,
-                  height: 50,
-                  color: Colors.deepPurple,
                 ),
               ],
             ),
@@ -46,6 +55,7 @@ class TaskCardMainScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  // Plan Title
                   Text(
                     title,
                     style: const TextStyle(
@@ -54,14 +64,23 @@ class TaskCardMainScreen extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 8),
-                  Text(
-                    description,
-                    style: const TextStyle(
-                      fontSize: 14,
-                      color: Colors.black54,
-                    ),
+                  // Completeness Line (Linear Progress Bar)
+                  LinearProgressIndicator(
+                    value: completeness,
+                    color: Colors.green,
+                    minHeight: 8,
                   ),
                 ],
+              ),
+            ),
+            const SizedBox(width: 16),
+            // Completion Percentage with "complete" on the next line
+            Text(
+              "${(completeness * 100).toStringAsFixed(0)}%\ncomplete",
+              textAlign: TextAlign.center, // Center align the text
+              style: const TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.bold,
               ),
             ),
           ],

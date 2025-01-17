@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import '../Widget/add_task_form.dart';
-import '../bloc/catogeryBloc/CatogeryBloc.dart';
-import '../bloc/catogeryBloc/Catogerystate.dart';
+
 
 class AddTaskScreen extends StatelessWidget {
   const AddTaskScreen({super.key});
@@ -39,26 +37,7 @@ class AddTaskScreen extends StatelessWidget {
         ),
       ),
 
-      body: BlocBuilder<CategoryBloc, CategoryState>(
-        builder: (context, state) {
-          if (state is CategoryLoading) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (state is CategoryError) {
-            return Center(
-              child: Text('Error: ${state.message}'),
-            );
-          } else if (state is CategoryLoaded) {
-            // Ensure at least one category exists
-            if (state.categories.isEmpty) {
-              return const Center(child: Text('No categories available.'));
-            }
-            return const AddTaskForm();
-
-          } else {
-            return const Center(child: Text('Loading categories...'));
-          }
-        },
-      ),
+      body:  const AddTaskForm(),
 
     );
   }

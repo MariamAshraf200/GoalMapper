@@ -20,13 +20,17 @@ class TaskModel {
   @HiveField(4)
   final String time;
 
+
   @HiveField(5)
-  final String priority;
+  final String endTime;
 
   @HiveField(6)
-  final String status;
+  final String priority;
 
   @HiveField(7)
+  final String status;
+
+  @HiveField(8)
   final String category;
 
   // Constructor
@@ -36,6 +40,7 @@ class TaskModel {
     required this.description,
     required this.date,
     required this.time,
+    required this.endTime,
     required this.priority,
     required this.status,
     required this.category,
@@ -48,6 +53,7 @@ class TaskModel {
       description: description,
       date: date,
       time: time,
+      endTime: endTime,
       priority: priority,
       status: status,
       category: category,
@@ -61,6 +67,7 @@ class TaskModel {
       description: entity.description,
       date: entity.date,
       time: entity.time,
+      endTime: entity.endTime,
       priority: entity.priority,
       status: entity.status,
       category: entity.category,
@@ -74,6 +81,7 @@ class TaskModel {
     String? description,
     String? date,
     String? time,
+    String? endTime,
     String? priority,
     String? status,
     String? category,
@@ -84,6 +92,7 @@ class TaskModel {
       description: description ?? this.description,
       date: date ?? this.date,
       time: time ?? this.time,
+      endTime: endTime?? this.endTime,
       priority: priority ?? this.priority,
       status: status ?? this.status,
       category: category ?? this.category,
@@ -92,7 +101,7 @@ class TaskModel {
 
   @override
   String toString() {
-    return 'TaskModel(id: $id, title: $title, description: $description, date: $date, time: $time, priority: $priority, status: $status, category: $category)';
+    return 'TaskModel(id: $id, title: $title, description: $description, date: $date, time: $time, endTime: $endTime,priority: $priority, status: $status, category: $category)';
   }
 }
 

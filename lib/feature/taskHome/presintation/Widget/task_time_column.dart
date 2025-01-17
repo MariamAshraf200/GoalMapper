@@ -22,7 +22,7 @@ class TaskTimeColumn extends StatelessWidget {
         // Top Time Display
         Text(
           formattedTime,
-          style: const TextStyle(color: Colors.black, fontSize: 12),
+          style: const TextStyle(fontSize: 12),
         ),
 
         // Vertical Divider
@@ -32,11 +32,11 @@ class TaskTimeColumn extends StatelessWidget {
           margin: const EdgeInsets.symmetric(vertical: 4),
           color: Colors.grey,
         ),
-
+// should take end time
         // Bottom Time Display
         Text(
           formattedTime,
-          style: const TextStyle(color: Colors.black, fontSize: 12),
+          style: const TextStyle( fontSize: 12),
         ),
       ],
     );

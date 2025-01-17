@@ -16,6 +16,8 @@ class TaskItems extends StatefulWidget {
   State<TaskItems> createState() => _TaskItemsState();
 }
 
+// confused
+
 class _TaskItemsState extends State<TaskItems> {
   final _scrollController = ScrollController();
   bool _isLoading = false;
@@ -44,7 +46,7 @@ class _TaskItemsState extends State<TaskItems> {
     return ListView.builder(
       padding: AppSpaces.calculatePaddingFromScreenWidth(context),
       controller: _scrollController,
-      itemCount: widget.tasks.length + 1,
+      itemCount: widget.tasks.length + 1,  // why +1
       itemBuilder: (context, index) {
         if (index == widget.tasks.length) {
           return _isLoading

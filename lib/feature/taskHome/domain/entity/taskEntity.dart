@@ -7,6 +7,8 @@ class TaskDetails {
   final String description;
   final String date;
   final String time;
+  final String endTime;
+
   final String priority;
   final String category;
   String status;
@@ -17,6 +19,7 @@ class TaskDetails {
     required this.description,
     required this.date,
     required this.time,
+    required this.endTime,
     required this.priority,
     required this.status,
     required this.category,
@@ -28,6 +31,7 @@ class TaskDetails {
     String? description,
     String? date,
     String? time,
+    String? endTime,
     String? priority,
     String? status,
     String? category,
@@ -38,6 +42,7 @@ class TaskDetails {
       description: description ?? this.description,
       date: date ?? this.date,
       time: time ?? this.time,
+      endTime: endTime ?? this.endTime,
       priority: priority ?? this.priority,
       status: status ?? this.status,
       category: category ?? this.category,
@@ -51,6 +56,7 @@ class TaskDetails {
       description: description,
       date: date,
       time: time,
+      endTime : endTime,
       priority: priority,
       id: id,
       status: status,
@@ -59,6 +65,6 @@ class TaskDetails {
 
   @override
   String toString() {
-    return 'TaskDetails(id: $id, title: $title, description: $description, date: $date, time: $time, priority: $priority, status: $status, category: $category)';
+    return 'TaskDetails(id: $id, title: $title, description: $description, date: $date, time: $time, , endTime: $endTime,,priority: $priority, status: $status, category: $category)';
   }
 }

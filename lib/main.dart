@@ -4,30 +4,25 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'core/di.dart';
 import 'core/constants/app_colors.dart';
-import 'core/hiveServices.dart';
-import 'feature/taskHome/data/model/categoryModel.dart';
-import 'feature/taskHome/data/model/taskModel.dart';
+import 'feature/MainScreen/presentation/screen/homeScreen.dart';
 import 'feature/taskHome/presintation/bloc/catogeryBloc/CatogeryBloc.dart';
 import 'feature/taskHome/presintation/bloc/catogeryBloc/Catogeryevent.dart';
 import 'feature/taskHome/presintation/bloc/taskBloc/bloc.dart';
-import 'feature/taskHome/presintation/screen/taskTrack.dart';
-
-
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  //final hiveService = HiveService();
- // await hiveService.initHive();
+  // Initialize Hive
   await Hive.initFlutter();
 
-
-  // Initialize GetIt
+  // Initialize GetIt (Dependency Injection)
   await init();
+
+  // Run the app
   runApp(const MyApp());
 }
 
-final navigatorKey = GlobalKey<NavigatorState>();
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>(); // Global navigator key
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -46,7 +41,7 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
         title: "Task Tracker",
         debugShowCheckedModeBanner: false,
-        navigatorKey: navigatorKey,
+        navigatorKey: navigatorKey, // Pass the global navigatorKey here
         theme: ThemeData(
           colorScheme: ColorScheme.fromSeed(seedColor: AppColors.defaultColor),
           primaryColor: AppColors.defaultColor,
@@ -65,10 +60,10 @@ class MyApp extends StatelessWidget {
             ),
           ),
         ),
-        themeMode: ThemeMode.light, // Set default theme mode
+        themeMode: ThemeMode.dark, // Set default theme mode
         locale: const Locale("en"),
 
-        home: const TaskTrack(), // Replace with your actual home widget
+        home: const HomeScreen(), // Replace with your actual home widget
       ),
     );
   }

@@ -169,6 +169,7 @@ class _AddTaskFormState extends State<AddTaskForm>
       description: _taskDescription ?? '',
       date: formattedDate,
       time: formattedStartTime,
+      endTime: formattedDate,
       priority: _selectedPriority,
       category: _selectedCategory ?? 'General',
       status: 'to do',

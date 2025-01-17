@@ -32,7 +32,6 @@ class PrioritySelector extends StatelessWidget {
               label: Text(
                 priority,
                 style: TextStyle(
-                  color: isSelected ? Colors.white : Colors.black,
                   fontWeight: FontWeight.bold,
                 ),
               ),

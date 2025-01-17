@@ -3,8 +3,8 @@ import 'package:uuid/uuid.dart';
 
 import '../../../data/model/categoryModel.dart';
 import '../../../domain/usecse/catogery/DeleteCategoryUseCase.dart';
-import '../../../domain/usecse/catogery/GetAllCategoriesUseCase].dart';
 import '../../../domain/usecse/catogery/addCatogeriesUseCase.dart';
+import '../../../domain/usecse/catogery/getAllCategoriesUseCase.dart';
 import 'Catogeryevent.dart';
 import 'Catogerystate.dart';
 
