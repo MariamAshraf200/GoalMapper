@@ -162,6 +162,7 @@ class _AddTaskFormState extends State<AddTaskForm>
 
     final formattedDate = DateFormat('dd/MM/yyyy').format(_taskDate!);
     final formattedStartTime = _taskStartTime!.format(context);
+    final formattedEndTime = _taskEndTime!.format(context);
 
     final task = TaskDetails(
       id: const Uuid().v4(),
@@ -169,7 +170,7 @@ class _AddTaskFormState extends State<AddTaskForm>
       description: _taskDescription ?? '',
       date: formattedDate,
       time: formattedStartTime,
-      endTime: formattedDate,
+      endTime: formattedEndTime,
       priority: _selectedPriority,
       category: _selectedCategory ?? 'General',
       status: 'to do',

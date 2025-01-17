@@ -4,7 +4,7 @@ import 'package:intl/intl.dart';
 import '../../domain/entity/taskEntity.dart';
 
 class TaskTimeColumn extends StatelessWidget {
-  final TaskDetails task; // Replace with your actual task model
+  final TaskDetails task;
 
   const TaskTimeColumn({
     super.key,
@@ -13,15 +13,19 @@ class TaskTimeColumn extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Parse and format the time
-    final DateTime parsedTime = _parseTaskTime(task.time);
-    final String formattedTime = _formatTaskTime(parsedTime);
+    // Parse and format the start time
+    final DateTime parsedStartTime = _parseTaskTime(task.time);
+    final String formattedStartTime = _formatTaskTime(parsedStartTime);
+
+    // Parse and format the end time
+    final DateTime parsedEndTime = _parseTaskTime(task.endTime);
+    final String formattedEndTime = _formatTaskTime(parsedEndTime);
 
     return Column(
       children: [
-        // Top Time Display
+        // Top Time Display (Start Time)
         Text(
-          formattedTime,
+          formattedStartTime,
           style: const TextStyle(fontSize: 12),
         ),
 
@@ -32,11 +36,11 @@ class TaskTimeColumn extends StatelessWidget {
           margin: const EdgeInsets.symmetric(vertical: 4),
           color: Colors.grey,
         ),
-// should take end time
-        // Bottom Time Display
+
+        // Bottom Time Display (End Time)
         Text(
-          formattedTime,
-          style: const TextStyle( fontSize: 12),
+          formattedEndTime,
+          style: const TextStyle(fontSize: 12),
         ),
       ],
     );
