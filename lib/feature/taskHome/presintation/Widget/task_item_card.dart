@@ -25,20 +25,21 @@ class _TaskItemCardState extends State<TaskItemCard>
   @override
   void initState() {
     super.initState();
-    // Initialize isCompleted based on the task's current status
-    isCompleted = widget.task.status == 'Done';
+    isCompleted = widget.task.status == 'to do';
+
   }
-
   void toggleCompletion() {
-    final newStatus = isCompleted ? 'To Do' : 'Done';
+    final newStatus = isCompleted ? 'to do' : 'Done';
 
+    // Dispatch event to update the status
     context.read<TaskBloc>().add(UpdateTaskStatusEvent(widget.task.id, newStatus));
 
+    // Update the UI state
     setState(() {
       isCompleted = !isCompleted;
     });
 
-    // Show a success message
+    // Show feedback
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text('Task marked as $newStatus'),
@@ -46,6 +47,7 @@ class _TaskItemCardState extends State<TaskItemCard>
       ),
     );
   }
+
 
 
   Color getPriorityColor(String priority) {
@@ -126,8 +128,7 @@ class _TaskItemCardState extends State<TaskItemCard>
                       onTap: toggleCompletion,
                       child: AnimatedSwitcher(
                         duration: const Duration(milliseconds: 600),
-                        transitionBuilder:
-                            (Widget child, Animation<double> animation) {
+                        transitionBuilder: (Widget child, Animation<double> animation) {
                           return ScaleTransition(
                             scale: animation,
                             child: child,
@@ -138,9 +139,10 @@ class _TaskItemCardState extends State<TaskItemCard>
                           AppAssets.rightCheckBox,
                           width: 30.0,
                           height: 30.0,
-
+                          key: const ValueKey('completed'),
                         )
                             : Container(
+                          key: const ValueKey('notCompleted'),
                           width: 30,
                           height: 30,
                           decoration: BoxDecoration(
@@ -154,6 +156,7 @@ class _TaskItemCardState extends State<TaskItemCard>
                         ),
                       ),
                     ),
+
                   ],
                 ),
               ],
