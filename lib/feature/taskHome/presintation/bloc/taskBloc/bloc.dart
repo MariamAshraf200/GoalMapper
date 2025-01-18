@@ -1,8 +1,6 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:intl/intl.dart';
+import 'package:mapperapp/feature/taskHome/domain/usecse/task/getTaskByPriorityUseCase.dart';
 import 'package:mapperapp/feature/taskHome/presintation/bloc/taskBloc/state.dart';
-import '../../../../../core/hiveServices.dart';
 import '../../../domain/entity/task_filters.dart';
 import '../../../domain/usecse/task/addUsecase.dart';
 import '../../../domain/usecse/task/deleteUsecase.dart';
@@ -20,6 +18,7 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
   final AddTaskUseCase addTaskUseCase;
   final UpdateTaskUseCase updateTaskUseCase;
   final UpdateTaskStatusUseCase updateTaskStatusUseCase;
+  final GetTasksByPriorityUseCase getTasksByPriorityUseCase;
   final DeleteTaskUseCase deleteTaskUseCase;
   final GetTasksByDateUseCase getTasksByDateUseCase;
   final FilterTasksUseCase filterTasksUseCase;
@@ -27,6 +26,7 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
   TaskBloc({
     required this.getAllTasksUseCase,
     required this.getTasksByStatusUseCase,
+    required this.getTasksByPriorityUseCase,
     required this.addTaskUseCase,
     required this.updateTaskUseCase,
     required this.updateTaskStatusUseCase,
@@ -36,6 +36,7 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
   }) : super(TaskInitial()) {
     on<GetAllTasksEvent>(_onGetAllTasks);
     on<GetTasksByStatusEvent>(_onGetTasksByStatus);
+    on<GetTasksByPriorityEvent>(_onGetTasksByPriority);
     on<GetTasksByDateEvent>(_onGetTasksByDate);
     on<AddTaskEvent>(_onAddTask);
     on<UpdateTaskEvent>(_onUpdateTask);
@@ -73,6 +74,23 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
       ));
     } catch (e) {
       emit(TaskError("Failed to load tasks by status: $e"));
+    }
+  }
+
+
+  Future<void> _onGetTasksByPriority(
+      GetTasksByPriorityEvent event,
+      Emitter<TaskState> emit,
+      ) async {
+    emit(TaskLoading());
+    try {
+      final tasks = await getTasksByPriorityUseCase(event.priority);
+      emit(TaskLoaded(
+        tasks,
+        filters: TaskFilters(date: '', priority: event.priority, status: null),
+      ));
+    } catch (e) {
+      emit(TaskError("Failed to load tasks by priority: $e"));
     }
   }
 

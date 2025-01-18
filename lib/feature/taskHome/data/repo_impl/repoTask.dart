@@ -1,8 +1,6 @@
-import 'package:hive/hive.dart';
 import '../../domain/entity/taskEntity.dart';
 import '../../domain/repo_interface/repoTask.dart';
 import '../dataSource/abstract_data_scource.dart';
-import '../dataSource/localData.dart';
 import '../model/taskModel.dart';
 
 class TaskRepositoryImpl implements TaskRepository {
@@ -29,6 +27,17 @@ class TaskRepositoryImpl implements TaskRepository {
       throw Exception("Error loading tasks with status '$status': $e");
     }
   }
+
+  @override
+  Future<List<TaskDetails>> getTasksByPriority(String priority) async {
+    try {
+      final taskModels = await dataSource.getTasksByPriority(priority);
+      return taskModels.map((taskModel) => taskModel.toEntity()).toList();
+    } catch (e) {
+      throw Exception("Error loading tasks with status '$priority': $e");
+    }
+  }
+
 
   @override
   Future<List<TaskDetails>> getTasksByDate(String date) async {

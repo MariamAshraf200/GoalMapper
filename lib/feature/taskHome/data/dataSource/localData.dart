@@ -39,5 +39,10 @@ class HiveTaskLocalDataSource implements TaskLocalDataSource {
   Future<List<TaskModel>> getTasksByDate(String date) async {
     return taskBox.values.where((task) => task.date == date).toList();
   }
+
+  @override
+  Future<List<TaskModel>> getTasksByPriority(String priority) async {
+    return taskBox.values.where((task) => task.priority == priority).toList();
+  }
 }
 

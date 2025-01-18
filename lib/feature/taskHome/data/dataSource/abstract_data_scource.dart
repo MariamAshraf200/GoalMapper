@@ -8,4 +8,6 @@ abstract class TaskLocalDataSource {
   Future<void> updateTask(TaskModel task);
   Future<List<TaskModel>> getTasksByStatus(String status);
   Future<List<TaskModel>> getTasksByDate(String date);
+  Future<List<TaskModel>> getTasksByPriority(String priority);
+
 }

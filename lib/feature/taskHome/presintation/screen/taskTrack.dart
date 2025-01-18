@@ -10,7 +10,6 @@ import '../bloc/taskBloc/event.dart';
 import '../bloc/taskBloc/state.dart';
 import 'add_task_screen.dart';
 
-
 class TaskTrack extends StatefulWidget {
   const TaskTrack({super.key});
 
@@ -33,29 +32,46 @@ class _TaskTrackState extends State<TaskTrack> {
   void _onDateSelected(DateTime date) {
     final formattedDate = DateFormat('dd/MM/yyyy').format(date);
     if (formattedDate != selectedDate) {
+      context.read<TaskBloc>().add(GetTasksByDateEvent(selectedDate));
       setState(() => selectedDate = formattedDate);
+
       _triggerFilterEvent();
     }
   }
 
   void _onPrioritySelected(String? priority) {
     setState(() => selectedPriority = priority);
+
+    if (selectedPriority == null) {
+      context.read<TaskBloc>().add(GetAllTasksEvent());
+    } else {
+      context.read<TaskBloc>().add(GetTasksByPriorityEvent(selectedPriority!));
+    }
     _triggerFilterEvent();
   }
+
 
   void _onStatusSelected(String? status) {
     setState(() => selectedStatus = status);
+
+    if (selectedStatus == null) {
+      context.read<TaskBloc>().add(GetAllTasksEvent());
+    } else {
+      context.read<TaskBloc>().add(GetTasksByStatusEvent(selectedStatus!));
+    }
+
     _triggerFilterEvent();
   }
 
+
   void _triggerFilterEvent() {
     context.read<TaskBloc>().add(
-      FilterTasksEvent(
-        date: selectedDate,
-        priority: selectedPriority,
-        status: selectedStatus,
-      ),
-    );
+          FilterTasksEvent(
+            date: selectedDate,
+            priority: selectedPriority,
+            status: selectedStatus,
+          ),
+        );
   }
 
   @override
@@ -93,7 +109,8 @@ class _TaskTrackState extends State<TaskTrack> {
                   Container(
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      border: Border.all(color: AppColors.secondaryColor, width: 2),
+                      border:
+                          Border.all(color: AppColors.secondaryColor, width: 2),
                     ),
                     child: IconButton(
                       onPressed: () {
@@ -113,8 +130,6 @@ class _TaskTrackState extends State<TaskTrack> {
                 ],
               ),
               const SizedBox(height: 20),
-
-
 
               // Date Picker
               DataFormat(
@@ -137,7 +152,8 @@ class _TaskTrackState extends State<TaskTrack> {
                           ),
                         ],
                       ),
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 12, vertical: 8),
                       child: Row(
                         children: [
                           const Icon(Icons.filter_list, color: Colors.blue),
@@ -147,15 +163,18 @@ class _TaskTrackState extends State<TaskTrack> {
                               value: selectedPriority,
                               hint: const Text(
                                 "Select Priority",
-                                style: TextStyle(fontSize: 14, color: Colors.grey),
+                                style:
+                                    TextStyle(fontSize: 14, color: Colors.grey),
                               ),
                               isExpanded: true,
-                              underline: const SizedBox(), // Remove the underline
+                              underline:
+                                  const SizedBox(), // Remove the underline
                               items: ['High', 'Medium', 'Low', null]
                                   .map((priority) => DropdownMenuItem<String>(
-                                value: priority,
-                                child: Text(priority ?? "All Priorities"),
-                              ))
+                                        value: priority,
+                                        child:
+                                            Text(priority ?? "All Priorities"),
+                                      ))
                                   .toList(),
                               onChanged: _onPrioritySelected,
                             ),
@@ -178,7 +197,8 @@ class _TaskTrackState extends State<TaskTrack> {
                           ),
                         ],
                       ),
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 12, vertical: 8),
                       child: Row(
                         children: [
                           const Icon(Icons.task_alt, color: Colors.green),
@@ -188,15 +208,17 @@ class _TaskTrackState extends State<TaskTrack> {
                               value: selectedStatus,
                               hint: const Text(
                                 "Select Status",
-                                style: TextStyle(fontSize: 14, color: Colors.grey),
+                                style:
+                                    TextStyle(fontSize: 14, color: Colors.grey),
                               ),
                               isExpanded: true,
-                              underline: const SizedBox(), // Remove the underline
+                              underline:
+                                  const SizedBox(), // Remove the underline
                               items: ['Done', 'Pending', 'to do', null]
                                   .map((status) => DropdownMenuItem<String>(
-                                value: status,
-                                child: Text(status ?? "All Statuses"),
-                              ))
+                                        value: status,
+                                        child: Text(status ?? "All Statuses"),
+                                      ))
                                   .toList(),
                               onChanged: _onStatusSelected,
                             ),
@@ -218,11 +240,11 @@ class _TaskTrackState extends State<TaskTrack> {
                     } else if (state is TaskLoaded) {
                       return state.tasks.isEmpty
                           ? const Center(
-                        child: Text(
-                          "No tasks match the filters.",
-                          style: TextStyle(fontSize: 18),
-                        ),
-                      )
+                              child: Text(
+                                "No tasks match the filters.",
+                                style: TextStyle(fontSize: 18),
+                              ),
+                            )
                           : TaskItems(tasks: state.tasks);
                     } else if (state is TaskError) {
                       return Center(

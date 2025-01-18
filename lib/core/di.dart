@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:get_it/get_it.dart';
 import '../feature/taskHome/data/dataSource/abstract_data_scource.dart';
 import '../feature/taskHome/data/dataSource/catogeryLocalData.dart';
@@ -15,6 +14,7 @@ import '../feature/taskHome/domain/usecse/task/addUsecase.dart';
 import '../feature/taskHome/domain/usecse/task/deleteUsecase.dart';
 import '../feature/taskHome/domain/usecse/task/filter_tasks.dart';
 import '../feature/taskHome/domain/usecse/task/getTaskByDateUsecase.dart';
+import '../feature/taskHome/domain/usecse/task/getTaskByPriorityUseCase.dart';
 import '../feature/taskHome/domain/usecse/task/getTaskBystatus.dart';
 import '../feature/taskHome/domain/usecse/task/getUsecase.dart';
 import '../feature/taskHome/domain/usecse/task/updateStatues.dart';
@@ -60,6 +60,7 @@ Future<void> init() async {
     sl.registerLazySingleton(() => DeleteTaskUseCase(sl<TaskRepository>()));
     sl.registerLazySingleton(() => UpdateTaskUseCase(sl<TaskRepository>()));
     sl.registerLazySingleton(() => GetTasksByStatusUseCase(sl<TaskRepository>()));
+    sl.registerLazySingleton(() => GetTasksByPriorityUseCase(sl<TaskRepository>()));
     sl.registerLazySingleton(() => UpdateTaskStatusUseCase(sl<TaskRepository>()));
     sl.registerLazySingleton(() => GetTasksByDateUseCase(sl<TaskRepository>()));
     sl.registerLazySingleton(() => FilterTasksUseCase(sl<TaskRepository>()));
@@ -76,6 +77,7 @@ Future<void> init() async {
       updateTaskUseCase: sl<UpdateTaskUseCase>(),
       deleteTaskUseCase: sl<DeleteTaskUseCase>(),
       getTasksByStatusUseCase: sl<GetTasksByStatusUseCase>(),
+      getTasksByPriorityUseCase: sl<GetTasksByPriorityUseCase>(),
       updateTaskStatusUseCase: sl<UpdateTaskStatusUseCase>(),
       getTasksByDateUseCase: sl<GetTasksByDateUseCase>(),
       filterTasksUseCase: sl<FilterTasksUseCase>(),

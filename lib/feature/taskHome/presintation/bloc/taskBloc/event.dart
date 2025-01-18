@@ -17,6 +17,14 @@ class GetTasksByStatusEvent extends TaskEvent {
   const GetTasksByStatusEvent(this.status);
 }
 
+class GetTasksByPriorityEvent extends TaskEvent {
+  final String priority;
+
+  const GetTasksByPriorityEvent(this.priority);
+
+}
+
+
 class AddTaskEvent extends TaskEvent {
   final TaskDetails task;
 
