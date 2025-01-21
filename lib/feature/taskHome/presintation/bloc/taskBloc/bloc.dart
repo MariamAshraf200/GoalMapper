@@ -156,18 +156,18 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
       emit(TaskError("Failed to filter tasks: $e"));
     }
   }
-
   Future<void> _onUpdateTaskStatus(
       UpdateTaskStatusEvent event,
       Emitter<TaskState> emit,
       ) async {
-    try {
-      // Optimistically update the state
-      if (state is TaskLoaded) {
-        final currentState = state as TaskLoaded;
+    TaskLoaded? previousState;
 
-        // Find the task and update its status
-        final updatedTasks = currentState.tasks.map((task) {
+    try {
+      if (state is TaskLoaded) {
+        previousState = state as TaskLoaded;
+
+        // Optimistically update the state
+        final updatedTasks = previousState.tasks.map((task) {
           if (task.id == event.taskId) {
             return task.copyWith(status: event.newStatus);
           }
@@ -176,16 +176,21 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
 
         emit(TaskLoaded(
           updatedTasks,
-          filters: currentState.filters,
+          filters: previousState.filters,
         ));
       }
 
-      // Perform the actual update in the repository
+      // Perform the actual update
       await updateTaskStatusUseCase(event.taskId, event.newStatus);
     } catch (e) {
+      // Revert to the previous state on error
+      if (previousState != null) {
+        emit(previousState);
+      }
       emit(TaskError("Failed to update task status: $e"));
     }
   }
+
 
 
   Future<void> _onUpdateTask(
