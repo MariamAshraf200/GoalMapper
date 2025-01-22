@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:mapperapp/feature/taskHome/presintation/Widget/upadte_task_form.dart';
 import 'package:mapperapp/feature/taskHome/presintation/bloc/taskBloc/event.dart';
 import 'package:mapperapp/feature/taskHome/presintation/Widget/task_item_card.dart';
-import 'package:mapperapp/feature/taskHome/presintation/screen/taskTrack.dart';
 import '../../domain/entity/taskEntity.dart';
 import '../bloc/taskBloc/bloc.dart';
 
@@ -45,7 +45,11 @@ class _TaskItemsState extends State<TaskItems> {
   }
 
   void _updateTask(BuildContext context, TaskDetails task) {
-
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => UpdateTaskForm(task: task),
+        ));
   }
 
   @override

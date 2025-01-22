@@ -204,16 +204,36 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
       emit(TaskError("Failed to update task: $e"));
     }
   }
-
   Future<void> _onDeleteTask(
       DeleteTaskEvent event,
       Emitter<TaskState> emit,
       ) async {
+    TaskLoaded? previousState;
+
     try {
+      if (state is TaskLoaded) {
+        previousState = state as TaskLoaded;
+
+        final updatedTasks = previousState.tasks.where((task) {
+          return task.id != event.taskId;
+        }).toList();
+
+        emit(TaskLoaded(updatedTasks, filters: previousState.filters));
+      }
+
       await deleteTaskUseCase(event.taskId);
-      emit(const TaskActionSuccess("Task deleted successfully."));
+
+      final tasks = await getTasksByDateUseCase(previousState?.filters.date ?? '');
+      final filteredTasks = tasks.where((task) {
+        final matchesStatus = previousState?.filters.status == null || task.status == previousState?.filters.status;
+        final matchesPriority = previousState?.filters.priority == null || task.priority == previousState?.filters.priority;
+        return matchesStatus && matchesPriority;
+      }).toList();
+
+      emit(TaskLoaded(filteredTasks, filters: previousState?.filters ?? TaskFilters(date: '', priority: null, status: null)));
     } catch (e) {
       emit(TaskError("Failed to delete task: $e"));
     }
   }
+
 }
