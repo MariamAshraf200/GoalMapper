@@ -237,9 +237,12 @@ class _UpdateTaskFormState extends State<UpdateTaskForm>
       return;
     }
 
+    // Format the date if provided
     final formattedDate = _taskDate != null
         ? DateFormat('dd/MM/yyyy').format(_taskDate!)
         : '';
+
+    // Optional: Format the start and end times if provided
     final formattedStartTime = _taskStartTime?.format(context) ?? '';
     final formattedEndTime = _taskEndTime?.format(context) ?? '';
 
@@ -247,18 +250,23 @@ class _UpdateTaskFormState extends State<UpdateTaskForm>
       title: _taskTitleController.text.trim(),
       description: _taskDescriptionController.text.trim(),
       date: formattedDate,
-      time: formattedStartTime,
-      endTime: formattedEndTime,
+      time: formattedStartTime.isNotEmpty ? formattedStartTime : null, // Set time to null if empty
+      endTime: formattedEndTime.isNotEmpty ? formattedEndTime : null,
       priority: _selectedPriority,
       category: _selectedCategory ?? 'General',
+      status: 'to do',
     );
 
+    // Dispatch the event to update the task
     context.read<TaskBloc>().add(UpdateTaskEvent(updatedTask));
 
+    // Show success message
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text('Task updated successfully!')),
     );
 
+    // Close the form
     Navigator.of(context).pop();
   }
+
 }

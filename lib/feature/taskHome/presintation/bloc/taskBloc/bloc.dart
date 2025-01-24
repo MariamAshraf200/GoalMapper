@@ -199,18 +199,33 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
   }
 
 
-
   Future<void> _onUpdateTask(
       UpdateTaskEvent event,
       Emitter<TaskState> emit,
       ) async {
+    emit(TaskLoading());
     try {
+      // Perform the task update
       await updateTaskUseCase(event.task);
-      emit(const TaskActionSuccess("Task updated successfully."));
+
+      // Fetch the updated list of tasks for the same date as the updated task
+      final updatedTasks = await getTasksByDateUseCase(event.task.date);
+
+      // Emit the updated tasks with existing filters
+      emit(TaskLoaded(
+        updatedTasks,
+        filters: TaskFilters(
+          date: event.task.date,
+          priority: null, // Update based on current filter logic
+          status: null, // Update based on current filter logic
+        ),
+      ));
     } catch (e) {
       emit(TaskError("Failed to update task: $e"));
     }
   }
+
+
   Future<void> _onDeleteTask(
       DeleteTaskEvent event,
       Emitter<TaskState> emit,
