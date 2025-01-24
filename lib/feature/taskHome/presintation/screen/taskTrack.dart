@@ -26,7 +26,10 @@ class _TaskTrackState extends State<TaskTrack> {
   void initState() {
     super.initState();
     selectedDate = DateFormat('dd/MM/yyyy').format(DateTime.now());
-    context.read<TaskBloc>().add(FilterTasksEvent(date: selectedDate));
+    context.read<TaskBloc>().add(FilterTasksEvent(
+        date: selectedDate,
+        status: selectedStatus,
+        priority: selectedPriority));
   }
 
   void _onDateSelected(DateTime date) {
@@ -50,7 +53,6 @@ class _TaskTrackState extends State<TaskTrack> {
     _triggerFilterEvent();
   }
 
-
   void _onStatusSelected(String? status) {
     setState(() => selectedStatus = status);
 
@@ -62,7 +64,6 @@ class _TaskTrackState extends State<TaskTrack> {
 
     _triggerFilterEvent();
   }
-
 
   void _triggerFilterEvent() {
     context.read<TaskBloc>().add(

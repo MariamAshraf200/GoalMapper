@@ -183,7 +183,6 @@ class _AddTaskFormState extends State<AddTaskForm>
     );
 
     context.read<TaskBloc>().add(AddTaskEvent(task));
-
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text('Task added successfully!')),
     );

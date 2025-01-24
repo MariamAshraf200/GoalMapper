@@ -116,34 +116,40 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
       ) async {
     emit(TaskLoading());
     try {
+      // Add the new task
       await addTaskUseCase(event.task);
 
+      // Fetch tasks for the same date
       final tasksForDate = await getTasksByDateUseCase(event.task.date);
       emit(TaskLoaded(
         tasksForDate,
-        filters: TaskFilters(date: event.task.date, priority: null, status: null),
+        filters: TaskFilters(
+          date: event.task.date,
+          priority: event.task.priority,
+          status: event.task.status,
+        ),
       ));
     } catch (e) {
-      emit(TaskError("Failed to add task: $e"));
+      emit(TaskError("Failed to add and filter tasks: $e"));
     }
   }
-
   Future<void> _onFilterTasks(
       FilterTasksEvent event,
       Emitter<TaskState> emit,
       ) async {
     emit(TaskLoading());
     try {
+      // Fetch tasks for the specified date
       final tasksForDate = await getTasksByDateUseCase(event.date);
 
+      // Filter tasks based on priority and status enums
       final filteredTasks = tasksForDate.where((task) {
-        final matchesPriority =
-            event.priority == null || task.priority == event.priority;
-        final matchesStatus =
-            event.status == null || task.status == event.status;
+        final matchesPriority = event.priority == null || task.priority == event.priority;
+        final matchesStatus = event.status == null || task.status == event.status;
         return matchesPriority && matchesStatus;
       }).toList();
 
+      // Emit the filtered tasks and applied filters
       emit(TaskLoaded(
         filteredTasks,
         filters: TaskFilters(
@@ -156,6 +162,7 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
       emit(TaskError("Failed to filter tasks: $e"));
     }
   }
+
   Future<void> _onUpdateTaskStatus(
       UpdateTaskStatusEvent event,
       Emitter<TaskState> emit,
@@ -237,3 +244,5 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
   }
 
 }
+enum TaskPriority { Low, Medium, High }
+enum TaskStatus { toDo, pending, Done }
