@@ -13,13 +13,11 @@ class TaskTimeColumn extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Parse and format the start time
-    final DateTime parsedStartTime = _parseTaskTime(task.time);
-    final String formattedStartTime = _formatTaskTime(parsedStartTime);
+    // Parse and format the start time or return an empty space
+    final String formattedStartTime = _parseAndFormatTaskTime(task.time);
 
-    // Parse and format the end time
-    final DateTime parsedEndTime = _parseTaskTime(task.endTime);
-    final String formattedEndTime = _formatTaskTime(parsedEndTime);
+    // Parse and format the end time or return an empty space
+    final String formattedEndTime = _parseAndFormatTaskTime(task.endTime);
 
     return Column(
       children: [
@@ -46,13 +44,19 @@ class TaskTimeColumn extends StatelessWidget {
     );
   }
 
-  // Parse the time from the task's string
-  DateTime _parseTaskTime(String time) {
+  // Parse and format the time from the task's string
+  String _parseAndFormatTaskTime(String? time) {
+    if (time == null || time.trim().isEmpty) {
+      // Return an empty space if time is null or empty
+      return ' ';
+    }
     try {
-      return DateFormat('hh:mm a').parseStrict(time);
+      // Parse the time string
+      final DateTime parsedTime = DateFormat('hh:mm a').parseStrict(time);
+      return _formatTaskTime(parsedTime);
     } catch (e) {
-      // Fallback to current time if parsing fails
-      return DateTime.now();
+      // Return an empty space if parsing fails
+      return ' ';
     }
   }
 

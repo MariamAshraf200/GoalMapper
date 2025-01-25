@@ -176,7 +176,7 @@ class _AddTaskFormState extends State<AddTaskForm>
       description: _taskDescriptionController.text.trim(),
       date: formattedDate,
       time: formattedStartTime,
-      endTime: formattedEndTime??' ',
+      endTime: formattedEndTime?? ' ',
       priority: _selectedPriority,
       category: _selectedCategory ?? 'General',
       status: 'to do',

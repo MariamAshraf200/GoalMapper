@@ -2,7 +2,6 @@ import 'package:flutter/foundation.dart';
 import 'package:hive/hive.dart';
 
 import '../../../../core/hiveServices.dart';
-import '../../../../core/util/widgets/error_dilog.dart';
 import '../model/categoryModel.dart';
 
 class HiveCategoryLocalDataSource {
@@ -22,7 +21,6 @@ class HiveCategoryLocalDataSource {
       );
 
       if (existingCategory) {
-        showErrorDialog('Category "${category.categoryName}" already exists.');
         return; // Exit the function without adding a duplicate
       }
 
@@ -32,7 +30,6 @@ class HiveCategoryLocalDataSource {
     } catch (e) {
       print('Error adding category: $e');
       // Show the error dialog in case of an exception
-      showErrorDialog('Error adding category: $e');
       rethrow;
     }
   }
