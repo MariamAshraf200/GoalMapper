@@ -1,11 +1,13 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:mapperapp/feature/taskHome/domain/usecse/task/getTaskByPriorityUseCase.dart';
 import 'package:mapperapp/feature/taskHome/presintation/bloc/taskBloc/state.dart';
+
+import '../../../domain/entity/taskEntity.dart';
 import '../../../domain/entity/task_filters.dart';
 import '../../../domain/usecse/task/addUsecase.dart';
 import '../../../domain/usecse/task/deleteUsecase.dart';
 import '../../../domain/usecse/task/filter_tasks.dart';
 import '../../../domain/usecse/task/getTaskByDateUsecase.dart';
+import '../../../domain/usecse/task/getTaskByPriorityUseCase.dart';
 import '../../../domain/usecse/task/getTaskBystatus.dart';
 import '../../../domain/usecse/task/getUsecase.dart';
 import '../../../domain/usecse/task/updateStatues.dart';
@@ -45,6 +47,15 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
     on<FilterTasksEvent>(_onFilterTasks);
   }
 
+  Future<List<TaskDetails>> _fetchAndFilterTasks(TaskFilters? filters) async {
+    final tasks = await getTasksByDateUseCase(filters?.date ?? '');
+    return tasks.where((task) {
+      final matchesPriority = filters?.priority == null || task.priority == filters?.priority;
+      final matchesStatus = filters?.status == null || task.status == filters?.status;
+      return matchesPriority && matchesStatus;
+    }).toList();
+  }
+
   Future<void> _onGetAllTasks(
       GetAllTasksEvent event,
       Emitter<TaskState> emit,
@@ -52,10 +63,7 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
     emit(TaskLoading());
     try {
       final tasks = await getAllTasksUseCase();
-      emit(TaskLoaded(
-        tasks,
-        filters: TaskFilters(date: '', priority: null, status: null),
-      ));
+      emit(TaskLoaded(tasks, filters: TaskFilters(date: '', priority: null, status: null)));
     } catch (e) {
       emit(TaskError("Failed to load tasks: $e"));
     }
@@ -76,7 +84,6 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
       emit(TaskError("Failed to load tasks by status: $e"));
     }
   }
-
 
   Future<void> _onGetTasksByPriority(
       GetTasksByPriorityEvent event,
@@ -110,56 +117,100 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
     }
   }
 
-  Future<void> _onAddTask(
-      AddTaskEvent event,
-      Emitter<TaskState> emit,
-      ) async {
-    emit(TaskLoading());
-    try {
-      // Add the new task
-      await addTaskUseCase(event.task);
-
-      // Fetch tasks for the same date
-      final tasksForDate = await getTasksByDateUseCase(event.task.date);
-      emit(TaskLoaded(
-        tasksForDate,
-        filters: TaskFilters(
-          date: event.task.date,
-          priority: event.task.priority,
-          status: event.task.status,
-        ),
-      ));
-    } catch (e) {
-      emit(TaskError("Failed to add and filter tasks: $e"));
-    }
-  }
   Future<void> _onFilterTasks(
       FilterTasksEvent event,
       Emitter<TaskState> emit,
       ) async {
     emit(TaskLoading());
     try {
-      // Fetch tasks for the specified date
-      final tasksForDate = await getTasksByDateUseCase(event.date);
-
-      // Filter tasks based on priority and status enums
-      final filteredTasks = tasksForDate.where((task) {
-        final matchesPriority = event.priority == null || task.priority == event.priority;
-        final matchesStatus = event.status == null || task.status == event.status;
-        return matchesPriority && matchesStatus;
-      }).toList();
-
-      // Emit the filtered tasks and applied filters
+      final filteredTasks = await _fetchAndFilterTasks(TaskFilters(
+        date: event.date,
+        priority: event.priority,
+        status: event.status,
+      ));
       emit(TaskLoaded(
         filteredTasks,
-        filters: TaskFilters(
-          date: event.date,
-          priority: event.priority,
-          status: event.status,
-        ),
+        filters: TaskFilters(date: event.date, priority: event.priority, status: event.status),
       ));
     } catch (e) {
       emit(TaskError("Failed to filter tasks: $e"));
+    }
+  }
+
+  Future<void> _onAddTask(
+      AddTaskEvent event,
+      Emitter<TaskState> emit,
+      ) async {
+    TaskLoaded? previousState;
+
+    try {
+      if (state is TaskLoaded) {
+        previousState = state as TaskLoaded;
+        final updatedTasks = List<TaskDetails>.from(previousState.tasks)..add(event.task);
+        emit(TaskLoaded(updatedTasks, filters: previousState.filters));
+      }
+
+      await addTaskUseCase(event.task);
+
+      final tasks = await _fetchAndFilterTasks(previousState?.filters);
+      emit(TaskLoaded(tasks, filters: previousState?.filters ?? TaskFilters(date: '', priority: null, status: null)));
+    } catch (e) {
+      if (previousState != null) {
+        emit(previousState);
+      }
+      emit(TaskError("Failed to add task: $e"));
+    }
+  }
+
+  Future<void> _onUpdateTask(
+      UpdateTaskEvent event,
+      Emitter<TaskState> emit,
+      ) async {
+    TaskLoaded? previousState;
+
+    try {
+      if (state is TaskLoaded) {
+        previousState = state as TaskLoaded;
+        final updatedTasks = previousState.tasks.map((task) {
+          return task.id == event.task.id ? event.task : task;
+        }).toList();
+        emit(TaskLoaded(updatedTasks, filters: previousState.filters));
+      }
+
+      await updateTaskUseCase(event.task);
+
+      final tasks = await _fetchAndFilterTasks(previousState?.filters);
+      emit(TaskLoaded(tasks, filters: previousState?.filters ?? TaskFilters(date: '', priority: null, status: null)));
+    } catch (e) {
+      if (previousState != null) {
+        emit(previousState);
+      }
+      emit(TaskError("Failed to update task: $e"));
+    }
+  }
+
+  Future<void> _onDeleteTask(
+      DeleteTaskEvent event,
+      Emitter<TaskState> emit,
+      ) async {
+    TaskLoaded? previousState;
+
+    try {
+      if (state is TaskLoaded) {
+        previousState = state as TaskLoaded;
+        final updatedTasks = previousState.tasks.where((task) => task.id != event.taskId).toList();
+        emit(TaskLoaded(updatedTasks, filters: previousState.filters));
+      }
+
+      await deleteTaskUseCase(event.taskId);
+
+      final tasks = await _fetchAndFilterTasks(previousState?.filters);
+      emit(TaskLoaded(tasks, filters: previousState?.filters ?? TaskFilters(date: '', priority: null, status: null)));
+    } catch (e) {
+      if (previousState != null) {
+        emit(previousState);
+      }
+      emit(TaskError("Failed to delete task: $e"));
     }
   }
 
@@ -172,92 +223,21 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
     try {
       if (state is TaskLoaded) {
         previousState = state as TaskLoaded;
-
-        // Optimistically update the state
         final updatedTasks = previousState.tasks.map((task) {
-          if (task.id == event.taskId) {
-            return task.copyWith(status: event.newStatus);
-          }
-          return task;
+          return task.id == event.taskId ? task.copyWith(status: event.newStatus) : task;
         }).toList();
-
-        emit(TaskLoaded(
-          updatedTasks,
-          filters: previousState.filters,
-        ));
+        emit(TaskLoaded(updatedTasks, filters: previousState.filters));
       }
 
-      // Perform the actual update
       await updateTaskStatusUseCase(event.taskId, event.newStatus);
+
+      final tasks = await _fetchAndFilterTasks(previousState?.filters);
+      emit(TaskLoaded(tasks, filters: previousState?.filters ?? TaskFilters(date: '', priority: null, status: null)));
     } catch (e) {
-      // Revert to the previous state on error
       if (previousState != null) {
         emit(previousState);
       }
       emit(TaskError("Failed to update task status: $e"));
     }
   }
-
-
-  Future<void> _onUpdateTask(
-      UpdateTaskEvent event,
-      Emitter<TaskState> emit,
-      ) async {
-    emit(TaskLoading());
-    try {
-      // Perform the task update
-      await updateTaskUseCase(event.task);
-
-      // Fetch the updated list of tasks for the same date as the updated task
-      final updatedTasks = await getTasksByDateUseCase(event.task.date);
-
-      // Emit the updated tasks with existing filters
-      emit(TaskLoaded(
-        updatedTasks,
-        filters: TaskFilters(
-          date: event.task.date,
-          priority: null, // Update based on current filter logic
-          status: null, // Update based on current filter logic
-        ),
-      ));
-    } catch (e) {
-      emit(TaskError("Failed to update task: $e"));
-    }
-  }
-
-
-  Future<void> _onDeleteTask(
-      DeleteTaskEvent event,
-      Emitter<TaskState> emit,
-      ) async {
-    TaskLoaded? previousState;
-
-    try {
-      if (state is TaskLoaded) {
-        previousState = state as TaskLoaded;
-
-        final updatedTasks = previousState.tasks.where((task) {
-          return task.id != event.taskId;
-        }).toList();
-
-        emit(TaskLoaded(updatedTasks, filters: previousState.filters));
-      }
-
-      await deleteTaskUseCase(event.taskId);
-
-      final tasks = await getTasksByDateUseCase(previousState?.filters.date ?? '');
-      final filteredTasks = tasks.where((task) {
-        final matchesStatus = previousState?.filters.status == null || task.status == previousState?.filters.status;
-        final matchesPriority = previousState?.filters.priority == null || task.priority == previousState?.filters.priority;
-        return matchesStatus && matchesPriority;
-      }).toList();
-
-      emit(TaskLoaded(filteredTasks, filters: previousState?.filters ?? TaskFilters(date: '', priority: null, status: null)));
-    } catch (e) {
-      emit(TaskError("Failed to delete task: $e"));
-    }
-  }
-
 }
-enum TaskPriority { Low, Medium, High }
-enum TaskStatus { toDo, pending, Done }
