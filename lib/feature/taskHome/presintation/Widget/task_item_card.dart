@@ -176,31 +176,10 @@ class TaskItemCard extends StatelessWidget {
                       ],
                     ),
                   ),
-                  // Completion Indicator
                   GestureDetector(
-                    onTap: () {
-                      final newStatus = isCompleted ? 'to do' : 'Done';
-
-                      // Dispatch event to update the status
-                      context
-                          .read<TaskBloc>()
-                          .add(UpdateTaskStatusEvent(task.id, newStatus));
-
-                      // Show feedback
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text('Task marked as $newStatus'),
-                          behavior: SnackBarBehavior.floating,
-                          duration: const Duration(seconds: 1),
-                          backgroundColor:
-                          isCompleted ? Colors.orange : Colors.green,
-                        ),
-                      );
-                    },
                     child: AnimatedSwitcher(
-                      duration: const Duration(milliseconds: 300),
-                      transitionBuilder:
-                          (Widget child, Animation<double> animation) {
+                      duration: const Duration(milliseconds: 350),
+                      transitionBuilder: (Widget child, Animation<double> animation) {
                         return ScaleTransition(scale: animation, child: child);
                       },
                       child: isCompleted
@@ -223,7 +202,27 @@ class TaskItemCard extends StatelessWidget {
                         ),
                       ),
                     ),
+
+                    onTap: () async {
+
+                      await Future.delayed(const Duration(milliseconds: 500));
+
+                      final newStatus = isCompleted ? 'to do' : 'Done';
+
+                      context.read<TaskBloc>().add(UpdateTaskStatusEvent(task.id, newStatus));
+
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('Task marked as $newStatus'),
+                          behavior: SnackBarBehavior.floating,
+                          duration: const Duration(seconds: 1),
+                          backgroundColor: isCompleted ? Colors.orange : Colors.green,
+                        ),
+                      );
+                    },
+
                   ),
+
                 ],
               ),
             ),
