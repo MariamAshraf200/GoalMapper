@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -204,10 +205,10 @@ class TaskItemCard extends StatelessWidget {
                     ),
 
                     onTap: () async {
+                      final newStatus = isCompleted ? 'to do' : 'Done';
 
                       await Future.delayed(const Duration(milliseconds: 500));
 
-                      final newStatus = isCompleted ? 'to do' : 'Done';
 
                       context.read<TaskBloc>().add(UpdateTaskStatusEvent(task.id, newStatus));
 
