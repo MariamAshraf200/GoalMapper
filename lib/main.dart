@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:intl/intl.dart';
 import 'package:mapperapp/feature/taskHome/presintation/bloc/taskBloc/event.dart';
 import 'core/di.dart';
 import 'core/constants/app_colors.dart';
@@ -32,8 +33,11 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
+        //If you want display only tasksStatus == to do =>
+        // create a new event take static data Date==now && Status == to do
+
         BlocProvider<TaskBloc>(
-          create: (context) => sl<TaskBloc>()..add(GetAllTasksEvent()),
+          create: (context) => sl<TaskBloc>()..add(GetTasksByDateEvent(DateFormat('dd/MM/yyyy').format(DateTime.now()))),
         ),
         BlocProvider<CategoryBloc>(
           create: (context) => sl<CategoryBloc>()..add(LoadCategoriesEvent()),
@@ -42,7 +46,7 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
         title: "Task Tracker",
         debugShowCheckedModeBanner: false,
-        navigatorKey: navigatorKey, // Pass the global navigatorKey here
+        navigatorKey: navigatorKey, 
         theme: ThemeData(
           colorScheme: ColorScheme.fromSeed(seedColor: AppColors.defaultColor),
           primaryColor: AppColors.defaultColor,

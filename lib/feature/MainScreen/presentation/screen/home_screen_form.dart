@@ -1,18 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:mapperapp/feature/taskHome/presintation/bloc/taskBloc/event.dart';
+import 'package:mapperapp/feature/taskHome/domain/entity/taskEntity.dart';
 import 'package:mapperapp/feature/taskHome/presintation/screen/taskTrack.dart';
-import '../../../taskHome/presintation/bloc/taskBloc/bloc.dart';
 import '../wedgit/plan_list.dart';
 import '../wedgit/task_list.dart';
 
 class HomeScreenForm extends StatelessWidget {
-  const HomeScreenForm({super.key});
+  final List<TaskDetails> tasks;
+
+  const HomeScreenForm({super.key, required this.tasks});
 
   @override
   Widget build(BuildContext context) {
-    context.read<TaskBloc>().add(FilterTasksEvent(date: DateTime.now().toIso8601String(), status: 'to do'));
-
     return Column(
       children: [
         _buildSectionTitle("My Tasks", () {
@@ -20,7 +18,7 @@ class HomeScreenForm extends StatelessWidget {
               context, MaterialPageRoute(builder: (context) => TaskTrack()));
         }),
         const SizedBox(height: 6),
-        const TaskList(), // Use the TaskList widget
+        TaskList(tasks: tasks),
         const SizedBox(height: 12),
         _buildSectionTitle("My Plan", () {
           print("See All Plans pressed");

@@ -16,7 +16,6 @@ class TaskTrack extends StatefulWidget {
   @override
   _TaskTrackState createState() => _TaskTrackState();
 }
-
 class _TaskTrackState extends State<TaskTrack> {
   late String selectedDate;
   String? selectedPriority;
@@ -26,7 +25,13 @@ class _TaskTrackState extends State<TaskTrack> {
   void initState() {
     super.initState();
     selectedDate = DateFormat('dd/MM/yyyy').format(DateTime.now());
-    // Initial filter event trigger
+
+    // Retrieve selected filters from the TaskBloc
+    final taskBloc = context.read<TaskBloc>();
+    selectedPriority = taskBloc.selectedPriority;
+    selectedStatus = taskBloc.selectedStatus;
+
+    // Trigger the filter event with the saved filters
     context.read<TaskBloc>().add(FilterTasksEvent(
       date: selectedDate,
       status: selectedStatus,
@@ -34,30 +39,11 @@ class _TaskTrackState extends State<TaskTrack> {
     ));
   }
 
-  // Handle date selection and update state
   void _onDateSelected(DateTime date) {
     final formattedDate = DateFormat('dd/MM/yyyy').format(date);
     if (formattedDate != selectedDate) {
       setState(() => selectedDate = formattedDate);
-      context.read<TaskBloc>().add(FilterTasksEvent(
-        date: selectedDate,
-        status: selectedStatus,
-        priority: selectedPriority,
-      ));
-    }
-  }
-
-  // Show date picker and update date
-  void _pickDate() async {
-    final DateTime? pickedDate = await showDatePicker(
-      context: context,
-      initialDate: DateFormat('dd/MM/yyyy').parse(selectedDate),
-      firstDate: DateTime(2000),
-      lastDate: DateTime(2100),
-    );
-
-    if (pickedDate != null) {
-      _onDateSelected(pickedDate);
+      _triggerFilterEvent();
     }
   }
 
@@ -93,7 +79,7 @@ class _TaskTrackState extends State<TaskTrack> {
           padding: const EdgeInsets.symmetric(vertical: 40.0, horizontal: 4.0),
           child: Column(
             children: [
-              // Title Section with Date Picker Icon
+              // Title Section with Button
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -109,17 +95,15 @@ class _TaskTrackState extends State<TaskTrack> {
                           ),
                         ),
                         const SizedBox(width: 5),
-                        IconButton(
-                          onPressed: _pickDate,
-                          icon: const Icon(Icons.date_range_sharp, size: 25),
-                        ),
+                        const Icon(Icons.date_range_sharp, size: 25),
                       ],
                     ),
                   ),
                   Container(
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      border: Border.all(color: AppColors.secondaryColor, width: 2),
+                      border:
+                      Border.all(color: AppColors.secondaryColor, width: 2),
                     ),
                     child: IconButton(
                       onPressed: () {
@@ -140,14 +124,12 @@ class _TaskTrackState extends State<TaskTrack> {
               ),
               const SizedBox(height: 20),
 
-              // Date Display Section
+              // Date Picker
               DataFormat(
                 selectedDate: selectedDate,
                 onDateSelected: _onDateSelected,
               ),
               const SizedBox(height: 16),
-
-              // Filter Options (Priority and Status)
               Row(
                 children: [
                   Expanded(
@@ -159,11 +141,12 @@ class _TaskTrackState extends State<TaskTrack> {
                             color: Colors.grey.withOpacity(0.2),
                             spreadRadius: 1,
                             blurRadius: 5,
-                            offset: const Offset(0, 3),
+                            offset: const Offset(0, 3), // Shadow position
                           ),
                         ],
                       ),
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 12, vertical: 8),
                       child: Row(
                         children: [
                           const Icon(Icons.filter_list, color: Colors.blue),
@@ -173,14 +156,17 @@ class _TaskTrackState extends State<TaskTrack> {
                               value: selectedPriority,
                               hint: const Text(
                                 "Select Priority",
-                                style: TextStyle(fontSize: 14, color: Colors.grey),
+                                style:
+                                TextStyle(fontSize: 14, color: Colors.grey),
                               ),
                               isExpanded: true,
-                              underline: const SizedBox(),
+                              underline:
+                              const SizedBox(), // Remove the underline
                               items: ['High', 'Medium', 'Low', null]
                                   .map((priority) => DropdownMenuItem<String>(
                                 value: priority,
-                                child: Text(priority ?? "All Priorities"),
+                                child:
+                                Text(priority ?? "All Priorities"),
                               ))
                                   .toList(),
                               onChanged: _onPrioritySelected,
@@ -190,7 +176,7 @@ class _TaskTrackState extends State<TaskTrack> {
                       ),
                     ),
                   ),
-                  const SizedBox(width: 16),
+                  const SizedBox(width: 16), // Adjust spacing between dropdowns
                   Expanded(
                     child: Container(
                       decoration: BoxDecoration(
@@ -200,11 +186,12 @@ class _TaskTrackState extends State<TaskTrack> {
                             color: Colors.grey.withOpacity(0.2),
                             spreadRadius: 1,
                             blurRadius: 5,
-                            offset: const Offset(0, 3),
+                            offset: const Offset(0, 3), // Shadow position
                           ),
                         ],
                       ),
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 12, vertical: 8),
                       child: Row(
                         children: [
                           const Icon(Icons.task_alt, color: Colors.green),
@@ -214,10 +201,12 @@ class _TaskTrackState extends State<TaskTrack> {
                               value: selectedStatus,
                               hint: const Text(
                                 "Select Status",
-                                style: TextStyle(fontSize: 14, color: Colors.grey),
+                                style:
+                                TextStyle(fontSize: 14, color: Colors.grey),
                               ),
                               isExpanded: true,
-                              underline: const SizedBox(),
+                              underline:
+                              const SizedBox(), // Remove the underline
                               items: ['Done', 'Pending', 'to do', null]
                                   .map((status) => DropdownMenuItem<String>(
                                 value: status,
@@ -233,9 +222,9 @@ class _TaskTrackState extends State<TaskTrack> {
                   ),
                 ],
               ),
-              const SizedBox(height: 16),
 
-              // Task Display Section
+              const SizedBox(height: 16),
+              // Tasks Display Section
               Expanded(
                 child: BlocBuilder<TaskBloc, TaskState>(
                   builder: (context, state) {
@@ -243,10 +232,20 @@ class _TaskTrackState extends State<TaskTrack> {
                       return const Center(child: CircularProgressIndicator());
                     } else if (state is TaskLoaded) {
                       return state.tasks.isEmpty
-                          ? const Center(child: Text("No tasks match the filters."))
+                          ? const Center(
+                        child: Text(
+                          "No tasks match the filters.",
+                          style: TextStyle(fontSize: 18),
+                        ),
+                      )
                           : TaskItems(tasks: state.tasks);
                     } else if (state is TaskError) {
-                      return Center(child: Text(state.message));
+                      return Center(
+                        child: Text(
+                          state.message,
+                          style: const TextStyle(fontSize: 18),
+                        ),
+                      );
                     }
                     return const SizedBox();
                   },

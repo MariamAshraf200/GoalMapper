@@ -25,6 +25,13 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
   final GetTasksByDateUseCase getTasksByDateUseCase;
   final FilterTasksUseCase filterTasksUseCase;
 
+  // Add properties to store selected filters
+  String? _selectedPriority;
+  String? _selectedStatus;
+
+  String? get selectedPriority => _selectedPriority;
+  String? get selectedStatus => _selectedStatus;
+
   TaskBloc({
     required this.getAllTasksUseCase,
     required this.getTasksByStatusUseCase,
@@ -50,29 +57,32 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
   Future<List<TaskDetails>> _fetchAndFilterTasks(TaskFilters? filters) async {
     final tasks = await getTasksByDateUseCase(filters?.date ?? '');
     return tasks.where((task) {
-      final matchesPriority = filters?.priority == null || task.priority == filters?.priority;
-      final matchesStatus = filters?.status == null || task.status == filters?.status;
+      final matchesPriority =
+          filters?.priority == null || task.priority == filters?.priority;
+      final matchesStatus =
+          filters?.status == null || task.status == filters?.status;
       return matchesPriority && matchesStatus;
     }).toList();
   }
 
   Future<void> _onGetAllTasks(
-      GetAllTasksEvent event,
-      Emitter<TaskState> emit,
-      ) async {
+    GetAllTasksEvent event,
+    Emitter<TaskState> emit,
+  ) async {
     emit(TaskLoading());
     try {
       final tasks = await getAllTasksUseCase();
-      emit(TaskLoaded(tasks, filters: TaskFilters(date: '', priority: null, status: null)));
+      emit(TaskLoaded(tasks,
+          filters: TaskFilters(date: '', priority: null, status: null)));
     } catch (e) {
       emit(TaskError("Failed to load tasks: $e"));
     }
   }
 
   Future<void> _onGetTasksByStatus(
-      GetTasksByStatusEvent event,
-      Emitter<TaskState> emit,
-      ) async {
+    GetTasksByStatusEvent event,
+    Emitter<TaskState> emit,
+  ) async {
     emit(TaskLoading());
     try {
       final tasks = await getTasksByStatusUseCase(event.status);
@@ -86,9 +96,9 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
   }
 
   Future<void> _onGetTasksByPriority(
-      GetTasksByPriorityEvent event,
-      Emitter<TaskState> emit,
-      ) async {
+    GetTasksByPriorityEvent event,
+    Emitter<TaskState> emit,
+  ) async {
     emit(TaskLoading());
     try {
       final tasks = await getTasksByPriorityUseCase(event.priority);
@@ -102,9 +112,9 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
   }
 
   Future<void> _onGetTasksByDate(
-      GetTasksByDateEvent event,
-      Emitter<TaskState> emit,
-      ) async {
+    GetTasksByDateEvent event,
+    Emitter<TaskState> emit,
+  ) async {
     emit(TaskLoading());
     try {
       final tasks = await getTasksByDateUseCase(event.date);
@@ -118,11 +128,15 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
   }
 
   Future<void> _onFilterTasks(
-      FilterTasksEvent event,
-      Emitter<TaskState> emit,
-      ) async {
+    FilterTasksEvent event,
+    Emitter<TaskState> emit,
+  ) async {
     emit(TaskLoading());
     try {
+      // Update selected filters
+      _selectedPriority = event.priority;
+      _selectedStatus = event.status;
+
       final filteredTasks = await _fetchAndFilterTasks(TaskFilters(
         date: event.date,
         priority: event.priority,
@@ -130,7 +144,8 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
       ));
       emit(TaskLoaded(
         filteredTasks,
-        filters: TaskFilters(date: event.date, priority: event.priority, status: event.status),
+        filters: TaskFilters(
+            date: event.date, priority: event.priority, status: event.status),
       ));
     } catch (e) {
       emit(TaskError("Failed to filter tasks: $e"));
@@ -138,22 +153,25 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
   }
 
   Future<void> _onAddTask(
-      AddTaskEvent event,
-      Emitter<TaskState> emit,
-      ) async {
+    AddTaskEvent event,
+    Emitter<TaskState> emit,
+  ) async {
     TaskLoaded? previousState;
 
     try {
       if (state is TaskLoaded) {
         previousState = state as TaskLoaded;
-        final updatedTasks = List<TaskDetails>.from(previousState.tasks)..add(event.task);
+        final updatedTasks = List<TaskDetails>.from(previousState.tasks)
+          ..add(event.task);
         emit(TaskLoaded(updatedTasks, filters: previousState.filters));
       }
 
       await addTaskUseCase(event.task);
 
       final tasks = await _fetchAndFilterTasks(previousState?.filters);
-      emit(TaskLoaded(tasks, filters: previousState?.filters ?? TaskFilters(date: '', priority: null, status: null)));
+      emit(TaskLoaded(tasks,
+          filters: previousState?.filters ??
+              TaskFilters(date: '', priority: null, status: null)));
     } catch (e) {
       if (previousState != null) {
         emit(previousState);
@@ -163,9 +181,9 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
   }
 
   Future<void> _onUpdateTask(
-      UpdateTaskEvent event,
-      Emitter<TaskState> emit,
-      ) async {
+    UpdateTaskEvent event,
+    Emitter<TaskState> emit,
+  ) async {
     TaskLoaded? previousState;
 
     try {
@@ -180,7 +198,9 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
       await updateTaskUseCase(event.task);
 
       final tasks = await _fetchAndFilterTasks(previousState?.filters);
-      emit(TaskLoaded(tasks, filters: previousState?.filters ?? TaskFilters(date: '', priority: null, status: null)));
+      emit(TaskLoaded(tasks,
+          filters: previousState?.filters ??
+              TaskFilters(date: '', priority: null, status: null)));
     } catch (e) {
       if (previousState != null) {
         emit(previousState);
@@ -190,22 +210,26 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
   }
 
   Future<void> _onDeleteTask(
-      DeleteTaskEvent event,
-      Emitter<TaskState> emit,
-      ) async {
+    DeleteTaskEvent event,
+    Emitter<TaskState> emit,
+  ) async {
     TaskLoaded? previousState;
 
     try {
       if (state is TaskLoaded) {
         previousState = state as TaskLoaded;
-        final updatedTasks = previousState.tasks.where((task) => task.id != event.taskId).toList();
+        final updatedTasks = previousState.tasks
+            .where((task) => task.id != event.taskId)
+            .toList();
         emit(TaskLoaded(updatedTasks, filters: previousState.filters));
       }
 
       await deleteTaskUseCase(event.taskId);
 
       final tasks = await _fetchAndFilterTasks(previousState?.filters);
-      emit(TaskLoaded(tasks, filters: previousState?.filters ?? TaskFilters(date: '', priority: null, status: null)));
+      emit(TaskLoaded(tasks,
+          filters: previousState?.filters ??
+              TaskFilters(date: '', priority: null, status: null)));
     } catch (e) {
       if (previousState != null) {
         emit(previousState);
@@ -215,16 +239,18 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
   }
 
   Future<void> _onUpdateTaskStatus(
-      UpdateTaskStatusEvent event,
-      Emitter<TaskState> emit,
-      ) async {
+    UpdateTaskStatusEvent event,
+    Emitter<TaskState> emit,
+  ) async {
     TaskLoaded? previousState;
 
     try {
       if (state is TaskLoaded) {
         previousState = state as TaskLoaded;
         final updatedTasks = previousState.tasks.map((task) {
-          return task.id == event.taskId ? task.copyWith(status: event.newStatus) : task;
+          return task.id == event.taskId
+              ? task.copyWith(status: event.newStatus)
+              : task;
         }).toList();
         emit(TaskLoaded(updatedTasks, filters: previousState.filters));
       }
@@ -232,7 +258,9 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
       await updateTaskStatusUseCase(event.taskId, event.newStatus);
 
       final tasks = await _fetchAndFilterTasks(previousState?.filters);
-      emit(TaskLoaded(tasks, filters: previousState?.filters ?? TaskFilters(date: '', priority: null, status: null)));
+      emit(TaskLoaded(tasks,
+          filters: previousState?.filters ??
+              TaskFilters(date: '', priority: null, status: null)));
     } catch (e) {
       if (previousState != null) {
         emit(previousState);
