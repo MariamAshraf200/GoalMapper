@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:mapperapp/feature/taskHome/presintation/bloc/taskBloc/event.dart';
 import 'core/di.dart';
 import 'core/constants/app_colors.dart';
 import 'feature/MainScreen/presentation/screen/homeScreen.dart';
@@ -32,7 +33,7 @@ class MyApp extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider<TaskBloc>(
-          create: (context) => sl<TaskBloc>(),
+          create: (context) => sl<TaskBloc>()..add(GetAllTasksEvent()),
         ),
         BlocProvider<CategoryBloc>(
           create: (context) => sl<CategoryBloc>()..add(LoadCategoriesEvent()),
