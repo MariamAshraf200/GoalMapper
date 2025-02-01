@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 
 class CustomDialog extends StatelessWidget {
@@ -5,6 +6,7 @@ class CustomDialog extends StatelessWidget {
   final String description;
   final String operation;
   final IconData icon;
+  final Color color;
   final VoidCallback onConfirmed;
   final VoidCallback onCanceled;
 
@@ -14,6 +16,7 @@ class CustomDialog extends StatelessWidget {
     required this.description,
     required this.operation,
     required this.icon,
+    required this.color,
     required this.onConfirmed,
     required this.onCanceled,
   }) : super(key: key);
@@ -39,12 +42,12 @@ class CustomDialog extends StatelessWidget {
                   curve: Curves.easeInOut,
                   padding: const EdgeInsets.all(8.0),
                   decoration: BoxDecoration(
-                    color: Theme.of(context).primaryColor.withOpacity(0.2),
+                    color: color.withOpacity(0.2),
                     shape: BoxShape.circle,
                   ),
                   child: Icon(
                     icon,
-                    color: Theme.of(context).primaryColor,
+                    color: color,
                     size: 40.0,
                   ),
                 ),
@@ -58,7 +61,7 @@ class CustomDialog extends StatelessWidget {
               style: TextStyle(
                 fontSize: 22.0,
                 fontWeight: FontWeight.w700,
-                color: Theme.of(context).primaryColor,
+                color: color,
               ),
               textAlign: TextAlign.center,
             ),
@@ -105,7 +108,7 @@ class CustomDialog extends StatelessWidget {
                     onPressed: onConfirmed,
                     style: ElevatedButton.styleFrom(
                       foregroundColor: Colors.white,
-                      backgroundColor: Theme.of(context).primaryColor,
+                      backgroundColor: color,
                       padding: const EdgeInsets.symmetric(vertical: 14),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),

@@ -39,6 +39,7 @@ class TaskItemCard extends StatelessWidget {
           description: 'Are you sure you want to delete this task?',
           icon: Icons.delete_forever,
           operation: 'Delete',
+          color: Colors.red,
           onConfirmed: () {
             context.read<TaskBloc>().add(DeleteTaskEvent(task.id));
             Navigator.of(context).pop(); // Close the dialog
@@ -56,6 +57,7 @@ class TaskItemCard extends StatelessWidget {
       },
     );
   }
+
   void _showUpdateDialog(BuildContext context, TaskDetails task) {
     showDialog(
       context: context,
@@ -65,6 +67,7 @@ class TaskItemCard extends StatelessWidget {
           description: 'Are you sure you want to update this task?',
           icon: Icons.update,
           operation: 'Update',
+          color: Colors.blue,
           onConfirmed: () {
             Navigator.of(context).pop(); // Close the dialog first
             Navigator.push(
@@ -73,7 +76,6 @@ class TaskItemCard extends StatelessWidget {
                 builder: (context) => UpdateTaskScreen(task: task),
               ),
             ).then((_) {
-              // Optional: Perform any actions needed after returning from the update screen
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(
                   content: Text('Task updated successfully'),
@@ -96,7 +98,7 @@ class TaskItemCard extends StatelessWidget {
 
     return Dismissible(
       key: Key(task.id),
-      direction: DismissDirection.horizontal, // Allow horizontal swipes
+      direction: DismissDirection.horizontal,
       background: Container(
         color: Colors.blue,
         alignment: Alignment.centerLeft,
@@ -147,7 +149,8 @@ class TaskItemCard extends StatelessWidget {
                           ),
                           child: Text(
                             task.priority,
-                            style: const TextStyle(
+                            style: const
+                            TextStyle(
                               color: Colors.white,
                               fontSize: 12,
                               fontWeight: FontWeight.bold,
