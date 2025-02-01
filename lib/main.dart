@@ -6,15 +6,19 @@ import 'package:intl/intl.dart';
 import 'package:mapperapp/feature/taskHome/presintation/bloc/taskBloc/event.dart';
 import 'core/di.dart';
 import 'core/constants/app_colors.dart';
+import 'feature/MainScreen/presentation/bloc/main_bloc.dart';
+import 'feature/MainScreen/presentation/bloc/main_event.dart';
 import 'feature/MainScreen/presentation/screen/homeScreen.dart';
 import 'feature/taskHome/presintation/bloc/catogeryBloc/CatogeryBloc.dart';
 import 'feature/taskHome/presintation/bloc/catogeryBloc/Catogeryevent.dart';
 import 'feature/taskHome/presintation/bloc/taskBloc/bloc.dart';
 
+/// Create a global RouteObserver to monitor route changes.
+final RouteObserver<PageRoute> routeObserver = RouteObserver<PageRoute>();
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Initialize Hive
   await Hive.initFlutter();
 
   // Initialize GetIt (Dependency Injection)
@@ -33,11 +37,11 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        //If you want display only tasksStatus == to do =>
-        // create a new event take static data Date==now && Status == to do
-
+        BlocProvider<MainTaskBloc>(
+          create: (context) => sl<MainTaskBloc>(),
+        ),
         BlocProvider<TaskBloc>(
-          create: (context) => sl<TaskBloc>()..add(GetTasksByDateEvent(DateFormat('dd/MM/yyyy').format(DateTime.now()))),
+          create: (context) => sl<TaskBloc>()
         ),
         BlocProvider<CategoryBloc>(
           create: (context) => sl<CategoryBloc>()..add(LoadCategoriesEvent()),
@@ -46,7 +50,8 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
         title: "Task Tracker",
         debugShowCheckedModeBanner: false,
-        navigatorKey: navigatorKey, 
+        navigatorKey: navigatorKey,
+        navigatorObservers: [routeObserver], // Register the global RouteObserver
         theme: ThemeData(
           colorScheme: ColorScheme.fromSeed(seedColor: AppColors.defaultColor),
           primaryColor: AppColors.defaultColor,
@@ -67,8 +72,7 @@ class MyApp extends StatelessWidget {
         ),
         themeMode: ThemeMode.dark, // Set default theme mode
         locale: const Locale("en"),
-
-        home: const HomeScreen(), // Replace with your actual home widget
+        home: const HomeScreen(), // Your actual home widget
       ),
     );
   }

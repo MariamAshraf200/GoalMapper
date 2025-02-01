@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
+
 import '../../../../core/customColor.dart';
 import '../../../../core/util/widgets/custom_FAB.dart';
-
-import '../../../taskHome/presintation/bloc/taskBloc/bloc.dart';
-import '../../../taskHome/presintation/bloc/taskBloc/state.dart';
+import '../bloc/main_bloc.dart';
+import '../bloc/main_event.dart';
+import '../bloc/main_state.dart';
 import 'home_screen_form.dart';
+import 'package:mapperapp/main.dart'; // Ensure this imports your global routeObserver
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -14,34 +17,68 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _HomeScreenState extends State<HomeScreen> with RouteAware {
   CustomColor color = CustomColor();
+
+  @override
+  void initState() {
+    super.initState();
+    // Initial data load
+    context.read<MainTaskBloc>().add(GetMainTasksEvent());
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Subscribe this screen to the route observer.
+    routeObserver.subscribe(this, ModalRoute.of(context)! as PageRoute);
+  }
+
+  @override
+  void dispose() {
+    // Unsubscribe from the route observer
+    routeObserver.unsubscribe(this);
+    super.dispose();
+  }
+
+  @override
+  void didPopNext() {
+    // Called when the current route is re-shown (i.e. when returning from another screen)
+    // Refresh the tasks by dispatching the event.
+    context.read<MainTaskBloc>().add(GetMainTasksEvent());
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: BlocBuilder<TaskBloc, TaskState>(
+      body: BlocBuilder<MainTaskBloc, MainState>(
         builder: (context, state) {
-          if (state is TaskLoading) {
+          if (state is MainTaskLoading) {
             return const Center(child: CircularProgressIndicator());
-          } else if (state is TaskLoaded) {
+          } else if (state is MainTaskLoaded) {
             final tasks = state.tasks;
-            final doneTasksCount = tasks.where((task) => task.status == "Done").length;
+            final doneTasksCount =
+                tasks.where((task) => task.status.trim().toLowerCase() == "done").length;
             final totalTasksCount = tasks.length;
 
-            // Calculate task completion percentage
-            double taskCompletionPercentage = totalTasksCount > 0 ? doneTasksCount / totalTasksCount : 0;
+            final today = DateFormat('dd/MM/yyyy').format(DateTime.now());
+            final tasksForToday = tasks.where((task) {
+              return task.date == today && task.status.trim().toLowerCase() == "to do";
+            }).toList();
+
+            double taskCompletionPercentage =
+            totalTasksCount > 0 ? doneTasksCount / totalTasksCount : 0;
 
             return Column(
               children: [
                 _buildHeader(doneTasksCount, totalTasksCount, taskCompletionPercentage),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 15.0),
-                  child: HomeScreenForm(tasks: tasks), // Pass tasks to HomeScreenForm
+                  child: HomeScreenForm(tasks: tasksForToday),
                 ),
               ],
             );
-          } else if (state is TaskError) {
+          } else if (state is MainTaskError) {
             return Center(child: Text(state.message));
           } else {
             return const Center(child: Text("No tasks found."));

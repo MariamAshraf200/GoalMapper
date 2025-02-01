@@ -1,4 +1,6 @@
 import 'package:get_it/get_it.dart';
+import '../feature/MainScreen/domain/task_usecase/filter_usecase.dart';
+import '../feature/MainScreen/presentation/bloc/main_bloc.dart';
 import '../feature/taskHome/data/dataSource/abstract_data_scource.dart';
 import '../feature/taskHome/data/dataSource/catogeryLocalData.dart';
 import '../feature/taskHome/data/dataSource/localData.dart';
@@ -64,6 +66,7 @@ Future<void> init() async {
     sl.registerLazySingleton(() => UpdateTaskStatusUseCase(sl<TaskRepository>()));
     sl.registerLazySingleton(() => GetTasksByDateUseCase(sl<TaskRepository>()));
     sl.registerLazySingleton(() => FilterTasksUseCase(sl<TaskRepository>()));
+    sl.registerLazySingleton(() => FilterMainTasksUseCase(sl<TaskRepository>()));
 
     // Register Use Cases for Categories
     sl.registerLazySingleton(() => AddCategoryUseCase(sl<CategoryRepository>()));
@@ -89,9 +92,12 @@ Future<void> init() async {
       getAllCategoriesUseCase: sl<GetAllCategoriesUseCase>(),
       deleteCategoryUseCase: sl<DeleteCategoryUseCase>(),
     ));
+    sl.registerFactory(() => MainTaskBloc(
+      filterTasksUseCase: sl<FilterMainTasksUseCase>(),
+    ));
+
   } catch (e, stackTrace) {
     print("Error during DI initialization: $e");
     print(stackTrace);
   }
 }
-
