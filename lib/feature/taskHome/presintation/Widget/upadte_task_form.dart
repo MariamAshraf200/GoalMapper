@@ -37,6 +37,7 @@ class _UpdateTaskFormState extends State<UpdateTaskForm>
   String? _selectedCategory;
   String _selectedPriority = 'Medium';
   bool _allowNotifications = false;
+  bool _isLoading = false; // Loading state for the update action
 
   @override
   void initState() {
@@ -46,13 +47,10 @@ class _UpdateTaskFormState extends State<UpdateTaskForm>
 
   void _initializeFormFields() {
     _taskTitleController = TextEditingController(text: widget.task.title);
-    _taskDescriptionController =
-        TextEditingController(text: widget.task.description);
+    _taskDescriptionController = TextEditingController(text: widget.task.description);
     _taskDate = _tryParseDate(widget.task.date);
     _taskStartTime = _tryParseTime(widget.task.time);
-    _taskEndTime = widget.task.endTime.isNotEmpty == true
-        ? _tryParseTime(widget.task.endTime)
-        : null;
+    _taskEndTime = widget.task.endTime.isNotEmpty ? _tryParseTime(widget.task.endTime) : null;
     _selectedCategory = widget.task.category;
     _selectedPriority = widget.task.priority;
   }
@@ -70,8 +68,8 @@ class _UpdateTaskFormState extends State<UpdateTaskForm>
   TimeOfDay? _tryParseTime(String? time) {
     if (time == null || time.isEmpty) return null;
     try {
-      final parsed = DateFormat.jm().parse(time);
-      return TimeOfDay.fromDateTime(parsed);
+      final parsedTime = DateFormat('hh:mm a').parse(time);
+      return TimeOfDay.fromDateTime(parsedTime);
     } catch (e) {
       debugPrint('Error parsing time: $e');
       return null;
@@ -228,7 +226,7 @@ class _UpdateTaskFormState extends State<UpdateTaskForm>
       onPressed: _handleUpdate,
       buttonText: 'Update Task',
       icon: const Icon(Icons.update),
-      showLoading: true,
+      showLoading: _isLoading,
     );
   }
 
@@ -237,36 +235,44 @@ class _UpdateTaskFormState extends State<UpdateTaskForm>
       return;
     }
 
+    setState(() {
+      _isLoading = true;
+    });
+
     // Format the date if provided
     final formattedDate = _taskDate != null
         ? DateFormat('dd/MM/yyyy').format(_taskDate!)
         : '';
 
-    // Optional: Format the start and end times if provided
-    final formattedStartTime = _taskStartTime?.format(context) ?? '';
-    final formattedEndTime = _taskEndTime?.format(context) ?? '';
+    // Format start and end time
+    final formattedStartTime = _taskStartTime != null
+        ? _taskStartTime!.format(context)
+        : '';
+    final formattedEndTime = _taskEndTime != null
+        ? _taskEndTime!.format(context)
+        : '';
 
     final updatedTask = widget.task.copyWith(
       title: _taskTitleController.text.trim(),
       description: _taskDescriptionController.text.trim(),
       date: formattedDate,
-      time: formattedStartTime.isNotEmpty ? formattedStartTime : null, // Set time to null if empty
+      time: formattedStartTime.isNotEmpty ? formattedStartTime : null,
       endTime: formattedEndTime.isNotEmpty ? formattedEndTime : null,
       priority: _selectedPriority,
       category: _selectedCategory ?? 'General',
       status: 'to do',
     );
 
-    // Dispatch the event to update the task
     context.read<TaskBloc>().add(UpdateTaskEvent(updatedTask));
 
-    // Show success message
+    setState(() {
+      _isLoading = false;
+    });
+
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text('Task updated successfully!')),
     );
 
-    // Close the form
     Navigator.of(context).pop();
   }
-
 }
