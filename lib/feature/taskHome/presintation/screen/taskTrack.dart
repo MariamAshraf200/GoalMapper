@@ -16,6 +16,7 @@ class TaskTrack extends StatefulWidget {
   @override
   _TaskTrackState createState() => _TaskTrackState();
 }
+
 class _TaskTrackState extends State<TaskTrack> {
   late String selectedDate;
   String? selectedPriority;
@@ -67,6 +68,24 @@ class _TaskTrackState extends State<TaskTrack> {
     );
   }
 
+  void _showDatePicker() async {
+    final initialDate = DateFormat('dd/MM/yyyy').parse(selectedDate);
+    final DateTime? pickedDate = await showDatePicker(
+      context: context,
+      initialDate: initialDate,
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2100),
+    );
+
+    if (pickedDate != null && pickedDate != initialDate) {
+      setState(() {
+        selectedDate = DateFormat('dd/MM/yyyy').format(pickedDate);
+      });
+      _triggerFilterEvent();
+    }
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -95,15 +114,17 @@ class _TaskTrackState extends State<TaskTrack> {
                           ),
                         ),
                         const SizedBox(width: 5),
-                        const Icon(Icons.date_range_sharp, size: 25),
+                        IconButton(
+                          icon: const Icon(Icons.date_range_sharp, size: 25),
+                          onPressed: _showDatePicker, // Trigger date picker
+                        ),
                       ],
                     ),
                   ),
                   Container(
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      border:
-                      Border.all(color: AppColors.secondaryColor, width: 2),
+                      border: Border.all(color: AppColors.secondaryColor, width: 2),
                     ),
                     child: IconButton(
                       onPressed: () {
@@ -165,8 +186,7 @@ class _TaskTrackState extends State<TaskTrack> {
                               items: ['High', 'Medium', 'Low', null]
                                   .map((priority) => DropdownMenuItem<String>(
                                 value: priority,
-                                child:
-                                Text(priority ?? "All Priorities"),
+                                child: Text(priority ?? "All Priorities"),
                               ))
                                   .toList(),
                               onChanged: _onPrioritySelected,
