@@ -1,4 +1,3 @@
-
 import '../../data/model/taskModel.dart';
 
 class TaskDetails {
@@ -8,10 +7,10 @@ class TaskDetails {
   final String date;
   final String time;
   final String endTime;
-
   final String priority;
   final String category;
   String status;
+  String? updatedTime; // Added field to track last update time
 
   TaskDetails({
     required this.id,
@@ -23,6 +22,7 @@ class TaskDetails {
     required this.priority,
     required this.status,
     required this.category,
+    this.updatedTime, // Optional, as it might not always be provided
   });
 
   TaskDetails copyWith({
@@ -35,6 +35,7 @@ class TaskDetails {
     String? priority,
     String? status,
     String? category,
+    String? updatedTime, // Added to copyWith
   }) {
     return TaskDetails(
       id: id ?? this.id,
@@ -46,6 +47,7 @@ class TaskDetails {
       priority: priority ?? this.priority,
       status: status ?? this.status,
       category: category ?? this.category,
+      updatedTime: updatedTime ?? this.updatedTime, // Copying updatedTime
     );
   }
 
@@ -56,15 +58,16 @@ class TaskDetails {
       description: description,
       date: date,
       time: time,
-      endTime : endTime,
+      endTime: endTime,
       priority: priority,
       id: id,
       status: status,
+      updatedTime: updatedTime, // Mapping updatedTime to the model
     );
   }
 
   @override
   String toString() {
-    return 'TaskDetails(id: $id, title: $title, description: $description, date: $date, time: $time, , endTime: $endTime,,priority: $priority, status: $status, category: $category)';
+    return 'TaskDetails(id: $id, title: $title, description: $description, date: $date, time: $time, endTime: $endTime, priority: $priority, status: $status, category: $category, updatedTime: $updatedTime)';
   }
 }

@@ -90,15 +90,24 @@ class TaskRepositoryImpl implements TaskRepository {
 
 
   @override
-  Future<void> updateTaskStatus(String taskId, String newStatus) async {
+  Future<void> updateTaskStatus(String taskId, String newStatus, String updatedTime) async {
     try {
+      // Fetch the task by ID
       final task = (await dataSource.getAllTasks()).firstWhere((task) => task.id == taskId);
-      final updatedTask = task.copyWith(status: newStatus);
+
+      // Update the task with new status and updated time
+      final updatedTask = task.copyWith(
+        status: newStatus,
+        time: updatedTime, // Pass the time as a field in your model
+      );
+
+      // Update the task in the data source
       await dataSource.updateTask(updatedTask);
     } catch (e) {
       throw Exception("Error updating task status: $e");
     }
   }
+
 
 
   @override

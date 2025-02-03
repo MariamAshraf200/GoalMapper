@@ -20,7 +20,6 @@ class TaskModel {
   @HiveField(4)
   final String time;
 
-
   @HiveField(5)
   final String endTime;
 
@@ -33,6 +32,9 @@ class TaskModel {
   @HiveField(8)
   final String category;
 
+  @HiveField(9)
+  final String? updatedTime; // Added field to track last update time
+
   // Constructor
   const TaskModel({
     required this.id,
@@ -44,8 +46,10 @@ class TaskModel {
     required this.priority,
     required this.status,
     required this.category,
+    this.updatedTime, // Optional, to ensure backward compatibility
   });
 
+  /// Converts the `TaskModel` to a `TaskDetails` entity.
   TaskDetails toEntity() {
     return TaskDetails(
       id: id,
@@ -57,9 +61,11 @@ class TaskModel {
       priority: priority,
       status: status,
       category: category,
+      updatedTime: updatedTime, // Mapping updatedTime to the entity
     );
   }
 
+  /// Creates a `TaskModel` from a `TaskDetails` entity.
   factory TaskModel.fromEntity(TaskDetails entity) {
     return TaskModel(
       id: entity.id,
@@ -71,6 +77,7 @@ class TaskModel {
       priority: entity.priority,
       status: entity.status,
       category: entity.category,
+      updatedTime: entity.updatedTime, // Mapping updatedTime from the entity
     );
   }
 
@@ -85,6 +92,7 @@ class TaskModel {
     String? priority,
     String? status,
     String? category,
+    String? updatedTime, // Added updatedTime to the copyWith method
   }) {
     return TaskModel(
       id: id ?? this.id,
@@ -92,16 +100,16 @@ class TaskModel {
       description: description ?? this.description,
       date: date ?? this.date,
       time: time ?? this.time,
-      endTime: endTime?? this.endTime,
+      endTime: endTime ?? this.endTime,
       priority: priority ?? this.priority,
       status: status ?? this.status,
       category: category ?? this.category,
+      updatedTime: updatedTime ?? this.updatedTime, // Copying updatedTime
     );
   }
 
   @override
   String toString() {
-    return 'TaskModel(id: $id, title: $title, description: $description, date: $date, time: $time, endTime: $endTime,priority: $priority, status: $status, category: $category)';
+    return 'TaskModel(id: $id, title: $title, description: $description, date: $date, time: $time, endTime: $endTime, priority: $priority, status: $status, category: $category, updatedTime: $updatedTime)';
   }
 }
-

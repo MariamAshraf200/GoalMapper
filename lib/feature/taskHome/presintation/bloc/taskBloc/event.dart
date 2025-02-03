@@ -51,13 +51,17 @@ class DeleteTaskEvent extends TaskEvent {
   @override
   List<Object?> get props => [taskId];
 }
-
 class UpdateTaskStatusEvent extends TaskEvent {
   final String taskId;
   final String newStatus;
+  final String updatedTime;
 
-  const UpdateTaskStatusEvent(this.taskId, this.newStatus);
+  UpdateTaskStatusEvent(this.taskId, this.newStatus, {required this.updatedTime});
+
+  @override
+  List<Object> get props => [taskId, newStatus, updatedTime];
 }
+
 
 class GetTasksByDateEvent extends TaskEvent {
   final String date; // Assuming date is in String format

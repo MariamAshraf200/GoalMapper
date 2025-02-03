@@ -1,7 +1,7 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:intl/intl.dart';
 import 'package:mapperapp/feature/taskHome/presintation/Widget/task_time_column.dart';
 import 'package:mapperapp/feature/taskHome/presintation/screen/upadte_task_form.dart';
 import '../../../../core/constants/app_assets.dart';
@@ -92,9 +92,28 @@ class TaskItemCard extends StatelessWidget {
     );
   }
 
+  void _toggleTaskStatus(BuildContext context) {
+    final newStatus = task.status == 'to do' ? 'Pending' : 'to do';
+
+    context.read<TaskBloc>().add(
+          UpdateTaskStatusEvent(task.id, newStatus,
+              updatedTime: DateFormat('hh:mm a').format(DateTime.now())),
+        );
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Task status updated to $newStatus'),
+        behavior: SnackBarBehavior.floating,
+        duration: const Duration(seconds: 1),
+        backgroundColor: newStatus == 'Pending' ? Colors.orange : Colors.grey,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    final isCompleted = task.status != 'to do';
+    final isCompleted = task.status == 'Done';
+    final isPending = task.status == 'Pending';
 
     return Dismissible(
       key: Key(task.id),
@@ -119,120 +138,161 @@ class TaskItemCard extends StatelessWidget {
         }
         return false; // Prevents auto-dismiss after swipe
       },
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          TaskTimeColumn(task: task),
-          const SizedBox(width: 8),
-          Expanded(
-            child: CustomCard(
-              margin: const EdgeInsets.symmetric(vertical: 8),
-              padding: const EdgeInsets.all(12),
-              borderRadius: BorderRadius.circular(15),
-              elevation: 4,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // Priority Indicator
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            vertical: 4,
-                            horizontal: 8,
-                          ),
-                          decoration: BoxDecoration(
-                            color: getPriorityColor(task.priority),
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: Text(
-                            task.priority,
-                            style: const
-                            TextStyle(
-                              color: Colors.white,
-                              fontSize: 12,
-                              fontWeight: FontWeight.bold,
+      child: GestureDetector(
+        onLongPress: () {
+          if (task.status == 'Done') {
+            // Show error dialog for tasks with status "Done"
+            _showErrorDialog(context);
+          } else {
+            // Toggle between "to do" and "Pending" statuses
+            _toggleTaskStatus(context);
+          }
+        },
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            TaskTimeColumn(task: task),
+            const SizedBox(width: 8),
+            Expanded(
+              child: CustomCard(
+                margin: const EdgeInsets.symmetric(vertical: 8),
+                padding: const EdgeInsets.all(12),
+                borderRadius: BorderRadius.circular(15),
+                elevation: 4,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // Priority Indicator
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              vertical: 4,
+                              horizontal: 8,
+                            ),
+                            decoration: BoxDecoration(
+                              color: getPriorityColor(task.priority),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Text(
+                              task.priority,
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                           ),
-                        ),
-                        const SizedBox(height: 8),
-                        // Task Title
-                        Text(
-                          task.title,
-                          style: const TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.w600,
+                          const SizedBox(height: 8),
+                          // Task Title
+                          Text(
+                            task.title,
+                            style: const TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w600,
+                            ),
+                            overflow: TextOverflow.ellipsis,
                           ),
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        const SizedBox(height: 4),
-                        // Task Description
-                        Text(
-                          task.description,
-                          style: const TextStyle(
-                            fontSize: 14,
-                            color: Colors.grey,
+                          const SizedBox(height: 4),
+                          // Task Description
+                          Text(
+                            task.description,
+                            style: const TextStyle(
+                              fontSize: 14,
+                              color: Colors.grey,
+                            ),
+                            overflow: TextOverflow.ellipsis,
                           ),
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ],
-                    ),
-                  ),
-                  GestureDetector(
-                    child: AnimatedSwitcher(
-                      duration: const Duration(milliseconds: 350),
-                      transitionBuilder: (Widget child, Animation<double> animation) {
-                        return ScaleTransition(scale: animation, child: child);
-                      },
-                      child: isCompleted
-                          ? SvgPicture.asset(
-                        AppAssets.rightCheckBox,
-                        width: 30.0,
-                        height: 30.0,
-                        key: const ValueKey('completed'),
-                      )
-                          : Container(
-                        key: const ValueKey('notCompleted'),
-                        width: 30,
-                        height: 30,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          border: Border.all(
-                            color: Colors.grey,
-                            width: 2,
-                          ),
-                        ),
+                        ],
                       ),
                     ),
+                    GestureDetector(
+                      child: AnimatedSwitcher(
+                        duration: const Duration(milliseconds: 350),
+                        transitionBuilder:
+                            (Widget child, Animation<double> animation) {
+                          return ScaleTransition(
+                              scale: animation, child: child);
+                        },
+                        child: isCompleted
+                            ? SvgPicture.asset(
+                                AppAssets.rightCheckBox,
+                                width: 30.0,
+                                height: 30.0,
+                                key: const ValueKey('completed'),
+                              )
+                            : isPending
+                                ? Image.asset(
+                                    'assets/images/pending-clock-icon.webp',
+                                    width: 30.0,
+                                    height: 30.0,
+                                    key: const ValueKey('pending'),
+                                  )
+                                : Container(
+                                    key: const ValueKey('notCompleted'),
+                                    width: 30,
+                                    height: 30,
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      border: Border.all(
+                                        color: Colors.grey,
+                                        width: 2,
+                                      ),
+                                    ),
+                                  ),
+                      ),
+                      onTap: () async {
+                        final newStatus = isCompleted ? 'to do' : 'Done';
 
-                    onTap: () async {
-                      final newStatus = isCompleted ? 'to do' : 'Done';
+                        await Future.delayed(const Duration(milliseconds: 500));
 
-                      await Future.delayed(const Duration(milliseconds: 500));
+                        context.read<TaskBloc>().add(UpdateTaskStatusEvent(
+                            task.id, newStatus,
+                            updatedTime:
+                                DateFormat('hh:mm a').format(DateTime.now())));
 
-
-                      context.read<TaskBloc>().add(UpdateTaskStatusEvent(task.id, newStatus));
-
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text('Task marked as $newStatus'),
-                          behavior: SnackBarBehavior.floating,
-                          duration: const Duration(seconds: 1),
-                          backgroundColor: isCompleted ? Colors.orange : Colors.green,
-                        ),
-                      );
-                    },
-
-                  ),
-
-                ],
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text('Task marked as $newStatus'),
+                            behavior: SnackBarBehavior.floating,
+                            duration: const Duration(seconds: 1),
+                            backgroundColor:
+                                isCompleted ? Colors.grey : Colors.green,
+                          ),
+                        );
+                      },
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
+    );
+  }
+
+  // Function to show the "Error" dialog for completed tasks
+  void _showErrorDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Task Already Completed'),
+          content: const Text(
+              'This task is already marked as Done and cannot be updated.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        );
+      },
     );
   }
 }

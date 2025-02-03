@@ -239,33 +239,45 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
   }
 
   Future<void> _onUpdateTaskStatus(
-    UpdateTaskStatusEvent event,
-    Emitter<TaskState> emit,
-  ) async {
+      UpdateTaskStatusEvent event,
+      Emitter<TaskState> emit,
+      ) async {
     TaskLoaded? previousState;
 
     try {
       if (state is TaskLoaded) {
         previousState = state as TaskLoaded;
         final updatedTasks = previousState.tasks.map((task) {
-          return task.id == event.taskId
-              ? task.copyWith(status: event.newStatus)
-              : task;
+          // Check if this is the task being updated
+          if (task.id == event.taskId) {
+            // Update status and time
+            return task.copyWith(
+              status: event.newStatus,
+              updatedTime: event.updatedTime, // Update time to now
+            );
+          }
+          return task;
         }).toList();
         emit(TaskLoaded(updatedTasks, filters: previousState.filters));
       }
 
-      await updateTaskStatusUseCase(event.taskId, event.newStatus);
+      // Update the status in the backend or database
+      await updateTaskStatusUseCase(event.taskId, event.newStatus,event.updatedTime);
 
+      // Fetch and filter tasks again after update
       final tasks = await _fetchAndFilterTasks(previousState?.filters);
-      emit(TaskLoaded(tasks,
-          filters: previousState?.filters ??
-              TaskFilters(date: '', priority: null, status: null)));
+      emit(TaskLoaded(
+        tasks,
+        filters: previousState?.filters ??
+            TaskFilters(date: '', priority: null, status: null),
+      ));
     } catch (e) {
+      // Revert to previous state if error occurs
       if (previousState != null) {
         emit(previousState);
       }
       emit(TaskError("Failed to update task status: $e"));
     }
   }
+
 }

@@ -5,7 +5,7 @@ class UpdateTaskStatusUseCase {
 
   UpdateTaskStatusUseCase(this.taskRepository);
 
-  Future<void> call(String taskId, String newStatus) {
-    return taskRepository.updateTaskStatus(taskId, newStatus);
+  Future<void> call(String taskId, String newStatus, String updatedTime) {
+    return taskRepository.updateTaskStatus(taskId, newStatus, updatedTime);
   }
 }
