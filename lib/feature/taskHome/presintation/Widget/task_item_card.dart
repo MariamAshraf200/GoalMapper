@@ -232,7 +232,7 @@ class TaskItemCard extends StatelessWidget {
         return AlertDialog(
           title: const Text('Task Not Editable'),
           content: const Text(
-              'This task is already completed or missed and cannot be updated.'),
+              'This task is already completed or missed and cannot be pended.'),
           actions: [
             TextButton(
               onPressed: () {
