@@ -144,7 +144,6 @@ class _TaskTrackState extends State<TaskTrack> {
                 ],
               ),
               const SizedBox(height: 20),
-
               // Date Picker
               DataFormat(
                 selectedDate: selectedDate,
@@ -197,6 +196,7 @@ class _TaskTrackState extends State<TaskTrack> {
                     ),
                   ),
                   const SizedBox(width: 16), // Adjust spacing between dropdowns
+                  // Update the status dropdown to include the new status "Missed"
                   Expanded(
                     child: Container(
                       decoration: BoxDecoration(
@@ -210,8 +210,7 @@ class _TaskTrackState extends State<TaskTrack> {
                           ),
                         ],
                       ),
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 12, vertical: 8),
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                       child: Row(
                         children: [
                           const Icon(Icons.task_alt, color: Colors.green),
@@ -221,13 +220,11 @@ class _TaskTrackState extends State<TaskTrack> {
                               value: selectedStatus,
                               hint: const Text(
                                 "Select Status",
-                                style:
-                                TextStyle(fontSize: 14, color: Colors.grey),
+                                style: TextStyle(fontSize: 14, color: Colors.grey),
                               ),
                               isExpanded: true,
-                              underline:
-                              const SizedBox(), // Remove the underline
-                              items: ['Done', 'Pending', 'to do', null]
+                              underline: const SizedBox(), // Remove the underline
+                              items: ['Done', 'Pending', 'to do', 'Missed', null]
                                   .map((status) => DropdownMenuItem<String>(
                                 value: status,
                                 child: Text(status ?? "All Statuses"),
@@ -240,6 +237,7 @@ class _TaskTrackState extends State<TaskTrack> {
                       ),
                     ),
                   ),
+
                 ],
               ),
 
