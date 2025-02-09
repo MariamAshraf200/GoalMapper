@@ -86,6 +86,7 @@ class _TaskTrackState extends State<TaskTrack> {
   }
 
 
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -98,29 +99,46 @@ class _TaskTrackState extends State<TaskTrack> {
           padding: const EdgeInsets.symmetric(vertical: 40.0, horizontal: 4.0),
           child: Column(
             children: [
-              // Title Section with Button
+              // Title Section with Button and Year
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween, // Align items to the edges
                 children: [
-                  Expanded(
-                    child: Row(
-                      children: [
-                        Text(
-                          ' My Task',
+                  // Left side: "My Task" title and year
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start, // Align text to the left
+                    children: [
+                      Row(
+                        children: [
+                          Text(
+                            ' My Task',
+                            style: TextStyle(
+                              color: AppColors.secondaryColor,
+                              fontSize: 30,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          const SizedBox(width: 5),
+                          IconButton(
+                            icon: const Icon(Icons.date_range_sharp, size: 25),
+                            onPressed: _showDatePicker, // Trigger date picker
+                          ),
+                        ],
+                      ),
+                      // Display the year of the selected date
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          DateFormat('yyyy/MM/dd').format(DateFormat('dd/MM/yyyy').parse(selectedDate)),
                           style: TextStyle(
                             color: AppColors.secondaryColor,
-                            fontSize: 30,
+                            fontSize: 18,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        const SizedBox(width: 5),
-                        IconButton(
-                          icon: const Icon(Icons.date_range_sharp, size: 25),
-                          onPressed: _showDatePicker, // Trigger date picker
-                        ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
+                  // Right side: Add task button
                   Container(
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
@@ -144,7 +162,7 @@ class _TaskTrackState extends State<TaskTrack> {
                 ],
               ),
               const SizedBox(height: 20),
-              // Date Picker
+              // Date Picker with Selected Date Highlight
               DataFormat(
                 selectedDate: selectedDate,
                 onDateSelected: _onDateSelected,
@@ -165,8 +183,7 @@ class _TaskTrackState extends State<TaskTrack> {
                           ),
                         ],
                       ),
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 12, vertical: 8),
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                       child: Row(
                         children: [
                           const Icon(Icons.filter_list, color: Colors.blue),
@@ -176,12 +193,10 @@ class _TaskTrackState extends State<TaskTrack> {
                               value: selectedPriority,
                               hint: const Text(
                                 "Select Priority",
-                                style:
-                                TextStyle(fontSize: 14, color: Colors.grey),
+                                style: TextStyle(fontSize: 14, color: Colors.grey),
                               ),
                               isExpanded: true,
-                              underline:
-                              const SizedBox(), // Remove the underline
+                              underline: const SizedBox(), // Remove the underline
                               items: ['High', 'Medium', 'Low', null]
                                   .map((priority) => DropdownMenuItem<String>(
                                 value: priority,
@@ -237,10 +252,8 @@ class _TaskTrackState extends State<TaskTrack> {
                       ),
                     ),
                   ),
-
                 ],
               ),
-
               const SizedBox(height: 16),
               // Tasks Display Section
               Expanded(

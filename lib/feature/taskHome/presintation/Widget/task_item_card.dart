@@ -34,10 +34,8 @@ class TaskItemCard extends StatelessWidget {
     final now = DateTime.now();
 
     try {
-      // Parse the task's date and time
       final taskEndDateTime = DateFormat('dd/MM/yyyy hh:mm a').parse('${task.date} ${task.endTime}');
 
-      // Compare the task's end date and time with the current date and time
       if (taskEndDateTime.isBefore(now) &&
           task.status != 'Done' &&
           task.status != 'Missed') {

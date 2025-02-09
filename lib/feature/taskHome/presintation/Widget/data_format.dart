@@ -28,7 +28,7 @@ class _DataFormatState extends State<DataFormat> {
     super.initState();
     currentDate = DateTime.now();
     weekDays = List.generate(
-      30,
+      7,
           (index) => currentDate.add(Duration(days: index - currentDate.weekday + 1)),
     );
     _scrollController = ScrollController();
