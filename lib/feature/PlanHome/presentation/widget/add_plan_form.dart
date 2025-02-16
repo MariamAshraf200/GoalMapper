@@ -36,7 +36,7 @@ class _AddPlanFormState extends State<AddPlanForm>
   DateTime? _planEndDate;
   String? _selectedCategory;
   String _selectedPriority = 'Medium';
-  XFile? _pickedImage; // Store picked image
+  XFile? _pickedImage;
 
   @override
   void dispose() {

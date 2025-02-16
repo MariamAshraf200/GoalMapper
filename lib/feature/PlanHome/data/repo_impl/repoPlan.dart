@@ -59,11 +59,11 @@ class PlanRepositoryImpl implements PlanRepository {
   }
 
   @override
-  Future<void> updatePlanPriority(String planId, String newPriority, String updatedTime) async {
+  Future<void> updatePlanStatus(String planId, String newStatus, String updatedTime) async {
     try {
       final plan = (await dataSource.getAllPlans()).firstWhere((plan) => plan.id == planId);
       final updatedPlan = plan.copyWith(
-        priority: newPriority,
+        priority: newStatus,
         updatedTime: updatedTime,
       );
       await dataSource.updatePlan(updatedPlan);

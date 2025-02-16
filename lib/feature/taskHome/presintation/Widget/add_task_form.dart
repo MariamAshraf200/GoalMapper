@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
-import 'package:mapperapp/feature/taskHome/presintation/Widget/priority_selector.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../../../core/constants/app_spaces.dart';
@@ -13,9 +12,12 @@ import '../../domain/entity/taskEntity.dart';
 import '../bloc/taskBloc/bloc.dart';
 import '../bloc/taskBloc/event.dart';
 import 'category_selector.dart';
+import 'priority_selector.dart';
 
 class AddTaskForm extends StatefulWidget {
-  const AddTaskForm({super.key});
+  final String? planId; // Make planId optional
+
+  const AddTaskForm({super.key, this.planId});
 
   @override
   _AddTaskFormState createState() => _AddTaskFormState();
@@ -176,10 +178,11 @@ class _AddTaskFormState extends State<AddTaskForm>
       description: _taskDescriptionController.text.trim(),
       date: formattedDate,
       time: formattedStartTime,
-      endTime: formattedEndTime?? ' ',
+      endTime: formattedEndTime ?? ' ',
       priority: _selectedPriority,
       category: _selectedCategory ?? 'General',
       status: 'to do',
+      planId: widget.planId, // Pass the optional planId
     );
 
     context.read<TaskBloc>().add(AddTaskEvent(task));

@@ -1,6 +1,7 @@
 import 'package:get_it/get_it.dart';
 import 'package:mapperapp/feature/PlanHome/data/dataSource/localData.dart';
 import 'package:mapperapp/feature/PlanHome/domain/usecase/getByStatus_plan_useCase.dart';
+import 'package:mapperapp/feature/taskHome/domain/usecse/task/getByPlanId_task_usecase.dart';
 import '../feature/MainScreen/domain/task_usecase/filter_usecase.dart';
 import '../feature/MainScreen/presentation/bloc/main_bloc.dart';
 import '../feature/PlanHome/data/repo_impl/repoPlan.dart';
@@ -90,6 +91,7 @@ Future<void> init() async {
     sl.registerLazySingleton(() => FilterTasksUseCase(sl<TaskRepository>()));
     sl.registerLazySingleton(
         () => FilterMainTasksUseCase(sl<TaskRepository>()));
+sl.registerLazySingleton(()=> GetTasksByPlanIdUseCase(sl<TaskRepository>()));
 
     // Register Use Cases for Categories
     sl.registerLazySingleton(
@@ -117,7 +119,7 @@ Future<void> init() async {
           getTasksByPriorityUseCase: sl<GetTasksByPriorityUseCase>(),
           updateTaskStatusUseCase: sl<UpdateTaskStatusUseCase>(),
           getTasksByDateUseCase: sl<GetTasksByDateUseCase>(),
-          filterTasksUseCase: sl<FilterTasksUseCase>(),
+          filterTasksUseCase: sl<FilterTasksUseCase>(), getTasksByPlanIdUseCase: sl<GetTasksByPlanIdUseCase>(),
         ));
 
     // Register CategoryBloc

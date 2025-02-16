@@ -14,9 +14,10 @@ abstract class PlanState extends Equatable {
 class PlanInitial extends PlanState {}
 
 class PlanLoading extends PlanState {}
+
 class PlanLoaded extends PlanState {
   final List<PlanDetails> plans;
-  final String? status; // Nullable to handle cases where no specific status filter is applied
+  final String? status;
 
   const PlanLoaded(this.plans, {this.status});
 

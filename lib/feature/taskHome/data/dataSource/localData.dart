@@ -1,8 +1,8 @@
-
 import 'package:hive/hive.dart';
 import '../../../../core/hiveServices.dart';
 import '../model/taskModel.dart';
 import 'abstract_data_scource.dart';
+
 class HiveTaskLocalDataSource implements TaskLocalDataSource {
   final HiveService hiveService;
 
@@ -44,5 +44,9 @@ class HiveTaskLocalDataSource implements TaskLocalDataSource {
   Future<List<TaskModel>> getTasksByPriority(String priority) async {
     return taskBox.values.where((task) => task.priority == priority).toList();
   }
-}
 
+  @override
+  Future<List<TaskModel>> getTasksByPlanId(String planId) async {
+    return taskBox.values.where((task) => task.planId == planId).toList();
+  }
+}

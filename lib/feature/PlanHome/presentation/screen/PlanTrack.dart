@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
 import '../../../taskHome/presintation/bloc/catogeryBloc/CatogeryBloc.dart';
 import '../../../taskHome/presintation/bloc/catogeryBloc/Catogeryevent.dart';
 import '../../../taskHome/presintation/bloc/catogeryBloc/Catogerystate.dart';
@@ -76,7 +75,7 @@ class _PlanTrackerScreenState extends State<PlanTrackerScreen> {
                               value: category.categoryName,
                               child: Text(category.categoryName),
                             );
-                          }).toList(),
+                          }),
                         ],
                       );
                     } else if (state is CategoryError) {
@@ -112,7 +111,7 @@ class _PlanTrackerScreenState extends State<PlanTrackerScreen> {
                 if (state is PlanLoading) {
                   return const Center(child: CircularProgressIndicator());
                 } else if (state is PlanLoaded) {
-                  return PlanItems(plans: state.plans);
+                 return PlanItems();
                 } else if (state is PlanError) {
                   return Center(child: Text(state.message));
                 } else {
@@ -159,11 +158,6 @@ class _PlanTrackerScreenState extends State<PlanTrackerScreen> {
           children: [
             Text(
               title,
-              style: TextStyle(
-                fontSize: 15,
-                fontWeight: FontWeight.bold,
-                color: selected ? Colors.white : Colors.black,
-              ),
             ),
           ],
         ),

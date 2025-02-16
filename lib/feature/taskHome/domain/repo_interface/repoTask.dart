@@ -1,4 +1,3 @@
-
 import '../entity/taskEntity.dart';
 
 abstract class TaskRepository {
@@ -15,5 +14,5 @@ abstract class TaskRepository {
     String? priority,
     String? status,
   });
-
+  Future<List<TaskDetails>> getTasksByPlanId(String planId); // Add this method
 }

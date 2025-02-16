@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
 import '../Widget/add_task_form.dart';
 
-
 class AddTaskScreen extends StatelessWidget {
-  const AddTaskScreen({super.key});
+  final String? planId; // Make planId optional
+
+  const AddTaskScreen({super.key, this.planId}); // planId is optional
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        automaticallyImplyLeading: false, 
+        automaticallyImplyLeading: false,
         title: Row(
           children: [
             IconButton(
@@ -36,11 +37,7 @@ class AddTaskScreen extends StatelessWidget {
           ],
         ),
       ),
-
-      body:  const AddTaskForm(),
-
+      body: AddTaskForm(planId: planId), // Pass planId to AddTaskForm
     );
   }
 }
-
-

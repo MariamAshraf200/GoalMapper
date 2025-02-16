@@ -10,7 +10,8 @@ class TaskDetails {
   final String priority;
   final String category;
   String status;
-  String? updatedTime; // Added field to track last update time
+  String? updatedTime; // Field to track the last update time
+  String? planId; // New nullable field for plan ID
 
   TaskDetails({
     required this.id,
@@ -23,8 +24,10 @@ class TaskDetails {
     required this.status,
     required this.category,
     this.updatedTime, // Optional, as it might not always be provided
+    this.planId, // Optional, for backward compatibility
   });
 
+  /// `copyWith` method for creating a new instance with updated fields.
   TaskDetails copyWith({
     String? id,
     String? title,
@@ -35,7 +38,8 @@ class TaskDetails {
     String? priority,
     String? status,
     String? category,
-    String? updatedTime, // Added to copyWith
+    String? updatedTime, // Included updatedTime in copyWith
+    String? planId, // Included planId in copyWith
   }) {
     return TaskDetails(
       id: id ?? this.id,
@@ -48,9 +52,11 @@ class TaskDetails {
       status: status ?? this.status,
       category: category ?? this.category,
       updatedTime: updatedTime ?? this.updatedTime, // Copying updatedTime
+      planId: planId ?? this.planId, // Copying planId
     );
   }
 
+  /// Converts `TaskDetails` to `TaskModel`.
   TaskModel toModel() {
     return TaskModel(
       category: category,
@@ -62,12 +68,13 @@ class TaskDetails {
       priority: priority,
       id: id,
       status: status,
-      updatedTime: updatedTime, // Mapping updatedTime to the model
+      updatedTime: updatedTime, 
+      planId: planId,
     );
   }
 
   @override
   String toString() {
-    return 'TaskDetails(id: $id, title: $title, description: $description, date: $date, time: $time, endTime: $endTime, priority: $priority, status: $status, category: $category, updatedTime: $updatedTime)';
+    return 'TaskDetails(id: $id, title: $title, description: $description, date: $date, time: $time, endTime: $endTime, priority: $priority, status: $status, category: $category, updatedTime: $updatedTime, planId: $planId)';
   }
 }

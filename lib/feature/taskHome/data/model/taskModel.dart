@@ -35,6 +35,9 @@ class TaskModel {
   @HiveField(9)
   final String? updatedTime; // Added field to track last update time
 
+  @HiveField(10)
+  final String? planId; // New nullable field for plan ID
+
   // Constructor
   const TaskModel({
     required this.id,
@@ -47,6 +50,7 @@ class TaskModel {
     required this.status,
     required this.category,
     this.updatedTime, // Optional, to ensure backward compatibility
+    this.planId, // Optional, for backward compatibility
   });
 
   /// Converts the `TaskModel` to a `TaskDetails` entity.
@@ -62,6 +66,7 @@ class TaskModel {
       status: status,
       category: category,
       updatedTime: updatedTime, // Mapping updatedTime to the entity
+      planId: planId, // Mapping planId to the entity
     );
   }
 
@@ -78,6 +83,7 @@ class TaskModel {
       status: entity.status,
       category: entity.category,
       updatedTime: entity.updatedTime, // Mapping updatedTime from the entity
+      planId: entity.planId, // Mapping planId from the entity
     );
   }
 
@@ -93,6 +99,7 @@ class TaskModel {
     String? status,
     String? category,
     String? updatedTime, // Added updatedTime to the copyWith method
+    String? planId, // Added planId to the copyWith method
   }) {
     return TaskModel(
       id: id ?? this.id,
@@ -105,11 +112,12 @@ class TaskModel {
       status: status ?? this.status,
       category: category ?? this.category,
       updatedTime: updatedTime ?? this.updatedTime, // Copying updatedTime
+      planId: planId ?? this.planId, // Copying planId
     );
   }
 
   @override
   String toString() {
-    return 'TaskModel(id: $id, title: $title, description: $description, date: $date, time: $time, endTime: $endTime, priority: $priority, status: $status, category: $category, updatedTime: $updatedTime)';
+    return 'TaskModel(id: $id, title: $title, description: $description, date: $date, time: $time, endTime: $endTime, priority: $priority, status: $status, category: $category, updatedTime: $updatedTime, planId: $planId)';
   }
 }

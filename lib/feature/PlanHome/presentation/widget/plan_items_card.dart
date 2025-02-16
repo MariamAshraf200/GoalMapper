@@ -1,128 +1,99 @@
 import 'package:flutter/material.dart';
-import '../../domain/entities/plan_entity.dart';
+import 'package:mapperapp/feature/PlanHome/domain/entities/plan_entity.dart';
+import 'package:mapperapp/feature/PlanHome/presentation/widget/plan_details.dart';
+
+
 
 class PlanItemCard extends StatelessWidget {
   final PlanDetails plan;
 
-  const PlanItemCard({
-    super.key,
-    required this.plan,
-  });
+  const PlanItemCard({super.key, required this.plan});
 
   @override
   Widget build(BuildContext context) {
-    return ClipPath(
-      clipper: PlanClipper(),
-      child: Container(
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(12),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.grey.withOpacity(0.3),
-              blurRadius: 8,
-              offset: const Offset(0, 4),
-            ),
-          ],
+    return GestureDetector(
+      onLongPress: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => PlanDetailsScreen(plan: plan),
+          ),
+        );
+      },
+      child: Card(
+        elevation: 6,
+        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Header Section
-            Container(
-              padding: const EdgeInsets.all(16.0),
-              color: plan.completed ? Colors.green : Colors.blue,
-              child: Text(
-                plan.title,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
+            // Custom Header with Clipper
+            ClipPath(
+              clipper: WavyClipper(),
+              child: Container(
+                height: 90,
+                decoration: BoxDecoration(
+                  color: plan.completed ? Colors.green : Colors.orange,
+                ),
+                child: Center(
+                  child: Text(
+                    plan.completed ? "COMPLETED" : "NOT COMPLETED",
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18,
+                    ),
+                  ),
                 ),
               ),
             ),
-            // Image Section (if available)
-            if (plan.image != null)
-              Image.network(
-                plan.image!,
-                width: double.infinity,
-                height: 150,
-                fit: BoxFit.cover,
-              ),
-            // Details Section
+            // Main Content
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  // Title
                   Text(
-                    plan.description,
-                    style: const TextStyle(
-                      fontSize: 16,
-                      color: Colors.black87,
+                    plan.title,
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
                   const SizedBox(height: 8),
+                  // Date and Priority
                   Row(
                     children: [
+                      Icon(Icons.calendar_today,
+                          size: 16, color: Colors.grey[700]),
+                      const SizedBox(width: 8),
                       Text(
-                        "Start: ${plan.startDate}",
-                        style: const TextStyle(
-                          fontSize: 14,
-                          color: Colors.black54,
+                        "${plan.startDate} - ${plan.endDate}",
+                        style:
+                        Theme.of(context).textTheme.bodySmall?.copyWith(
+                          color: Colors.grey[700],
                         ),
                       ),
                       const Spacer(),
+                      Icon(
+                        Icons.priority_high,
+                        size: 16,
+                        color: plan.priority == "High"
+                            ? Colors.red
+                            : Colors.orange,
+                      ),
+                      const SizedBox(width: 4),
                       Text(
-                        "End: ${plan.endDate}",
-                        style: const TextStyle(
-                          fontSize: 14,
-                          color: Colors.black54,
+                        plan.priority,
+                        style:
+                        Theme.of(context).textTheme.bodySmall?.copyWith(
+                          color: plan.priority == "High"
+                              ? Colors.red
+                              : Colors.orange,
                         ),
                       ),
-                    ],
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    "Priority: ${plan.priority}",
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: plan.priority == "High"
-                          ? Colors.red
-                          : Colors.orange,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    "Category: ${plan.category}",
-                    style: const TextStyle(
-                      fontSize: 14,
-                      color: Colors.black87,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Row(
-                    children: [
-                      Text(
-                        "Status: ${plan.status}",
-                        style: const TextStyle(
-                          fontSize: 14,
-                          color: Colors.black87,
-                        ),
-                      ),
-                      const Spacer(),
-                      if (plan.completed)
-                        const Icon(
-                          Icons.check_circle,
-                          color: Colors.green,
-                          size: 18,
-                        )
-                      else
-                        const Icon(
-                          Icons.circle_outlined,
-                          color: Colors.red,
-                          size: 18,
-                        ),
                     ],
                   ),
                 ],
@@ -135,12 +106,20 @@ class PlanItemCard extends StatelessWidget {
   }
 }
 
-class PlanClipper extends CustomClipper<Path> {
+
+class WavyClipper extends CustomClipper<Path> {
   @override
   Path getClip(Size size) {
     Path path = Path();
-    path.lineTo(0, size.height);
-    path.quadraticBezierTo(size.width / 2, size.height - 20, size.width, size.height);
+    path.lineTo(0, size.height - 20);
+    path.quadraticBezierTo(
+      size.width / 4, size.height,
+      size.width / 2, size.height - 20,
+    );
+    path.quadraticBezierTo(
+      size.width * 3 / 4, size.height - 40,
+      size.width, size.height - 20,
+    );
     path.lineTo(size.width, 0);
     path.close();
     return path;

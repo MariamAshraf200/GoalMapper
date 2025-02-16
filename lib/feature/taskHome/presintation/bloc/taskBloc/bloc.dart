@@ -6,6 +6,7 @@ import '../../../domain/entity/task_filters.dart';
 import '../../../domain/usecse/task/addUsecase.dart';
 import '../../../domain/usecse/task/deleteUsecase.dart';
 import '../../../domain/usecse/task/filter_tasks.dart';
+import '../../../domain/usecse/task/getByPlanId_task_usecase.dart';
 import '../../../domain/usecse/task/getTaskByDateUsecase.dart';
 import '../../../domain/usecse/task/getTaskByPriorityUseCase.dart';
 import '../../../domain/usecse/task/getTaskBystatus.dart';
@@ -24,6 +25,7 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
   final DeleteTaskUseCase deleteTaskUseCase;
   final GetTasksByDateUseCase getTasksByDateUseCase;
   final FilterTasksUseCase filterTasksUseCase;
+  final GetTasksByPlanIdUseCase getTasksByPlanIdUseCase; // Add this use case
 
   // Add properties to store selected filters
   String? _selectedPriority;
@@ -42,6 +44,7 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
     required this.deleteTaskUseCase,
     required this.getTasksByDateUseCase,
     required this.filterTasksUseCase,
+    required this.getTasksByPlanIdUseCase, // Add this use case
   }) : super(TaskInitial()) {
     on<GetAllTasksEvent>(_onGetAllTasks);
     on<GetTasksByStatusEvent>(_onGetTasksByStatus);
@@ -52,6 +55,7 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
     on<UpdateTaskStatusEvent>(_onUpdateTaskStatus);
     on<DeleteTaskEvent>(_onDeleteTask);
     on<FilterTasksEvent>(_onFilterTasks);
+    on<GetTasksByPlanIdEvent>(_onGetTasksByPlanId); // Add this handler
   }
 
   Future<List<TaskDetails>> _fetchAndFilterTasks(TaskFilters? filters) async {
@@ -66,9 +70,9 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
   }
 
   Future<void> _onGetAllTasks(
-    GetAllTasksEvent event,
-    Emitter<TaskState> emit,
-  ) async {
+      GetAllTasksEvent event,
+      Emitter<TaskState> emit,
+      ) async {
     emit(TaskLoading());
     try {
       final tasks = await getAllTasksUseCase();
@@ -80,9 +84,9 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
   }
 
   Future<void> _onGetTasksByStatus(
-    GetTasksByStatusEvent event,
-    Emitter<TaskState> emit,
-  ) async {
+      GetTasksByStatusEvent event,
+      Emitter<TaskState> emit,
+      ) async {
     emit(TaskLoading());
     try {
       final tasks = await getTasksByStatusUseCase(event.status);
@@ -96,9 +100,9 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
   }
 
   Future<void> _onGetTasksByPriority(
-    GetTasksByPriorityEvent event,
-    Emitter<TaskState> emit,
-  ) async {
+      GetTasksByPriorityEvent event,
+      Emitter<TaskState> emit,
+      ) async {
     emit(TaskLoading());
     try {
       final tasks = await getTasksByPriorityUseCase(event.priority);
@@ -112,9 +116,9 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
   }
 
   Future<void> _onGetTasksByDate(
-    GetTasksByDateEvent event,
-    Emitter<TaskState> emit,
-  ) async {
+      GetTasksByDateEvent event,
+      Emitter<TaskState> emit,
+      ) async {
     emit(TaskLoading());
     try {
       final tasks = await getTasksByDateUseCase(event.date);
@@ -128,9 +132,9 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
   }
 
   Future<void> _onFilterTasks(
-    FilterTasksEvent event,
-    Emitter<TaskState> emit,
-  ) async {
+      FilterTasksEvent event,
+      Emitter<TaskState> emit,
+      ) async {
     emit(TaskLoading());
     try {
       // Update selected filters
@@ -153,9 +157,9 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
   }
 
   Future<void> _onAddTask(
-    AddTaskEvent event,
-    Emitter<TaskState> emit,
-  ) async {
+      AddTaskEvent event,
+      Emitter<TaskState> emit,
+      ) async {
     TaskLoaded? previousState;
 
     try {
@@ -181,9 +185,9 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
   }
 
   Future<void> _onUpdateTask(
-    UpdateTaskEvent event,
-    Emitter<TaskState> emit,
-  ) async {
+      UpdateTaskEvent event,
+      Emitter<TaskState> emit,
+      ) async {
     TaskLoaded? previousState;
 
     try {
@@ -210,9 +214,9 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
   }
 
   Future<void> _onDeleteTask(
-    DeleteTaskEvent event,
-    Emitter<TaskState> emit,
-  ) async {
+      DeleteTaskEvent event,
+      Emitter<TaskState> emit,
+      ) async {
     TaskLoaded? previousState;
 
     try {
@@ -262,7 +266,7 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
       }
 
       // Update the status in the backend or database
-      await updateTaskStatusUseCase(event.taskId, event.newStatus,event.updatedTime);
+      await updateTaskStatusUseCase(event.taskId, event.newStatus, event.updatedTime);
 
       // Fetch and filter tasks again after update
       final tasks = await _fetchAndFilterTasks(previousState?.filters);
@@ -280,4 +284,20 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
     }
   }
 
+  // Handler for GetTasksByPlanIdEvent
+  Future<void> _onGetTasksByPlanId(
+      GetTasksByPlanIdEvent event,
+      Emitter<TaskState> emit,
+      ) async {
+    emit(TaskLoading());
+    try {
+      final tasks = await getTasksByPlanIdUseCase(event.planId);
+      emit(TaskLoaded(
+        tasks,
+        filters: TaskFilters(date: '', priority: null, status: null),
+      ));
+    } catch (e) {
+      emit(TaskError("Failed to load tasks by plan ID: $e"));
+    }
+  }
 }

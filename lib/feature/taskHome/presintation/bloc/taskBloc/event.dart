@@ -15,6 +15,9 @@ class GetTasksByStatusEvent extends TaskEvent {
   final String status;
 
   const GetTasksByStatusEvent(this.status);
+
+  @override
+  List<Object?> get props => [status];
 }
 
 class GetTasksByPriorityEvent extends TaskEvent {
@@ -22,8 +25,9 @@ class GetTasksByPriorityEvent extends TaskEvent {
 
   const GetTasksByPriorityEvent(this.priority);
 
+  @override
+  List<Object?> get props => [priority];
 }
-
 
 class AddTaskEvent extends TaskEvent {
   final TaskDetails task;
@@ -51,17 +55,17 @@ class DeleteTaskEvent extends TaskEvent {
   @override
   List<Object?> get props => [taskId];
 }
+
 class UpdateTaskStatusEvent extends TaskEvent {
   final String taskId;
   final String newStatus;
   final String updatedTime;
 
-  UpdateTaskStatusEvent(this.taskId, this.newStatus, {required this.updatedTime});
+  const UpdateTaskStatusEvent(this.taskId, this.newStatus, {required this.updatedTime});
 
   @override
-  List<Object> get props => [taskId, newStatus, updatedTime];
+  List<Object?> get props => [taskId, newStatus, updatedTime];
 }
-
 
 class GetTasksByDateEvent extends TaskEvent {
   final String date; // Assuming date is in String format
@@ -83,4 +87,12 @@ class FilterTasksEvent extends TaskEvent {
   List<Object?> get props => [date, priority, status];
 }
 
+// New event to fetch tasks by planId
+class GetTasksByPlanIdEvent extends TaskEvent {
+  final String planId; // Plan ID to filter tasks
 
+  const GetTasksByPlanIdEvent(this.planId);
+
+  @override
+  List<Object?> get props => [planId];
+}

@@ -12,7 +12,7 @@ class TaskRepositoryImpl implements TaskRepository {
   Future<List<TaskDetails>> getTasks() async {
     try {
       final taskModels = await dataSource.getAllTasks();
-      return taskModels.map((taskModel) => taskModel.toEntity()).toList(); //ToDo
+      return taskModels.map((taskModel) => taskModel.toEntity()).toList();
     } catch (e) {
       throw Exception("Error loading tasks from local data source: $e");
     }
@@ -34,10 +34,9 @@ class TaskRepositoryImpl implements TaskRepository {
       final taskModels = await dataSource.getTasksByPriority(priority);
       return taskModels.map((taskModel) => taskModel.toEntity()).toList();
     } catch (e) {
-      throw Exception("Error loading tasks with status '$priority': $e");
+      throw Exception("Error loading tasks with priority '$priority': $e");
     }
   }
-
 
   @override
   Future<List<TaskDetails>> getTasksByDate(String date) async {
@@ -50,8 +49,16 @@ class TaskRepositoryImpl implements TaskRepository {
   }
 
   @override
+  Future<List<TaskDetails>> getTasksByPlanId(String planId) async {
+    try {
+      final taskModels = await dataSource.getTasksByPlanId(planId);
+      return taskModels.map((taskModel) => taskModel.toEntity()).toList();
+    } catch (e) {
+      throw Exception("Error loading tasks by plan ID '$planId': $e");
+    }
+  }
 
-  //ToDo why date
+  @override
   Future<List<TaskDetails>> filterTasks({
     required String date,
     String? priority,
@@ -60,7 +67,7 @@ class TaskRepositoryImpl implements TaskRepository {
     final taskModels = await dataSource.getTasksByDate(date);
     return taskModels
         .where((task) =>
-        (priority == null || task.priority == priority) &&
+    (priority == null || task.priority == priority) &&
         (status == null || task.status == status))
         .map((task) => task.toEntity())
         .toList();
@@ -86,9 +93,6 @@ class TaskRepositoryImpl implements TaskRepository {
     }
   }
 
-
-
-
   @override
   Future<void> updateTaskStatus(String taskId, String newStatus, String updatedTime) async {
     try {
@@ -107,8 +111,6 @@ class TaskRepositoryImpl implements TaskRepository {
       throw Exception("Error updating task status: $e");
     }
   }
-
-
 
   @override
   Future<void> deleteTask(String taskId) async {

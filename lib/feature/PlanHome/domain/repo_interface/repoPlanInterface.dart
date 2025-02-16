@@ -10,10 +10,10 @@ abstract class PlanRepository {
 
   Future<void> updatePlan(PlanDetails plan);
 
-  Future<List<PlanDetails>> getPlansByStatus(String status); // Add this method
+  Future<List<PlanDetails>> getPlansByStatus(String status);
 
 
-  Future<void> updatePlanPriority(String planId, String newPriority, String updatedTime);
+  Future<void> updatePlanStatus(String planId, String newStatus, String updatedTime);
 
   Future<void> deletePlan(String planId);
 }
