@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:mapperapp/feature/taskHome/domain/entity/taskEntity.dart';
 import 'package:mapperapp/feature/taskHome/presintation/screen/taskTrack.dart';
 import '../../../PlanHome/presentation/screen/PlanTrack.dart';
-import '../../../PlanHome/presentation/widget/plan_items.dart';
 import '../wedgit/plan_list.dart';
 import '../wedgit/task_list.dart';
 
