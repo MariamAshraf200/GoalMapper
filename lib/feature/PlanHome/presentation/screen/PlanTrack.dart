@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../domain/entities/plan_entity.dart';
+import '../../../taskHome/presintation/bloc/catogeryBloc/CatogeryBloc.dart';
+import '../../../taskHome/presintation/bloc/catogeryBloc/Catogeryevent.dart';
+import '../../../taskHome/presintation/bloc/catogeryBloc/Catogerystate.dart';
 import '../bloc/bloc.dart';
 import '../bloc/event.dart';
 import '../bloc/state.dart';
+import '../widget/plan_items.dart';
+
 
 class PlanTrackerScreen extends StatefulWidget {
   const PlanTrackerScreen({super.key});
@@ -15,6 +19,13 @@ class PlanTrackerScreen extends StatefulWidget {
 
 class _PlanTrackerScreenState extends State<PlanTrackerScreen> {
   String selectedStatus = "All";
+  String? selectedCategory;
+
+  @override
+  void initState() {
+    super.initState();
+    context.read<CategoryBloc>().add(LoadCategoriesEvent());
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -34,13 +45,45 @@ class _PlanTrackerScreenState extends State<PlanTrackerScreen> {
                     color: Colors.deepPurple,
                   ),
                 ),
-                IconButton(
-                  icon: const Icon(
-                    Icons.filter_list,
-                    color: Colors.deepPurple,
-                  ),
-                  onPressed: () {
-                    _showCategoryFilterDialog(context);
+                BlocBuilder<CategoryBloc, CategoryState>(
+                  builder: (context, state) {
+                    if (state is CategoryLoading) {
+                      return const CircularProgressIndicator();
+                    } else if (state is CategoryLoaded) {
+                      final categories = state.categories;
+                      return PopupMenuButton<String>(
+                        icon: const Icon(
+                          Icons.filter_list,
+                          color: Colors.deepPurple,
+                        ),
+                        onSelected: (category) {
+                          setState(() {
+                            selectedCategory = category;
+                          });
+                          if (category == "All") {
+                            context.read<PlanBloc>().add(GetAllPlansEvent());
+                          } else {
+                            context.read<PlanBloc>().add(GetPlansByCategoryEvent(category));
+                          }
+                        },
+                        itemBuilder: (context) => [
+                          const PopupMenuItem(
+                            value: "All",
+                            child: Text("All Categories"),
+                          ),
+                          ...categories.map((category) {
+                            return PopupMenuItem(
+                              value: category.categoryName,
+                              child: Text(category.categoryName),
+                            );
+                          }).toList(),
+                        ],
+                      );
+                    } else if (state is CategoryError) {
+                      return Text(state.message, style: const TextStyle(color: Colors.red));
+                    } else {
+                      return const Text("No categories available.");
+                    }
                   },
                 ),
               ],
@@ -69,7 +112,7 @@ class _PlanTrackerScreenState extends State<PlanTrackerScreen> {
                 if (state is PlanLoading) {
                   return const Center(child: CircularProgressIndicator());
                 } else if (state is PlanLoaded) {
-                  return _buildPlanList(state.plans);
+                  return PlanItems(plans: state.plans);
                 } else if (state is PlanError) {
                   return Center(child: Text(state.message));
                 } else {
@@ -94,7 +137,6 @@ class _PlanTrackerScreenState extends State<PlanTrackerScreen> {
       onTap: () {
         setState(() {
           selectedStatus = title;
-          // Trigger a Bloc event based on the selected status
           if (title == "All") {
             context.read<PlanBloc>().add(GetAllPlansEvent());
           } else if (title == "Completed") {
@@ -126,77 +168,6 @@ class _PlanTrackerScreenState extends State<PlanTrackerScreen> {
           ],
         ),
       ),
-    );
-  }
-
-  void _showCategoryFilterDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (context) {
-        String? selectedCategory;
-        return AlertDialog(
-          title: const Text('Select Category'),
-          content: DropdownButton<String>(
-            isExpanded: true,
-            hint: const Text('Choose a category'),
-            value: selectedCategory,
-            items: ['Work', 'Personal', 'Fitness', 'Study']
-                .map((category) => DropdownMenuItem(
-              value: category,
-              child: Text(category),
-            ))
-                .toList(),
-            onChanged: (category) {
-              setState(() {
-                selectedCategory = category;
-              });
-            },
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              child: const Text('Cancel'),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                if (selectedCategory != null) {
-                  context
-                      .read<PlanBloc>()
-                      .add(GetPlansByCategoryEvent(selectedCategory!));
-                }
-                Navigator.pop(context);
-              },
-              child: const Text('Apply'),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  Widget _buildPlanList(List<PlanDetails> plans) {
-    return ListView.builder(
-      itemCount: plans.length,
-      itemBuilder: (context, index) {
-        final plan = plans[index];
-        return Card(
-          child: ListTile(
-            title: Text(plan.title),
-            subtitle: Text(plan.category),
-            trailing: IconButton(
-              icon: const Icon(Icons.delete),
-              onPressed: () {
-                context.read<PlanBloc>().add(DeletePlanEvent(plan.id));
-              },
-            ),
-            onTap: () {
-              // Navigate to Edit Plan Screen
-            },
-          ),
-        );
-      },
     );
   }
 }

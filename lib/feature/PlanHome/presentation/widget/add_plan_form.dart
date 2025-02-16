@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
-import 'package:image_picker/image_picker.dart'; // Import image picker package
+import 'package:image_picker/image_picker.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../../../core/constants/app_spaces.dart';
@@ -176,7 +176,7 @@ class _AddPlanFormState extends State<AddPlanForm>
       priority: _selectedPriority,
       category: _selectedCategory ?? 'General',
       status: 'notCompleted',
-      image: _pickedImage?.path, // Store image path if needed
+      image: _pickedImage?.path, 
     );
 
     context.read<PlanBloc>().add(AddPlanEvent(plan));
