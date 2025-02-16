@@ -1,6 +1,16 @@
 import 'package:get_it/get_it.dart';
+import 'package:mapperapp/feature/PlanHome/data/dataSource/localData.dart';
+import 'package:mapperapp/feature/PlanHome/domain/usecase/getByStatus_plan_useCase.dart';
 import '../feature/MainScreen/domain/task_usecase/filter_usecase.dart';
 import '../feature/MainScreen/presentation/bloc/main_bloc.dart';
+import '../feature/PlanHome/data/repo_impl/repoPlan.dart';
+import '../feature/PlanHome/domain/repo_interface/repoPlanInterface.dart';
+import '../feature/PlanHome/domain/usecase/add_plan_usecase.dart';
+import '../feature/PlanHome/domain/usecase/delete_plan_useCase.dart';
+import '../feature/PlanHome/domain/usecase/getAll_plan_usecase.dart';
+import '../feature/PlanHome/domain/usecase/getByCatogery_plan_usecase.dart';
+import '../feature/PlanHome/domain/usecase/update_plan_usecase.dart';
+import '../feature/PlanHome/presentation/bloc/bloc.dart';
 import '../feature/taskHome/data/dataSource/abstract_data_scource.dart';
 import '../feature/taskHome/data/dataSource/catogeryLocalData.dart';
 import '../feature/taskHome/data/dataSource/localData.dart';
@@ -38,22 +48,31 @@ Future<void> init() async {
 
     // Register HiveTaskLocalDataSource
     sl.registerLazySingleton<TaskLocalDataSource>(
-          () => HiveTaskLocalDataSource(sl<HiveService>()),
+      () => HiveTaskLocalDataSource(sl<HiveService>()),
     );
 
     // Register HiveCategoryLocalDataSource
     sl.registerLazySingleton<HiveCategoryLocalDataSource>(
-          () => HiveCategoryLocalDataSource(sl<HiveService>()),
+      () => HiveCategoryLocalDataSource(sl<HiveService>()),
+    );
+
+    // Register HiveCategoryLocalDataSource
+    sl.registerLazySingleton<HivePlanLocalDataSource>(
+      () => HivePlanLocalDataSource(sl<HiveService>()),
     );
 
     // Register TaskRepository
     sl.registerLazySingleton<TaskRepository>(
-          () => TaskRepositoryImpl(sl<TaskLocalDataSource>()),
+      () => TaskRepositoryImpl(sl<TaskLocalDataSource>()),
     );
 
     // Register CategoryRepository
     sl.registerLazySingleton<CategoryRepository>(
-          () => CategoryRepositoryImpl(sl<HiveCategoryLocalDataSource>()),
+      () => CategoryRepositoryImpl(sl<HiveCategoryLocalDataSource>()),
+    );
+
+    sl.registerLazySingleton<PlanRepository>(
+      () => PlanRepositoryImpl(sl<HivePlanLocalDataSource>()),
     );
 
     // Register Use Cases for Tasks
@@ -61,41 +80,65 @@ Future<void> init() async {
     sl.registerLazySingleton(() => GetAllTasksUseCase(sl<TaskRepository>()));
     sl.registerLazySingleton(() => DeleteTaskUseCase(sl<TaskRepository>()));
     sl.registerLazySingleton(() => UpdateTaskUseCase(sl<TaskRepository>()));
-    sl.registerLazySingleton(() => GetTasksByStatusUseCase(sl<TaskRepository>()));
-    sl.registerLazySingleton(() => GetTasksByPriorityUseCase(sl<TaskRepository>()));
-    sl.registerLazySingleton(() => UpdateTaskStatusUseCase(sl<TaskRepository>()));
+    sl.registerLazySingleton(
+        () => GetTasksByStatusUseCase(sl<TaskRepository>()));
+    sl.registerLazySingleton(
+        () => GetTasksByPriorityUseCase(sl<TaskRepository>()));
+    sl.registerLazySingleton(
+        () => UpdateTaskStatusUseCase(sl<TaskRepository>()));
     sl.registerLazySingleton(() => GetTasksByDateUseCase(sl<TaskRepository>()));
     sl.registerLazySingleton(() => FilterTasksUseCase(sl<TaskRepository>()));
-    sl.registerLazySingleton(() => FilterMainTasksUseCase(sl<TaskRepository>()));
+    sl.registerLazySingleton(
+        () => FilterMainTasksUseCase(sl<TaskRepository>()));
 
     // Register Use Cases for Categories
-    sl.registerLazySingleton(() => AddCategoryUseCase(sl<CategoryRepository>()));
-    sl.registerLazySingleton(() => GetAllCategoriesUseCase(sl<CategoryRepository>()));
-    sl.registerLazySingleton(() => DeleteCategoryUseCase(sl<CategoryRepository>()));
+    sl.registerLazySingleton(
+        () => AddCategoryUseCase(sl<CategoryRepository>()));
+    sl.registerLazySingleton(
+        () => GetAllCategoriesUseCase(sl<CategoryRepository>()));
+    sl.registerLazySingleton(
+        () => DeleteCategoryUseCase(sl<CategoryRepository>()));
+
+    sl.registerLazySingleton(() => GetAllPlansUseCase(sl<PlanRepository>()));
+    sl.registerLazySingleton(() => DeletePlanUseCase(sl<PlanRepository>()));
+    sl.registerLazySingleton(
+        () => GetPlansByCategoryUseCase(sl<PlanRepository>()));
+    sl.registerLazySingleton(() => AddPlanUseCase(sl<PlanRepository>()));
+    sl.registerLazySingleton(() => UpdatePlanUseCase(sl<PlanRepository>()));
+    sl.registerLazySingleton(()=>GetPlansByStatusUseCase(sl<PlanRepository>()));
 
     // Register TaskBloc
     sl.registerFactory(() => TaskBloc(
-      getAllTasksUseCase: sl<GetAllTasksUseCase>(),
-      addTaskUseCase: sl<AddTaskUseCase>(),
-      updateTaskUseCase: sl<UpdateTaskUseCase>(),
-      deleteTaskUseCase: sl<DeleteTaskUseCase>(),
-      getTasksByStatusUseCase: sl<GetTasksByStatusUseCase>(),
-      getTasksByPriorityUseCase: sl<GetTasksByPriorityUseCase>(),
-      updateTaskStatusUseCase: sl<UpdateTaskStatusUseCase>(),
-      getTasksByDateUseCase: sl<GetTasksByDateUseCase>(),
-      filterTasksUseCase: sl<FilterTasksUseCase>(),
-    ));
+          getAllTasksUseCase: sl<GetAllTasksUseCase>(),
+          addTaskUseCase: sl<AddTaskUseCase>(),
+          updateTaskUseCase: sl<UpdateTaskUseCase>(),
+          deleteTaskUseCase: sl<DeleteTaskUseCase>(),
+          getTasksByStatusUseCase: sl<GetTasksByStatusUseCase>(),
+          getTasksByPriorityUseCase: sl<GetTasksByPriorityUseCase>(),
+          updateTaskStatusUseCase: sl<UpdateTaskStatusUseCase>(),
+          getTasksByDateUseCase: sl<GetTasksByDateUseCase>(),
+          filterTasksUseCase: sl<FilterTasksUseCase>(),
+        ));
 
     // Register CategoryBloc
     sl.registerFactory(() => CategoryBloc(
-      addCategoryUseCase: sl<AddCategoryUseCase>(),
-      getAllCategoriesUseCase: sl<GetAllCategoriesUseCase>(),
-      deleteCategoryUseCase: sl<DeleteCategoryUseCase>(),
-    ));
+          addCategoryUseCase: sl<AddCategoryUseCase>(),
+          getAllCategoriesUseCase: sl<GetAllCategoriesUseCase>(),
+          deleteCategoryUseCase: sl<DeleteCategoryUseCase>(),
+        ));
     sl.registerFactory(() => MainTaskBloc(
-      filterTasksUseCase: sl<FilterMainTasksUseCase>(),
-    ));
+          filterTasksUseCase: sl<FilterMainTasksUseCase>(),
+        ));
 
+    // Register PlanBloc
+    sl.registerFactory(() => PlanBloc(
+          getAllPlansUseCase: sl<GetAllPlansUseCase>(),
+          addPlanUseCase: sl<AddPlanUseCase>(),
+          updatePlanUseCase: sl<UpdatePlanUseCase>(),
+          deletePlanUseCase: sl<DeletePlanUseCase>(),
+          getPlansByCategoryUseCase: sl<GetPlansByCategoryUseCase>(),
+          getPlansByStatusUseCase: sl<GetPlansByStatusUseCase>(),
+        ));
   } catch (e, stackTrace) {
     print("Error during DI initialization: $e");
     print(stackTrace);

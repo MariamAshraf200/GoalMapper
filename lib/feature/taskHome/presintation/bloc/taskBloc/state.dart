@@ -15,12 +15,7 @@ class TaskInitial extends TaskState {}
 
 class TaskLoading extends TaskState {}
 
-// class TaskLoaded extends TaskState {
-//   final List<TaskDetails> tasks;
-//   const TaskLoaded(this.tasks);
-//   @override
-//   List<Object?> get props => [tasks];
-// }
+
 
 class TaskLoaded extends TaskState {
   final List<TaskDetails> tasks;

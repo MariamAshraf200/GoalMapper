@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
+import 'package:mapperapp/feature/PlanHome/presentation/screen/addPlan.dart';
 import 'package:mapperapp/feature/taskHome/presintation/screen/add_task_screen.dart';
 
 class CustomFAB extends StatelessWidget {
@@ -53,5 +54,6 @@ class CustomFAB extends StatelessWidget {
   }
 
   void _addNewPlan() {
+    Navigator.push(context, MaterialPageRoute(builder: (context) => AddPlanScreen(),));
   }
 }

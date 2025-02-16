@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:mapperapp/feature/taskHome/domain/entity/taskEntity.dart';
 import 'package:mapperapp/feature/taskHome/presintation/screen/taskTrack.dart';
+import '../../../PlanHome/presentation/screen/PlanTrack.dart';
+import '../../../PlanHome/presentation/widget/plan_items.dart';
 import '../wedgit/plan_list.dart';
 import '../wedgit/task_list.dart';
 
@@ -21,7 +23,8 @@ class HomeScreenForm extends StatelessWidget {
         TaskList(tasks: tasks),
         const SizedBox(height: 12),
         _buildSectionTitle("My Plan", () {
-          print("See All Plans pressed");
+          Navigator.push(
+              context, MaterialPageRoute(builder: (context) => PlanTrackerScreen()));
         }),
         const SizedBox(height: 6),
         const PlanList(), // Use the PlanList widget

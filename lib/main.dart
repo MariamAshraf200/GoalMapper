@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:intl/intl.dart';
+import 'package:mapperapp/feature/PlanHome/presentation/bloc/bloc.dart';
 import 'package:mapperapp/feature/taskHome/presintation/bloc/taskBloc/event.dart';
 import 'core/di.dart';
 import 'core/constants/app_colors.dart';
@@ -21,10 +22,8 @@ Future<void> main() async {
 
   await Hive.initFlutter();
 
-  // Initialize GetIt (Dependency Injection)
   await init();
 
-  // Run the app
   runApp(const MyApp());
 }
 
@@ -46,6 +45,8 @@ class MyApp extends StatelessWidget {
         BlocProvider<CategoryBloc>(
           create: (context) => sl<CategoryBloc>()..add(LoadCategoriesEvent()),
         ),
+        BlocProvider<PlanBloc>(
+            create: (context)=>sl<PlanBloc>())
       ],
       child: MaterialApp(
         title: "Task Tracker",
