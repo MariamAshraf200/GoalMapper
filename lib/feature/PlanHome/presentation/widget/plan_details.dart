@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:mapperapp/feature/PlanHome/domain/entities/plan_entity.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../taskHome/presintation/bloc/taskBloc/bloc.dart';
 import '../../../taskHome/presintation/bloc/taskBloc/event.dart';
 import '../../../taskHome/presintation/bloc/taskBloc/state.dart';
 import '../../../taskHome/presintation/screen/add_task_screen.dart';
-
 
 class PlanDetailsScreen extends StatefulWidget {
   final PlanDetails plan;
@@ -20,12 +20,26 @@ class PlanDetailsScreen extends StatefulWidget {
 
 class _PlanDetailsScreenState extends State<PlanDetailsScreen> {
   int _selectedTabIndex = 0;
+  List<String> _notes = [];
 
   @override
   void initState() {
     super.initState();
     // Dispatch the event to fetch tasks for the current plan
     context.read<TaskBloc>().add(GetTasksByPlanIdEvent(widget.plan.id));
+    _loadNotes(); // Load notes from SharedPreferences
+  }
+
+  Future<void> _loadNotes() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _notes = prefs.getStringList('notes_${widget.plan.id}') ?? [];
+    });
+  }
+
+  Future<void> _saveNotes() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setStringList('notes_${widget.plan.id}', _notes);
   }
 
   @override
@@ -54,14 +68,9 @@ class _PlanDetailsScreenState extends State<PlanDetailsScreen> {
         ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.add),
+            icon: const Icon(Icons.filter_list),
             onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => AddTaskScreen(planId: widget.plan.id),
-                ),
-              );
+              // Filter functionality to be implemented here
             },
           ),
         ],
@@ -113,92 +122,95 @@ class _PlanDetailsScreenState extends State<PlanDetailsScreen> {
     );
   }
 
-  Widget _buildOverviewContent() {
-    return BlocBuilder<TaskBloc, TaskState>(
-      builder: (context, state) {
-        if (state is TaskLoading) {
-          return const Center(child: CircularProgressIndicator());
-        } else if (state is TaskLoaded) {
-          final tasks = state.tasks;
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Card(
-                elevation: 6,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "Tasks",
-                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      Column(
-                        children: tasks.map((task) {
-                          return Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Row(
-                                children: [
-                                  Checkbox(
-                                    value: task.status == 'to do',
-                                    onChanged: (value) {
-                                      context.read<TaskBloc>().add(
-                                        UpdateTaskStatusEvent(
-                                          task.id,
-                                          'Done',
-                                          updatedTime: '',
-                                        ),
-                                      );
-                                    },
-                                  ),
-                                  Text(
-                                    task.title,
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .bodyMedium
-                                        ?.copyWith(
-                                      decoration: task.status == 'Done'
-                                          ? TextDecoration.lineThrough
-                                          : TextDecoration.none,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              IconButton(
-                                onPressed: () {
-                                  context.read<TaskBloc>().add(
-                                    DeleteTaskEvent(task.id),
-                                  );
-                                },
-                                icon: const Icon(Icons.close, color: Colors.red),
-                              ),
-                            ],
-                          );
-                        }).toList(),
-                      ),
-                    ],
-                  ),
+  Widget _buildNotesContent() {
+    return Column(
+      children: [
+        // Add Note Button
+        Align(
+          alignment: Alignment.centerRight,
+          child: IconButton(
+            icon: const Icon(Icons.add, color: Colors.deepPurple),
+            onPressed: () {
+              _showAddNoteDialog(context); // Open dialog to add a note
+            },
+          ),
+        ),
+        // List of Notes
+        ListView.builder(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          itemCount: _notes.length,
+          itemBuilder: (context, index) {
+            return Card(
+              margin: const EdgeInsets.symmetric(vertical: 4),
+              child: ListTile(
+                title: Text(_notes[index]),
+                trailing: IconButton(
+                  icon: const Icon(Icons.delete, color: Colors.red),
+                  onPressed: () {
+                    setState(() {
+                      _notes.removeAt(index); // Remove note from the list
+                      _saveNotes(); // Save updated notes
+                    });
+                  },
                 ),
               ),
-            ],
-          );
-        } else if (state is TaskError) {
-          return Center(
-            child: Text("Failed to load tasks: ${state.message}"),
-          );
-        } else {
-          return const Center(child: Text("No tasks available."));
-        }
+            );
+          },
+        ),
+      ],
+    );
+  }
+
+  void _showAddNoteDialog(BuildContext context) {
+    final TextEditingController _noteController = TextEditingController();
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text("Add a Note"),
+          content: TextFormField(
+            controller: _noteController,
+            decoration: const InputDecoration(
+              hintText: "Write your note here...",
+            ),
+            maxLines: 3,
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context); // Close the dialog
+              },
+              child: const Text("Cancel"),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                if (_noteController.text.isNotEmpty) {
+                  setState(() {
+                    _notes.add(_noteController.text); // Add note to the list
+                    _saveNotes(); // Save updated notes
+                  });
+                  Navigator.pop(context); // Close the dialog
+                }
+              },
+              child: const Text("Save"),
+            ),
+          ],
+        );
       },
     );
+  }
+
+  Color _getStatusColor(String status) {
+    switch (status) {
+      case "Not Completed":
+        return Colors.orange;
+      case "Completed":
+        return Colors.green;
+      default:
+        return Colors.grey;
+    }
   }
 
   Widget _buildInfoCard({
@@ -248,6 +260,7 @@ class _PlanDetailsScreenState extends State<PlanDetailsScreen> {
     );
   }
 
+
   Widget _buildTabButton(String title, int index) {
     return GestureDetector(
       onTap: () {
@@ -284,25 +297,160 @@ class _PlanDetailsScreenState extends State<PlanDetailsScreen> {
         return const SizedBox.shrink();
     }
   }
+  Widget _buildOverviewContent() {
+    return BlocBuilder<TaskBloc, TaskState>(
+      builder: (context, state) {
+        if (state is TaskLoading) {
+          return const Center(child: CircularProgressIndicator());
+        } else if (state is TaskLoaded) {
+          final tasks = state.tasks;
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Description and Category Card
+              Card(
+                elevation: 4,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Description",
+                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        widget.plan.description,
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          color: Colors.grey.shade700,
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      Text(
+                        "Category",
+                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        widget.plan.category,
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          color: Colors.grey.shade700,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16),
+
+              // Tasks Card
+              Card(
+                elevation: 4,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            "Tasks",
+                            style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          IconButton(
+                            icon: const Icon(Icons.add),
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      AddTaskScreen(planId: widget.plan.id),
+                                ),
+                              );
+                            },
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 8),
+                      Column(
+                        children: tasks.map((task) {
+                          return Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Row(
+                                children: [
+                                  Checkbox(
+                                    value: task.status == 'Done',
+                                    onChanged: (value) {
+                                      context.read<TaskBloc>().add(
+                                        UpdateTaskStatusEvent(
+                                          task.id,
+                                          value! ? 'Done' : 'to do',
+                                          updatedTime: '',
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                  Text(
+                                    task.title,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodyMedium
+                                        ?.copyWith(
+                                      decoration: task.status == 'Done'
+                                          ? TextDecoration.lineThrough
+                                          : TextDecoration.none,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              IconButton(
+                                onPressed: () {
+                                  context.read<TaskBloc>().add(
+                                    DeleteTaskEvent(task.id),
+                                  );
+                                },
+                                icon: const Icon(Icons.close, color: Colors.red),
+                              ),
+                            ],
+                          );
+                        }).toList(),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          );
+        } else if (state is TaskError) {
+          return Center(
+            child: Text("Failed to load tasks: ${state.message}"),
+          );
+        } else {
+          return const Center(child: Text("No tasks available"));
+        }
+      },
+    );
+  }
+
+
 
   Widget _buildMediaContent() {
     return const Center(child: Text("Media files will be displayed here."));
   }
 
-  Widget _buildNotesContent() {
-    return const Center(child: Text("Notes content will appear here."));
-  }
-
-  Color _getStatusColor(String status) {
-    switch (status) {
-      case "Not Completed":
-        return Colors.orange;
-      case "Completed":
-        return Colors.green;
-      default:
-        return Colors.grey;
-    }
-  }
 }
-
-
