@@ -1,4 +1,4 @@
-# mapper_app
+# mapperapp
 
 A new Flutter project.
 
