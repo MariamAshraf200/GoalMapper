@@ -1,4 +1,6 @@
+import '../../../taskHome/domain/entity/taskEntity.dart';
 import '../../data/model/planModel.dart';
+
 
 class PlanDetails {
   final String id;
@@ -8,10 +10,11 @@ class PlanDetails {
   final String endDate;
   final String priority;
   final String category;
-  final String status; // Status field
+  late final String status; // Status field
   String? updatedTime;
   String? image;
-  final bool completed; // New field to track if the plan is completed
+  final bool completed; // Field to track if the plan is completed
+  final List<TaskDetails> tasks; // Updated to use TaskDetails
 
   PlanDetails({
     required this.id,
@@ -25,6 +28,7 @@ class PlanDetails {
     this.updatedTime, // Optional
     this.image, // Optional
     this.completed = false, // Default to false for backward compatibility
+    this.tasks = const [], // Default to an empty list
   });
 
   PlanDetails copyWith({
@@ -39,6 +43,7 @@ class PlanDetails {
     String? updatedTime,
     String? image,
     bool? completed,
+    List<TaskDetails>? tasks, // Update tasks list
   }) {
     return PlanDetails(
       id: id ?? this.id,
@@ -52,6 +57,7 @@ class PlanDetails {
       updatedTime: updatedTime ?? this.updatedTime,
       image: image ?? this.image,
       completed: completed ?? this.completed,
+      tasks: tasks ?? this.tasks,
     );
   }
 
@@ -68,11 +74,12 @@ class PlanDetails {
       updatedTime: updatedTime,
       image: image,
       completed: completed,
+      tasks: tasks.map((task) => task.toModel()).toList(), // Convert TaskDetails to TaskModel
     );
   }
 
   @override
   String toString() {
-    return 'PlanDetails(id: $id, title: $title, description: $description, startDate: $startDate, endDate: $endDate, priority: $priority, category: $category, status: $status, updatedTime: $updatedTime, image: $image, completed: $completed)';
+    return 'PlanDetails(id: $id, title: $title, description: $description, startDate: $startDate, endDate: $endDate, priority: $priority, category: $category, status: $status, updatedTime: $updatedTime, image: $image, completed: $completed, tasks: $tasks)';
   }
 }

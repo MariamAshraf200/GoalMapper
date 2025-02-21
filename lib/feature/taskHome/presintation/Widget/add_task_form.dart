@@ -162,7 +162,6 @@ class _AddTaskFormState extends State<AddTaskForm>
       ),
     );
   }
-
   Future<void> _handleSave() async {
     if (!_formKey.currentState!.validate()) {
       return;
@@ -185,11 +184,13 @@ class _AddTaskFormState extends State<AddTaskForm>
       planId: widget.planId, // Pass the optional planId
     );
 
-    context.read<TaskBloc>().add(AddTaskEvent(task));
+    // Dispatch event with planId
+    context.read<TaskBloc>().add(AddTaskEvent(task, planId: widget.planId));
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text('Task added successfully!')),
     );
 
     Navigator.of(context).pop();
   }
+
 }

@@ -69,14 +69,16 @@ class _HomeScreenState extends State<HomeScreen> with RouteAware {
             double taskCompletionPercentage =
             totalTasksCount > 0 ? doneTasksCount / totalTasksCount : 0;
 
-            return Column(
-              children: [
-                _buildHeader(doneTasksCount, totalTasksCount, taskCompletionPercentage),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 15.0),
-                  child: HomeScreenForm(tasks: tasksForToday),
-                ),
-              ],
+            return SingleChildScrollView(
+              child: Column(
+                children: [
+                  _buildHeader(doneTasksCount, totalTasksCount, taskCompletionPercentage),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                    child: HomeScreenForm(tasks: tasksForToday),
+                  ),
+                ],
+              ),
             );
           } else if (state is MainTaskError) {
             return Center(child: Text(state.message));

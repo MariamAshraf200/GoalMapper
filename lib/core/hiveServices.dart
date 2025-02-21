@@ -11,6 +11,7 @@ class HiveService {
   static const String _planBoxName = 'plans'; // Add Plan Box name
 
   Future<void> initHive() async {
+
     if (!Hive.isAdapterRegistered(0)) {
       Hive.registerAdapter(TaskModelAdapter());
     }
@@ -19,9 +20,7 @@ class HiveService {
       Hive.registerAdapter(CategoryModelAdapter());
     }
 
-    if (!Hive.isAdapterRegistered(2)) {
-      Hive.registerAdapter(PlanModelAdapter());
-    }
+
 
     await Hive.openBox<TaskModel>(_taskBoxName);
     await Hive.openBox<CategoryModel>(_categoryBoxName);

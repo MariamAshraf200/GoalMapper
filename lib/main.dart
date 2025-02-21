@@ -6,7 +6,8 @@ import 'package:mapperapp/feature/PlanHome/presentation/bloc/bloc.dart';
 import 'core/di.dart';
 import 'core/constants/app_colors.dart';
 import 'feature/MainScreen/presentation/bloc/main_bloc.dart';
-import 'feature/PlanHome/presentation/screen/PlanTrack.dart';
+import 'feature/MainScreen/presentation/screen/homeScreen.dart';
+import 'feature/PlanHome/data/model/planModel.dart';
 import 'feature/taskHome/presintation/bloc/catogeryBloc/CatogeryBloc.dart';
 import 'feature/taskHome/presintation/bloc/catogeryBloc/Catogeryevent.dart';
 import 'feature/taskHome/presintation/bloc/taskBloc/bloc.dart';
@@ -18,9 +19,9 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await Hive.initFlutter();
+  Hive.registerAdapter(PlanModelAdapter());
 
   await init();
-
   runApp(const MyApp());
 }
 
@@ -45,6 +46,7 @@ class MyApp extends StatelessWidget {
         BlocProvider<PlanBloc>(
             create: (context)=>sl<PlanBloc>())
       ],
+
       child: MaterialApp(
         title: "Task Tracker",
         debugShowCheckedModeBanner: false,
@@ -70,7 +72,7 @@ class MyApp extends StatelessWidget {
         ),
         themeMode: ThemeMode.dark, // Set default theme mode
         locale: const Locale("en"),
-        home: const PlanTrackerScreen (), // Your actual home widget
+        home: const HomeScreen(), // Your actual home widget
       ),
     );
   }

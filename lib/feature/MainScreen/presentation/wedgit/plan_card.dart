@@ -16,8 +16,10 @@ class PlanCardCombined extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final progress = (totalDay > 0) ? (totalDay - daysLeft) / totalDay : 0.0;
+
     return Card(
-      elevation: 5,
+      elevation: 4,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
       ),
@@ -34,10 +36,10 @@ class PlanCardCombined extends StatelessWidget {
                   width: 60,
                   height: 60,
                   child: CircularProgressIndicator(
-                    value: (totalDay - daysLeft) / totalDay, // Updated progress calculation
+                    value: progress.clamp(0.0, 1.0),
                     backgroundColor: Colors.grey[300],
                     color: Colors.deepPurple,
-                    strokeWidth: 8,
+                    strokeWidth: 6,
                   ),
                 ),
                 // Days Left in the Center
@@ -62,13 +64,25 @@ class PlanCardCombined extends StatelessWidget {
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
                     ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
                   ),
                   const SizedBox(height: 8),
                   // Completeness Line (Linear Progress Bar)
                   LinearProgressIndicator(
-                    value: completeness,
+                    value: completeness.clamp(0.0, 1.0),
                     color: Colors.green,
+                    backgroundColor: Colors.grey[300],
                     minHeight: 8,
+                  ),
+                  const SizedBox(height: 8),
+                  // Additional Info (Optional)
+                  Text(
+                    "Total: $totalDay days",
+                    style: const TextStyle(
+                      fontSize: 12,
+                      color: Colors.grey,
+                    ),
                   ),
                 ],
               ),
@@ -77,7 +91,7 @@ class PlanCardCombined extends StatelessWidget {
             // Completion Percentage with "complete" on the next line
             Text(
               "${(completeness * 100).toStringAsFixed(0)}%\ncomplete",
-              textAlign: TextAlign.center, // Center align the text
+              textAlign: TextAlign.center,
               style: const TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.bold,

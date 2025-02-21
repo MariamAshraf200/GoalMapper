@@ -54,3 +54,4 @@ class PlanAddSuccess extends PlanState {
   @override
   List<Object?> get props => [message, plan];
 }
+

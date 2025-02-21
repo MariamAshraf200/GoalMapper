@@ -1,6 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mapperapp/feature/PlanHome/presentation/bloc/state.dart';
-import '../../domain/entities/plan_entity.dart';
 import '../../domain/usecase/add_plan_usecase.dart';
 import '../../domain/usecase/delete_plan_useCase.dart';
 import '../../domain/usecase/getAll_plan_usecase.dart';
@@ -33,6 +32,7 @@ class PlanBloc extends Bloc<PlanEvent, PlanState> {
     on<GetPlansByStatusEvent>(_onGetPlansByStatus);
   }
 
+  // Fetch all plans
   Future<void> _onGetAllPlans(
       GetAllPlansEvent event,
       Emitter<PlanState> emit,
@@ -42,90 +42,59 @@ class PlanBloc extends Bloc<PlanEvent, PlanState> {
       final plans = await getAllPlansUseCase();
       emit(PlanLoaded(plans));
     } catch (e) {
-      emit(PlanError("Failed to load plans: $e"));
+      emit(PlanError("Failed to load all plans: ${e.toString()}"));
     }
   }
 
+  // Add a new plan
   Future<void> _onAddPlan(
       AddPlanEvent event,
       Emitter<PlanState> emit,
       ) async {
-    PlanLoaded? previousState;
-
+    final previousState = state;
+    emit(PlanLoading());
     try {
-      if (state is PlanLoaded) {
-        previousState = state as PlanLoaded;
-        final updatedPlans = List<PlanDetails>.from(previousState.plans)
-          ..add(event.plan);
-        emit(PlanLoaded(updatedPlans));
-      }
-
       await addPlanUseCase(event.plan);
-
-      final plans = await getAllPlansUseCase();
-      emit(PlanLoaded(plans));
+      await _reloadPlans(emit);
     } catch (e) {
-      if (previousState != null) {
-        emit(previousState);
-      }
-      emit(PlanError("Failed to add plan: $e"));
+      emit(previousState); // Restore previous state on error
+      emit(PlanError("Failed to add plan: ${e.toString()}"));
     }
   }
 
+  // Update an existing plan
   Future<void> _onUpdatePlan(
       UpdatePlanEvent event,
       Emitter<PlanState> emit,
       ) async {
-    PlanLoaded? previousState;
-
+    final previousState = state;
+    emit(PlanLoading());
     try {
-      if (state is PlanLoaded) {
-        previousState = state as PlanLoaded;
-        final updatedPlans = previousState.plans.map((plan) {
-          return plan.id == event.plan.id ? event.plan : plan;
-        }).toList();
-        emit(PlanLoaded(updatedPlans));
-      }
-
       await updatePlanUseCase(event.plan);
-
-      final plans = await getAllPlansUseCase();
-      emit(PlanLoaded(plans));
+      await _reloadPlans(emit);
     } catch (e) {
-      if (previousState != null) {
-        emit(previousState);
-      }
-      emit(PlanError("Failed to update plan: $e"));
+      emit(previousState); // Restore previous state on error
+      emit(PlanError("Failed to update plan: ${e.toString()}"));
     }
   }
 
+  // Delete a plan
   Future<void> _onDeletePlan(
       DeletePlanEvent event,
       Emitter<PlanState> emit,
       ) async {
-    PlanLoaded? previousState;
-
+    final previousState = state;
+    emit(PlanLoading());
     try {
-      if (state is PlanLoaded) {
-        previousState = state as PlanLoaded;
-        final updatedPlans = previousState.plans
-            .where((plan) => plan.id != event.planId)
-            .toList();
-        emit(PlanLoaded(updatedPlans));
-      }
-
       await deletePlanUseCase(event.planId);
-
-      final plans = await getAllPlansUseCase();
-      emit(PlanLoaded(plans));
+      await _reloadPlans(emit);
     } catch (e) {
-      if (previousState != null) {
-        emit(previousState);
-      }
-      emit(PlanError("Failed to delete plan: $e"));
+      emit(previousState); // Restore previous state on error
+      emit(PlanError("Failed to delete plan: ${e.toString()}"));
     }
   }
 
+  // Fetch plans by category
   Future<void> _onGetPlansByCategory(
       GetPlansByCategoryEvent event,
       Emitter<PlanState> emit,
@@ -135,10 +104,11 @@ class PlanBloc extends Bloc<PlanEvent, PlanState> {
       final plans = await getPlansByCategoryUseCase(event.category);
       emit(PlanLoaded(plans));
     } catch (e) {
-      emit(PlanError("Failed to load plans by category: $e"));
+      emit(PlanError("Failed to load plans by category: ${e.toString()}"));
     }
   }
 
+  // Fetch plans by status
   Future<void> _onGetPlansByStatus(
       GetPlansByStatusEvent event,
       Emitter<PlanState> emit,
@@ -148,7 +118,17 @@ class PlanBloc extends Bloc<PlanEvent, PlanState> {
       final plans = await getPlansByStatusUseCase(event.status);
       emit(PlanLoaded(plans));
     } catch (e) {
-      emit(PlanError("Failed to load plans by status: $e"));
+      emit(PlanError("Failed to load plans by status: ${e.toString()}"));
+    }
+  }
+
+  // Utility function to reload plans after a mutation
+  Future<void> _reloadPlans(Emitter<PlanState> emit) async {
+    try {
+      final plans = await getAllPlansUseCase();
+      emit(PlanLoaded(plans));
+    } catch (e) {
+      emit(PlanError("Failed to reload plans: ${e.toString()}"));
     }
   }
 }

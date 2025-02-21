@@ -33,7 +33,12 @@ class OverviewContent extends StatelessWidget {
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(16),
                     gradient: LinearGradient(
-                      colors: [Colors.deepPurple.shade50, Colors.deepPurple.shade100],
+                      colors: [
+                        Colors.deepPurple.shade50,
+                        Colors.deepPurple.shade100,
+                        Colors.deepPurple.shade200,
+                        Colors.deepPurple.shade300
+                      ],
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
                     ),
@@ -51,14 +56,18 @@ class OverviewContent extends StatelessWidget {
                     children: [
                       Row(
                         children: [
-                          Icon(Icons.description, color: Colors.deepPurple.shade700, size: 24),
+                          Icon(Icons.description,
+                              color: Colors.deepPurple.shade700, size: 24),
                           const SizedBox(width: 8),
                           Text(
                             "Description",
-                            style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                              fontWeight: FontWeight.bold,
-                              color: Colors.deepPurple.shade700,
-                            ),
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleLarge
+                                ?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.deepPurple.shade700,
+                                ),
                           ),
                         ],
                       ),
@@ -66,21 +75,25 @@ class OverviewContent extends StatelessWidget {
                       Text(
                         plan.description,
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: Colors.grey.shade800,
-                          height: 1.5, // Improved line spacing
-                        ),
+                              color: Colors.grey.shade800,
+                              height: 1.5, // Improved line spacing
+                            ),
                       ),
                       const SizedBox(height: 16),
                       Row(
                         children: [
-                          Icon(Icons.category, color: Colors.deepPurple.shade700, size: 24),
+                          Icon(Icons.category,
+                              color: Colors.deepPurple.shade700, size: 24),
                           const SizedBox(width: 8),
                           Text(
                             "Category",
-                            style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                              fontWeight: FontWeight.bold,
-                              color: Colors.deepPurple.shade700,
-                            ),
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleLarge
+                                ?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.deepPurple.shade700,
+                                ),
                           ),
                         ],
                       ),
@@ -88,9 +101,9 @@ class OverviewContent extends StatelessWidget {
                       Text(
                         plan.category,
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: Colors.grey.shade800,
-                          fontWeight: FontWeight.w600,
-                        ),
+                              color: Colors.grey.shade800,
+                              fontWeight: FontWeight.w600,
+                            ),
                       ),
                     ],
                   ),
@@ -114,9 +127,12 @@ class OverviewContent extends StatelessWidget {
                         children: [
                           Text(
                             "Tasks",
-                            style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                              fontWeight: FontWeight.bold,
-                            ),
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleLarge
+                                ?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                ),
                           ),
                           IconButton(
                             icon: const Icon(Icons.add),
@@ -144,12 +160,12 @@ class OverviewContent extends StatelessWidget {
                                     value: task.status == 'Done',
                                     onChanged: (value) {
                                       context.read<TaskBloc>().add(
-                                        UpdateTaskStatusEvent(
-                                          task.id,
-                                          value! ? 'Done' : 'to do',
-                                          updatedTime: '',
-                                        ),
-                                      );
+                                            UpdateTaskStatusEvent(
+                                              task.id,
+                                              value! ? 'Done' : 'to do',
+                                              updatedTime: '',
+                                            ),
+                                          );
                                     },
                                   ),
                                   Text(
@@ -158,20 +174,21 @@ class OverviewContent extends StatelessWidget {
                                         .textTheme
                                         .bodyMedium
                                         ?.copyWith(
-                                      decoration: task.status == 'Done'
-                                          ? TextDecoration.lineThrough
-                                          : TextDecoration.none,
-                                    ),
+                                          decoration: task.status == 'Done'
+                                              ? TextDecoration.lineThrough
+                                              : TextDecoration.none,
+                                        ),
                                   ),
                                 ],
                               ),
                               IconButton(
                                 onPressed: () {
                                   context.read<TaskBloc>().add(
-                                    DeleteTaskEvent(task.id),
-                                  );
+                                        DeleteTaskEvent(task.id),
+                                      );
                                 },
-                                icon: const Icon(Icons.close, color: Colors.red),
+                                icon:
+                                    const Icon(Icons.close, color: Colors.red),
                               ),
                             ],
                           );

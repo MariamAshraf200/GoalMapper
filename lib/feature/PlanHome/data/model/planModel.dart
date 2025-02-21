@@ -1,4 +1,5 @@
 import 'package:hive/hive.dart';
+import '../../../taskHome/data/model/taskModel.dart';
 import '../../domain/entities/plan_entity.dart';
 
 part 'planModel.g.dart';
@@ -38,6 +39,9 @@ class PlanModel {
   @HiveField(10)
   final bool completed; // New field to track if the plan is completed
 
+  @HiveField(11)
+  final List<TaskModel> tasks; // New field to store tasks
+
   // Constructor
   const PlanModel({
     required this.id,
@@ -51,6 +55,7 @@ class PlanModel {
     required this.status, // New status field
     this.image, // Optional image field
     this.completed = false, // Defaults to false for backward compatibility
+    this.tasks = const [], // Initialize with an empty list for backward compatibility
   });
 
   /// Converts the `PlanModel` to a `PlanDetails` entity.
@@ -67,6 +72,7 @@ class PlanModel {
       status: status, // Mapping status to the entity
       image: image, // Mapping image to the entity
       completed: completed, // Mapping completed to the entity
+      tasks: tasks.map((task) => task.toEntity()).toList(), // Convert tasks to entities
     );
   }
 
@@ -84,6 +90,7 @@ class PlanModel {
       status: entity.status, // Mapping status from the entity
       image: entity.image, // Mapping image from the entity
       completed: entity.completed, // Mapping completed from the entity
+      tasks: entity.tasks.map((task) => TaskModel.fromEntity(task)).toList(), // Convert entities to models
     );
   }
 
@@ -100,6 +107,7 @@ class PlanModel {
     String? status, // Added status to the copyWith method
     String? image, // Optional image
     bool? completed, // Added completed to the copyWith method
+    List<TaskModel>? tasks, // Added tasks to the copyWith method
   }) {
     return PlanModel(
       id: id ?? this.id,
@@ -113,11 +121,12 @@ class PlanModel {
       status: status ?? this.status, // Copying status
       image: image ?? this.image, // Copying image
       completed: completed ?? this.completed, // Copying completed
+      tasks: tasks ?? this.tasks, // Copying tasks
     );
   }
 
   @override
   String toString() {
-    return 'PlanModel(id: $id, title: $title, description: $description, startDate: $startDate, endDate: $endDate, category: $category, priority: $priority, updatedTime: $updatedTime, status: $status, image: $image, completed: $completed)';
+    return 'PlanModel(id: $id, title: $title, description: $description, startDate: $startDate, endDate: $endDate, category: $category, priority: $priority, updatedTime: $updatedTime, status: $status, image: $image, completed: $completed, tasks: $tasks)';
   }
 }

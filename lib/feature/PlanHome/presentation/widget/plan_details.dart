@@ -1,18 +1,21 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mapperapp/feature/PlanHome/domain/entities/plan_entity.dart';
+import 'package:mapperapp/feature/taskHome/domain/entity/taskEntity.dart';
 
 import '../../../taskHome/presintation/bloc/taskBloc/bloc.dart';
 import '../../../taskHome/presintation/bloc/taskBloc/event.dart';
+import '../../../taskHome/presintation/bloc/taskBloc/state.dart';
 import 'media.dart';
 import 'notes.dart';
 import 'overView.dart';
 
-
 class PlanDetailsScreen extends StatefulWidget {
   final PlanDetails plan;
 
-  const PlanDetailsScreen({Key? key, required this.plan}) : super(key: key);
+  const PlanDetailsScreen({super.key, required this.plan});
 
   @override
   _PlanDetailsScreenState createState() => _PlanDetailsScreenState();
@@ -20,12 +23,44 @@ class PlanDetailsScreen extends StatefulWidget {
 
 class _PlanDetailsScreenState extends State<PlanDetailsScreen> {
   int _selectedTabIndex = 0;
+  String _planStatus = "Not Completed";
+  late StreamSubscription _taskBlocSubscription;
 
   @override
   void initState() {
     super.initState();
+
+    // Initialize the plan status
+    _planStatus = widget.plan.status;
+
     // Fetch tasks for the current plan
     context.read<TaskBloc>().add(GetTasksByPlanIdEvent(widget.plan.id));
+
+    // Listen for task updates and update plan status
+    _taskBlocSubscription = context.read<TaskBloc>().stream.listen((state) {
+      if (state is TaskLoaded) {
+        _updatePlanStatus(state.tasks);
+      }
+    });
+  }
+
+  void _updatePlanStatus(List<TaskDetails> tasks) {
+    if (tasks.isEmpty && _planStatus != "Completed") {
+      setState(() {
+        _planStatus = "Completed";
+      });
+    } else if (tasks.isNotEmpty && _planStatus == "Completed") {
+      setState(() {
+        _planStatus = "Not Completed";
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    // Cancel the stream subscription to prevent memory leaks
+    _taskBlocSubscription.cancel();
+    super.dispose();
   }
 
   @override
@@ -55,9 +90,7 @@ class _PlanDetailsScreenState extends State<PlanDetailsScreen> {
         actions: [
           IconButton(
             icon: const Icon(Icons.filter_list),
-            onPressed: () {
-              // Filter functionality to be implemented here
-            },
+            onPressed: () {},
           ),
         ],
       ),
@@ -194,7 +227,7 @@ class _PlanDetailsScreenState extends State<PlanDetailsScreen> {
 
   Color _getStatusColor(String status) {
     switch (status) {
-      case "Not Completed":
+      case "notCompleted":
         return Colors.orange;
       case "Completed":
         return Colors.green;

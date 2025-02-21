@@ -28,13 +28,14 @@ class PlanModelAdapter extends TypeAdapter<PlanModel> {
       status: fields[8] as String,
       image: fields[9] as String?,
       completed: fields[10] as bool,
+      tasks: (fields[11] as List?)?.cast<TaskModel>() ?? [],
     );
   }
 
   @override
   void write(BinaryWriter writer, PlanModel obj) {
     writer
-      ..writeByte(11)
+      ..writeByte(12)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -56,7 +57,9 @@ class PlanModelAdapter extends TypeAdapter<PlanModel> {
       ..writeByte(9)
       ..write(obj.image)
       ..writeByte(10)
-      ..write(obj.completed);
+      ..write(obj.completed)
+      ..writeByte(11)
+      ..write(obj.tasks);
   }
 
   @override

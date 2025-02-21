@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 
+import '../../../taskHome/domain/entity/taskEntity.dart';
 import '../../domain/entities/plan_entity.dart';
 
 abstract class PlanEvent extends Equatable {
@@ -100,4 +101,10 @@ class GetPlansByStatusEvent extends PlanEvent {
 
   @override
   List<Object?> get props => [status];
+}
+class AddTaskToPlanEvent extends PlanEvent {
+  final String planId;
+  final TaskDetails task;
+
+  AddTaskToPlanEvent({required this.planId, required this.task});
 }

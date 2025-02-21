@@ -31,12 +31,14 @@ class GetTasksByPriorityEvent extends TaskEvent {
 
 class AddTaskEvent extends TaskEvent {
   final TaskDetails task;
+  final String? planId;
 
-  const AddTaskEvent(this.task);
+  const AddTaskEvent(this.task, {this.planId});
 
   @override
-  List<Object?> get props => [task];
+  List<Object?> get props => [task, planId];
 }
+
 
 class UpdateTaskEvent extends TaskEvent {
   final TaskDetails task;
