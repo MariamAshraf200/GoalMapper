@@ -1,16 +1,17 @@
+// notes_content.dart
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class NotesTab extends StatefulWidget {
+class NotesContent extends StatefulWidget {
   final String planId;
 
-  const NotesTab({Key? key, required this.planId}) : super(key: key);
+  const NotesContent({Key? key, required this.planId}) : super(key: key);
 
   @override
-  _NotesTabState createState() => _NotesTabState();
+  _NotesContentState createState() => _NotesContentState();
 }
 
-class _NotesTabState extends State<NotesTab> {
+class _NotesContentState extends State<NotesContent> {
   List<String> _notes = [];
 
   @override

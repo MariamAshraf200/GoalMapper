@@ -1,7 +1,8 @@
+// media_content.dart
 import 'package:flutter/material.dart';
 
-class MediaTab extends StatelessWidget {
-  const MediaTab({Key? key}) : super(key: key);
+class MediaContent extends StatelessWidget {
+  const MediaContent({super.key});
 
   @override
   Widget build(BuildContext context) {
