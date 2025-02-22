@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:mapperapp/feature/PlanHome/domain/entities/plan_entity.dart';
 import 'package:mapperapp/feature/PlanHome/presentation/widget/plan_details.dart';
 
+import '../../domain/entities/plan_entity.dart';
 import '../bloc/bloc.dart';
 import '../bloc/event.dart';
+import '../screen/updatePlan.dart';
+
 class PlanItemCard extends StatelessWidget {
   final PlanDetails plan;
 
@@ -22,7 +24,7 @@ class PlanItemCard extends StatelessWidget {
         );
       },
       child: Dismissible(
-        key: Key(plan.id), // Ensure a unique key for each plan
+        key: Key(plan.id),
         background: _buildSwipeBackground(
           color: Colors.blue,
           icon: Icons.edit,
@@ -37,10 +39,12 @@ class PlanItemCard extends StatelessWidget {
         ),
         confirmDismiss: (direction) async {
           if (direction == DismissDirection.startToEnd) {
-            BlocProvider.of<PlanBloc>(context).add(UpdatePlanEvent(
-              plan.copyWith(completed: true),
-            ));
-            _showSnackbar(context, "Plan marked as completed.");
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => UpdatePlanScreen(plan: plan),
+              ),
+            );
             return false; // Prevent dismissal
           } else if (direction == DismissDirection.endToStart) {
             return await _confirmDelete(context);
@@ -56,17 +60,17 @@ class PlanItemCard extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Custom Header with Clipper
+              // Status at the top
               ClipPath(
                 clipper: WavyClipper(),
                 child: Container(
                   height: 90,
                   decoration: BoxDecoration(
-                    color: plan.completed ? Colors.green : Colors.orange,
+                    color: plan.status=='Completed' ? Colors.green : Colors.orange,
                   ),
                   child: Center(
                     child: Text(
-                      plan.completed ? "COMPLETED" : "NOT COMPLETED",
+                      plan.status,
                       style: const TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
@@ -76,7 +80,7 @@ class PlanItemCard extends StatelessWidget {
                   ),
                 ),
               ),
-              // Main Content
+              // Main content
               Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Column(

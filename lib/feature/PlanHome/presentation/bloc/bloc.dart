@@ -1,5 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mapperapp/feature/PlanHome/presentation/bloc/state.dart';
+import '../../domain/usecase/UpdateStatus_plan_usecase.dart';
 import '../../domain/usecase/add_plan_usecase.dart';
 import '../../domain/usecase/delete_plan_useCase.dart';
 import '../../domain/usecase/getAll_plan_usecase.dart';
@@ -15,6 +16,7 @@ class PlanBloc extends Bloc<PlanEvent, PlanState> {
   final DeletePlanUseCase deletePlanUseCase;
   final GetPlansByCategoryUseCase getPlansByCategoryUseCase;
   final GetPlansByStatusUseCase getPlansByStatusUseCase;
+  final UpdatePlanStatusUseCase updatePlanStatusUseCase;
 
   PlanBloc({
     required this.getAllPlansUseCase,
@@ -23,6 +25,8 @@ class PlanBloc extends Bloc<PlanEvent, PlanState> {
     required this.deletePlanUseCase,
     required this.getPlansByCategoryUseCase,
     required this.getPlansByStatusUseCase,
+    required this.updatePlanStatusUseCase, // Add this
+
   }) : super(PlanInitial()) {
     on<GetAllPlansEvent>(_onGetAllPlans);
     on<AddPlanEvent>(_onAddPlan);
@@ -30,6 +34,8 @@ class PlanBloc extends Bloc<PlanEvent, PlanState> {
     on<DeletePlanEvent>(_onDeletePlan);
     on<GetPlansByCategoryEvent>(_onGetPlansByCategory);
     on<GetPlansByStatusEvent>(_onGetPlansByStatus);
+    on<UpdatePlanStatusEvent>(_onUpdatePlanStatus); // Add this
+
   }
 
   // Fetch all plans
@@ -129,6 +135,20 @@ class PlanBloc extends Bloc<PlanEvent, PlanState> {
       emit(PlanLoaded(plans));
     } catch (e) {
       emit(PlanError("Failed to reload plans: ${e.toString()}"));
+    }
+  }
+  Future<void> _onUpdatePlanStatus(
+      UpdatePlanStatusEvent event,
+      Emitter<PlanState> emit,
+      ) async {
+    final previousState = state;
+    emit(PlanLoading());
+    try {
+      await updatePlanStatusUseCase(event.planId, event.newStatus);
+      await _reloadPlans(emit); // Reload plans after updating status
+    } catch (e) {
+      emit(previousState); // Restore previous state on error
+      emit(PlanError("Failed to update plan status: ${e.toString()}"));
     }
   }
 }

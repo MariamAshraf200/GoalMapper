@@ -13,7 +13,7 @@ abstract class PlanRepository {
   Future<List<PlanDetails>> getPlansByStatus(String status);
 
 
-  Future<void> updatePlanStatus(String planId, String newStatus, String updatedTime);
+  Future<void> updatePlanStatus(String planId, String newStatus);
 
   Future<void> deletePlan(String planId);
 }

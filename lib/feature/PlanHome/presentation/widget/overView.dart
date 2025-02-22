@@ -1,11 +1,13 @@
-// overview_content.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mapperapp/feature/PlanHome/domain/entities/plan_entity.dart';
+import 'package:mapperapp/feature/PlanHome/presentation/bloc/bloc.dart';
 import '../../../taskHome/presintation/bloc/taskBloc/bloc.dart';
 import '../../../taskHome/presintation/bloc/taskBloc/event.dart';
 import '../../../taskHome/presintation/bloc/taskBloc/state.dart';
 import '../../../taskHome/presintation/screen/add_task_screen.dart';
+import '../bloc/event.dart';
+
 
 class OverviewContent extends StatelessWidget {
   final PlanDetails plan;
@@ -20,6 +22,20 @@ class OverviewContent extends StatelessWidget {
           return const Center(child: CircularProgressIndicator());
         } else if (state is TaskLoaded) {
           final tasks = state.tasks;
+
+          final allTasksCompleted = tasks.every((task) => task.status == 'Done');
+          final hasToDoTasks = tasks.any((task) => task.status == 'to do');
+
+          if (allTasksCompleted && plan.status != 'Completed') {
+            context.read<PlanBloc>().add(
+              UpdatePlanStatusEvent(plan.id, 'Completed'),
+            );
+          } else if (hasToDoTasks && plan.status != 'Not Completed') {
+            context.read<PlanBloc>().add(
+              UpdatePlanStatusEvent(plan.id, 'Not Completed'),
+            );
+          }
+
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -65,9 +81,9 @@ class OverviewContent extends StatelessWidget {
                                 .textTheme
                                 .titleLarge
                                 ?.copyWith(
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.deepPurple.shade700,
-                                ),
+                              fontWeight: FontWeight.bold,
+                              color: Colors.deepPurple.shade700,
+                            ),
                           ),
                         ],
                       ),
@@ -75,9 +91,9 @@ class OverviewContent extends StatelessWidget {
                       Text(
                         plan.description,
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                              color: Colors.grey.shade800,
-                              height: 1.5, // Improved line spacing
-                            ),
+                          color: Colors.grey.shade800,
+                          height: 1.5,
+                        ),
                       ),
                       const SizedBox(height: 16),
                       Row(
@@ -91,9 +107,9 @@ class OverviewContent extends StatelessWidget {
                                 .textTheme
                                 .titleLarge
                                 ?.copyWith(
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.deepPurple.shade700,
-                                ),
+                              fontWeight: FontWeight.bold,
+                              color: Colors.deepPurple.shade700,
+                            ),
                           ),
                         ],
                       ),
@@ -101,9 +117,9 @@ class OverviewContent extends StatelessWidget {
                       Text(
                         plan.category,
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                              color: Colors.grey.shade800,
-                              fontWeight: FontWeight.w600,
-                            ),
+                          color: Colors.grey.shade800,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                     ],
                   ),
@@ -131,8 +147,8 @@ class OverviewContent extends StatelessWidget {
                                 .textTheme
                                 .titleLarge
                                 ?.copyWith(
-                                  fontWeight: FontWeight.bold,
-                                ),
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                           IconButton(
                             icon: const Icon(Icons.add),
@@ -160,12 +176,14 @@ class OverviewContent extends StatelessWidget {
                                     value: task.status == 'Done',
                                     onChanged: (value) {
                                       context.read<TaskBloc>().add(
-                                            UpdateTaskStatusEvent(
-                                              task.id,
-                                              value! ? 'Done' : 'to do',
-                                              updatedTime: '',
-                                            ),
-                                          );
+                                        UpdateTaskStatusEvent(
+                                          task.id,
+                                          value! ? 'Done' : 'to do',
+                                          updatedTime: '',
+                                        ),
+                                      );
+                                      context.read<TaskBloc>().add(
+                                          GetTasksByPlanIdEvent(plan.id)); // Refresh tasks
                                     },
                                   ),
                                   Text(
@@ -174,21 +192,23 @@ class OverviewContent extends StatelessWidget {
                                         .textTheme
                                         .bodyMedium
                                         ?.copyWith(
-                                          decoration: task.status == 'Done'
-                                              ? TextDecoration.lineThrough
-                                              : TextDecoration.none,
-                                        ),
+                                      decoration: task.status == 'Done'
+                                          ? TextDecoration.lineThrough
+                                          : TextDecoration.none,
+                                    ),
                                   ),
                                 ],
                               ),
                               IconButton(
                                 onPressed: () {
                                   context.read<TaskBloc>().add(
-                                        DeleteTaskEvent(task.id),
-                                      );
+                                    DeleteTaskEvent(task.id),
+                                  );
+                                  context.read<TaskBloc>().add(
+                                      GetTasksByPlanIdEvent(plan.id)); // Refresh tasks
                                 },
                                 icon:
-                                    const Icon(Icons.close, color: Colors.red),
+                                const Icon(Icons.close, color: Colors.red),
                               ),
                             ],
                           );

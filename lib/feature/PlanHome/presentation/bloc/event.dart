@@ -60,12 +60,11 @@ class DeletePlanEvent extends PlanEvent {
 class UpdatePlanStatusEvent extends PlanEvent {
   final String planId;
   final String newStatus;
-  final String updatedTime;
 
-  const UpdatePlanStatusEvent(this.planId, this.newStatus, {required this.updatedTime});
+  const UpdatePlanStatusEvent(this.planId, this.newStatus);
 
   @override
-  List<Object?> get props => [planId, newStatus, updatedTime];
+  List<Object?> get props => [planId, newStatus];
 }
 
 class GetPlansByDateEvent extends PlanEvent {
@@ -106,5 +105,5 @@ class AddTaskToPlanEvent extends PlanEvent {
   final String planId;
   final TaskDetails task;
 
-  AddTaskToPlanEvent({required this.planId, required this.task});
+  const AddTaskToPlanEvent({required this.planId, required this.task});
 }

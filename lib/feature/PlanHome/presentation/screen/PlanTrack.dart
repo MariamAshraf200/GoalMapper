@@ -139,9 +139,9 @@ class _PlanTrackerScreenState extends State<PlanTrackerScreen> {
           if (title == "All") {
             context.read<PlanBloc>().add(GetAllPlansEvent());
           } else if (title == "Completed") {
-            context.read<PlanBloc>().add(GetPlansByStatusEvent('completed'));
+            context.read<PlanBloc>().add(GetPlansByStatusEvent('Completed'));
           } else if (title == "Not Completed") {
-            context.read<PlanBloc>().add(GetPlansByStatusEvent('notCompleted'));
+            context.read<PlanBloc>().add(GetPlansByStatusEvent('Not Completed'));
           }
         });
       },

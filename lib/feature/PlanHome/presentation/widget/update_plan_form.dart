@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:uuid/uuid.dart';
 
 import '../../../../core/constants/app_spaces.dart';
 import '../../../../core/util/widgets/custom_text_field.dart';
@@ -16,27 +15,42 @@ import '../../domain/entities/plan_entity.dart';
 import '../bloc/bloc.dart';
 import '../bloc/event.dart';
 
-class AddPlanForm extends StatefulWidget {
-  const AddPlanForm({super.key});
+class UpdatePlanForm extends StatefulWidget {
+  final PlanDetails plan;
+
+  const UpdatePlanForm({super.key, required this.plan});
 
   @override
-  _AddPlanFormState createState() => _AddPlanFormState();
+  _UpdatePlanFormState createState() => _UpdatePlanFormState();
 }
 
-class _AddPlanFormState extends State<AddPlanForm>
+class _UpdatePlanFormState extends State<UpdatePlanForm>
     with AutomaticKeepAliveClientMixin {
   @override
   bool get wantKeepAlive => true;
 
-  final _formKey = GlobalKey<FormState>();
-  final TextEditingController _planTitleController = TextEditingController();
-  final TextEditingController _planDescriptionController = TextEditingController();
+  late final TextEditingController _planTitleController;
+  late final TextEditingController _planDescriptionController;
 
   DateTime? _planStartDate;
   DateTime? _planEndDate;
   String? _selectedCategory;
-  String _selectedPriority = 'Medium';
+  late String _selectedPriority;
   XFile? _pickedImage;
+
+  @override
+  void initState() {
+    super.initState();
+    _planTitleController = TextEditingController(text: widget.plan.title);
+    _planDescriptionController =
+        TextEditingController(text: widget.plan.description);
+    _planStartDate = DateFormat('dd/MM/yyyy').parse(widget.plan.startDate);
+    _planEndDate = widget.plan.endDate != 'N/A'
+        ? DateFormat('dd/MM/yyyy').parse(widget.plan.endDate)
+        : null;
+    _selectedCategory = widget.plan.category;
+    _selectedPriority = widget.plan.priority;
+  }
 
   @override
   void dispose() {
@@ -71,7 +85,7 @@ class _AddPlanFormState extends State<AddPlanForm>
               isRequired: true,
               outSideTitle: 'Plan Title',
               borderRadius: 10,
-              labelText: 'Add your plan title',
+              labelText: 'Update your plan title',
               controller: _planTitleController,
               maxLength: 42,
               validator: (value) {
@@ -83,7 +97,7 @@ class _AddPlanFormState extends State<AddPlanForm>
             ),
             CustomTextField(
               outSideTitle: 'Description',
-              labelText: 'Add your plan description',
+              labelText: 'Update your plan description',
               controller: _planDescriptionController,
               maxLines: 3,
               canBeNull: true,
@@ -132,7 +146,22 @@ class _AddPlanFormState extends State<AddPlanForm>
             ),
 
             // Image Picker for Plan Image
-            _pickedImage == null
+            _pickedImage == null && widget.plan.image != null
+                ? Column(
+              children: [
+                Image.file(
+                  File(widget.plan.image!),
+                  height: 150,
+                  width: 150,
+                  fit: BoxFit.cover,
+                ),
+                ElevatedButton(
+                  onPressed: _pickImage,
+                  child: const Text('Change Plan Image'),
+                ),
+              ],
+            )
+                : _pickedImage == null
                 ? ElevatedButton(
               onPressed: _pickImage,
               child: const Text('Pick Plan Image'),
@@ -146,9 +175,9 @@ class _AddPlanFormState extends State<AddPlanForm>
 
             // Save Button
             LoadingElevatedButton(
-              onPressed: _handleSave,
-              buttonText: 'Add Plan',
-              icon: const Icon(Icons.add),
+              onPressed: _handleUpdate,
+              buttonText: 'Update Plan',
+              icon: const Icon(Icons.update),
               showLoading: true,
             ),
           ],
@@ -157,7 +186,7 @@ class _AddPlanFormState extends State<AddPlanForm>
     );
   }
 
-  Future<void> _handleSave() async {
+  Future<void> _handleUpdate() async {
     if (!_formKey.currentState!.validate()) {
       return;
     }
@@ -167,23 +196,24 @@ class _AddPlanFormState extends State<AddPlanForm>
         ? DateFormat('dd/MM/yyyy').format(_planEndDate!)
         : 'N/A';
 
-    final plan = PlanDetails(
-      id: const Uuid().v4(),
+    final updatedPlan = widget.plan.copyWith(
+      status: 'Not Completed',
       title: _planTitleController.text.trim(),
       description: _planDescriptionController.text.trim(),
       startDate: formattedStartDate,
       endDate: formattedEndDate,
       priority: _selectedPriority,
       category: _selectedCategory ?? 'General',
-      status: 'Not Completed',
-      image: _pickedImage?.path, 
+      image: _pickedImage?.path ?? widget.plan.image,
     );
 
-    context.read<PlanBloc>().add(AddPlanEvent(plan));
+    context.read<PlanBloc>().add(UpdatePlanEvent(updatedPlan));
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Plan added successfully!')),
+      const SnackBar(content: Text('Plan updated successfully!')),
     );
 
     Navigator.of(context).pop();
   }
+
+  final _formKey = GlobalKey<FormState>();
 }

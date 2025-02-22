@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:mapperapp/feature/PlanHome/presentation/bloc/bloc.dart';
+import 'package:mapperapp/feature/PlanHome/presentation/bloc/event.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../../../core/constants/app_spaces.dart';
@@ -186,6 +188,8 @@ class _AddTaskFormState extends State<AddTaskForm>
 
     // Dispatch event with planId
     context.read<TaskBloc>().add(AddTaskEvent(task, planId: widget.planId));
+    context.read<PlanBloc>().add(AddTaskToPlanEvent( task: task, planId: widget.planId!));
+
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text('Task added successfully!')),
     );

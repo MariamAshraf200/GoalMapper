@@ -1,5 +1,6 @@
 import 'package:get_it/get_it.dart';
 import 'package:mapperapp/feature/PlanHome/data/dataSource/localData.dart';
+import 'package:mapperapp/feature/PlanHome/domain/usecase/UpdateStatus_plan_usecase.dart';
 import 'package:mapperapp/feature/PlanHome/domain/usecase/getByStatus_plan_useCase.dart';
 import 'package:mapperapp/feature/taskHome/domain/usecse/task/getByPlanId_task_usecase.dart';
 import '../feature/MainScreen/domain/task_usecase/filter_usecase.dart';
@@ -101,6 +102,8 @@ sl.registerLazySingleton(()=> GetTasksByPlanIdUseCase(sl<TaskRepository>()));
     sl.registerLazySingleton(
         () => DeleteCategoryUseCase(sl<CategoryRepository>()));
 
+
+// plan use case
     sl.registerLazySingleton(() => GetAllPlansUseCase(sl<PlanRepository>()));
     sl.registerLazySingleton(() => DeletePlanUseCase(sl<PlanRepository>()));
     sl.registerLazySingleton(
@@ -108,6 +111,7 @@ sl.registerLazySingleton(()=> GetTasksByPlanIdUseCase(sl<TaskRepository>()));
     sl.registerLazySingleton(() => AddPlanUseCase(sl<PlanRepository>()));
     sl.registerLazySingleton(() => UpdatePlanUseCase(sl<PlanRepository>()));
     sl.registerLazySingleton(()=>GetPlansByStatusUseCase(sl<PlanRepository>()));
+    sl.registerLazySingleton(() => UpdatePlanStatusUseCase(sl<PlanRepository>()));
 
     // Register TaskBloc
     sl.registerFactory(() => TaskBloc(
@@ -140,6 +144,7 @@ sl.registerLazySingleton(()=> GetTasksByPlanIdUseCase(sl<TaskRepository>()));
           deletePlanUseCase: sl<DeletePlanUseCase>(),
           getPlansByCategoryUseCase: sl<GetPlansByCategoryUseCase>(),
           getPlansByStatusUseCase: sl<GetPlansByStatusUseCase>(),
+      updatePlanStatusUseCase: sl<UpdatePlanStatusUseCase>()
         ));
   } catch (e, stackTrace) {
     print("Error during DI initialization: $e");

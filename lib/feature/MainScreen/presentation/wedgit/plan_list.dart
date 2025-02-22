@@ -52,13 +52,16 @@ class PlanList extends StatelessWidget {
                     ? endDate.difference(startDate).inDays
                     : 0;
 
+
                 // Calculate completeness
                 final totalTasks = plan.tasks.length;
+                print(totalTasks);
                 final completedTasks = plan.tasks
-                    .where((task) => task.status == "done")
+                    .where((task) => task.status == "Done")
                     .length;
-                final completeness =
-                totalTasks > 0 ? (completedTasks / totalTasks) : 0.0;
+                final completeness = totalTasks > 0
+                    ? completedTasks / totalTasks
+                    : 0.0;
 
                 // Render fallback card for invalid data
                 if (startDate == null || endDate == null || totalDays <= 0) {
