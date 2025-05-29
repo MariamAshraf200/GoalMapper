@@ -188,7 +188,9 @@ class _AddTaskFormState extends State<AddTaskForm>
 
     // Dispatch event with planId
     context.read<TaskBloc>().add(AddTaskEvent(task, planId: widget.planId));
-    context.read<PlanBloc>().add(AddTaskToPlanEvent( task: task, planId: widget.planId!));
+    if (widget.planId != null) {
+      context.read<PlanBloc>().add(AddTaskToPlanEvent(task: task, planId: widget.planId!));
+    }
 
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text('Task added successfully!')),
