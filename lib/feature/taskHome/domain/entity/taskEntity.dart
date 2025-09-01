@@ -1,8 +1,8 @@
 import 'package:equatable/equatable.dart';
-
 import '../../data/model/taskModel.dart';
 
 class TaskDetails extends Equatable {
+  static const _noValue = Object();
   final String id;
   final String title;
   final String description;
@@ -29,7 +29,6 @@ class TaskDetails extends Equatable {
     this.planId,
   });
 
-  static const _noValue = Object();
 
   TaskDetails copyWith({
     String? id,
