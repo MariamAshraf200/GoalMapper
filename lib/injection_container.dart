@@ -23,7 +23,7 @@ Future<void> init() async {
     );
 
     // Register HiveCategoryLocalDataSource
-    sl.registerLazySingleton<HiveCategoryLocalDataSource>(
+    sl.registerLazySingleton<CategoryLocalDataSource>(
       () => HiveCategoryLocalDataSource(sl<HiveService>()),
     );
 
@@ -42,7 +42,7 @@ Future<void> init() async {
 
     // Register CategoryRepository
     sl.registerLazySingleton<CategoryRepository>(
-      () => CategoryRepositoryImpl(sl<HiveCategoryLocalDataSource>()),
+      () => CategoryRepositoryImpl(sl<CategoryLocalDataSource>()),
     );
 
     // Register PlanRepository

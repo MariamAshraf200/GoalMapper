@@ -1,6 +1,8 @@
+import 'package:equatable/equatable.dart';
+
 import '../../data/model/taskModel.dart';
 
-class TaskDetails {
+class TaskDetails extends Equatable {
   final String id;
   final String title;
   final String description;
@@ -9,11 +11,11 @@ class TaskDetails {
   final String endTime;
   final String priority;
   final String category;
-  String status;
-  String? updatedTime;
-  String? planId;
+  final String status;
+  final String? updatedTime;
+  final String? planId;
 
-  TaskDetails({
+  const TaskDetails({
     required this.id,
     required this.title,
     required this.description,
@@ -27,6 +29,8 @@ class TaskDetails {
     this.planId,
   });
 
+  static const _noValue = Object();
+
   TaskDetails copyWith({
     String? id,
     String? title,
@@ -35,10 +39,10 @@ class TaskDetails {
     String? time,
     String? endTime,
     String? priority,
-    String? status,
+    Object? status = _noValue,
     String? category,
-    String? updatedTime,
-    String? planId,
+    Object? updatedTime = _noValue,
+    Object? planId = _noValue,
   }) {
     return TaskDetails(
       id: id ?? this.id,
@@ -48,10 +52,10 @@ class TaskDetails {
       time: time ?? this.time,
       endTime: endTime ?? this.endTime,
       priority: priority ?? this.priority,
-      status: status ?? this.status,
+      status: status != _noValue ? status as String : this.status,
       category: category ?? this.category,
-      updatedTime: updatedTime ?? this.updatedTime,
-      planId: planId ?? this.planId,
+      updatedTime: updatedTime != _noValue ? updatedTime as String? : this.updatedTime,
+      planId: planId != _noValue ? planId as String? : this.planId,
     );
   }
 
@@ -72,7 +76,17 @@ class TaskDetails {
   }
 
   @override
-  String toString() {
-    return 'TaskDetails(id: $id, title: $title, description: $description, date: $date, time: $time, endTime: $endTime, priority: $priority, status: $status, category: $category, updatedTime: $updatedTime, planId: $planId)';
-  }
+  List<Object?> get props => [
+    id,
+    title,
+    description,
+    date,
+    time,
+    endTime,
+    priority,
+    category,
+    status,
+    updatedTime,
+    planId,
+  ];
 }

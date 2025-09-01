@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
 
 import '../../../domain/entity/taskEntity.dart';
+import '../../../domain/entity/task_enum.dart';
 
 abstract class TaskEvent extends Equatable {
   const TaskEvent();
@@ -12,7 +13,7 @@ abstract class TaskEvent extends Equatable {
 class GetAllTasksEvent extends TaskEvent {}
 
 class GetTasksByStatusEvent extends TaskEvent {
-  final String status;
+  final TaskStatus? status;
 
   const GetTasksByStatusEvent(this.status);
 
@@ -21,7 +22,7 @@ class GetTasksByStatusEvent extends TaskEvent {
 }
 
 class GetTasksByPriorityEvent extends TaskEvent {
-  final String priority;
+  final TaskPriority? priority;
 
   const GetTasksByPriorityEvent(this.priority);
 
@@ -60,7 +61,7 @@ class DeleteTaskEvent extends TaskEvent {
 
 class UpdateTaskStatusEvent extends TaskEvent {
   final String taskId;
-  final String newStatus;
+  final TaskStatus? newStatus;
   final String updatedTime;
 
   const UpdateTaskStatusEvent(this.taskId, this.newStatus, {required this.updatedTime});

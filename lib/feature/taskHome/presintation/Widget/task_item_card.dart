@@ -9,6 +9,7 @@ import '../../../../core/constants/app_colors.dart';
 import '../../../../core/util/widgets/custom_card.dart';
 import '../../../../core/util/widgets/custom_dilog.dart';
 import '../../domain/entity/taskEntity.dart';
+import '../../domain/entity/task_enum.dart';
 import '../bloc/taskBloc/bloc.dart';
 import '../bloc/taskBloc/event.dart';
 
@@ -37,13 +38,13 @@ class TaskItemCard extends StatelessWidget {
       final taskEndDateTime = DateFormat('dd/MM/yyyy hh:mm a').parse('${task.date} ${task.endTime}');
 
       if (taskEndDateTime.isBefore(now) &&
-          task.status != 'Done' &&
-          task.status != 'Missed') {
+          task.status != TaskStatus.completed.toTaskStatusString() &&
+          task.status != TaskStatus.inProgress.toTaskStatusString()) {
         // Mark task as missed
         context.read<TaskBloc>().add(
           UpdateTaskStatusEvent(
             task.id,
-            'Missed',
+            TaskStatus.inProgress,
             updatedTime: DateFormat('hh:mm a').format(now),
           ),
         );
@@ -195,7 +196,7 @@ class TaskItemCard extends StatelessWidget {
                                       ),
                       ),
                       onTap: () async {
-                        final newStatus = isCompleted ? 'to do' : 'Done';
+                        final newStatus = isCompleted ? TaskStatus.pending : TaskStatus.completed;
 
                         await Future.delayed(const Duration(milliseconds: 500));
 
@@ -206,7 +207,7 @@ class TaskItemCard extends StatelessWidget {
 
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
-                            content: Text('Task marked as $newStatus'),
+                            content: Text('Task marked as ${newStatus.toTaskStatusString()}'),
                             behavior: SnackBarBehavior.floating,
                             duration: const Duration(seconds: 1),
                             backgroundColor:
@@ -309,7 +310,7 @@ class TaskItemCard extends StatelessWidget {
   }
 
   void _toggleTaskStatus(BuildContext context) {
-    final newStatus = task.status == 'to do' ? 'Pending' : 'to do';
+    final newStatus = task.status == TaskStatus.pending.toTaskStatusString() ? TaskStatus.pending : TaskStatus.completed;
 
     context.read<TaskBloc>().add(
           UpdateTaskStatusEvent(task.id, newStatus,
@@ -318,10 +319,10 @@ class TaskItemCard extends StatelessWidget {
 
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('Task status updated to $newStatus'),
+        content: Text('Task status updated to ${newStatus.toTaskStatusString()}'),
         behavior: SnackBarBehavior.floating,
         duration: const Duration(seconds: 1),
-        backgroundColor: newStatus == 'Pending' ? Colors.orange : Colors.grey,
+        backgroundColor: newStatus == TaskStatus.pending ? Colors.orange : Colors.grey,
       ),
     );
   }

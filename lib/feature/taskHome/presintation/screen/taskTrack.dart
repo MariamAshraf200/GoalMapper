@@ -109,6 +109,10 @@ class _TaskTrackState extends State<TaskTrack> {
                     children: [
                       Row(
                         children: [
+                          IconButton(
+                            icon: const Icon(Icons.arrow_back, size: 28),
+                            onPressed: () => Navigator.of(context).pop(),
+                          ),
                           Text(
                             ' My Task',
                             style: TextStyle(
@@ -176,7 +180,7 @@ class _TaskTrackState extends State<TaskTrack> {
                         borderRadius: BorderRadius.circular(12),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.grey.withOpacity(0.2),
+                            color: Colors.grey.withAlpha( 20),
                             spreadRadius: 1,
                             blurRadius: 5,
                             offset: const Offset(0, 3), // Shadow position
@@ -218,7 +222,7 @@ class _TaskTrackState extends State<TaskTrack> {
                         borderRadius: BorderRadius.circular(12),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.grey.withOpacity(0.2),
+                            color: Colors.grey.withAlpha( 20),
                             spreadRadius: 1,
                             blurRadius: 5,
                             offset: const Offset(0, 3), // Shadow position
