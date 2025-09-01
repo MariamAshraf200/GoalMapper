@@ -3,21 +3,22 @@ import 'package:hive/hive.dart';
 
 import '../../../../core/hiveServices.dart';
 import '../model/categoryModel.dart';
+import 'abstract_data_scource.dart';
 
-class HiveCategoryLocalDataSource {
+class HiveCategoryLocalDataSource implements CategoryLocalDataSource {
   final HiveService hiveService;
 
   HiveCategoryLocalDataSource(this.hiveService);
 
   Box<CategoryModel> get categoryBox => hiveService.getCategoryBox();
 
-
-
-
+  @override
   Future<void> addCategory(CategoryModel category) async {
     try {
       final existingCategory = categoryBox.values.any(
-            (existing) => existing.categoryName.toLowerCase() == category.categoryName.toLowerCase(),
+        (existing) =>
+            existing.categoryName.toLowerCase() ==
+            category.categoryName.toLowerCase(),
       );
 
       if (existingCategory) {
@@ -26,7 +27,6 @@ class HiveCategoryLocalDataSource {
 
       // Add the category if it doesn't exist
       await categoryBox.add(category);
-
     } catch (e) {
       print('Error adding category: $e');
       // Show the error dialog in case of an exception
@@ -34,8 +34,8 @@ class HiveCategoryLocalDataSource {
     }
   }
 
-
   /// Fetch all categories from the Hive box.
+  @override
   Future<List<CategoryModel>> getAllCategories() async {
     try {
       final categories = categoryBox.values.toList();
@@ -49,25 +49,16 @@ class HiveCategoryLocalDataSource {
     }
   }
 
-
   /// Delete a category by its ID.
+  @override
   Future<void> deleteCategory(String id) async {
     try {
-    //ToDo  categoryBox.delete(id);
-
       final key = categoryBox.keys.firstWhere(
-            (key) => categoryBox.get(key)?.id == id,
+        (key) => categoryBox.get(key)?.id == id,
         orElse: () => null,
       );
       if (key != null) {
         await categoryBox.delete(key);
-        if (kDebugMode) {
-          print('Category with ID $id deleted.');
-        }
-      } else {
-        if (kDebugMode) {
-          print('Category with ID $id not found.');
-        }
       }
     } catch (e) {
       print('Error deleting category: $e');
@@ -76,11 +67,11 @@ class HiveCategoryLocalDataSource {
   }
 
   /// Update a category by its ID.
+  @override
   Future<void> updateCategory(CategoryModel updatedCategory) async {
     try {
-
       final key = categoryBox.keys.firstWhere(
-            (key) => categoryBox.get(key)?.id == updatedCategory.id,
+        (key) => categoryBox.get(key)?.id == updatedCategory.id,
         orElse: () => null,
       );
       if (key != null) {
@@ -94,7 +85,9 @@ class HiveCategoryLocalDataSource {
         }
       }
     } catch (e) {
-      print('Error updating category: $e');
+      if (kDebugMode) {
+        print('Error updating category: $e');
+      }
       rethrow;
     }
   }

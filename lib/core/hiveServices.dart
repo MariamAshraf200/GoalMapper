@@ -20,7 +20,12 @@ class HiveService {
       Hive.registerAdapter(CategoryModelAdapter());
     }
 
+    // Register PlanModelAdapter (typeId = 3)
+    if (!Hive.isAdapterRegistered(3)) {
+      Hive.registerAdapter(PlanModelAdapter());
+    }
 
+    await Hive.initFlutter();
 
     await Hive.openBox<TaskModel>(_taskBoxName);
     await Hive.openBox<CategoryModel>(_categoryBoxName);

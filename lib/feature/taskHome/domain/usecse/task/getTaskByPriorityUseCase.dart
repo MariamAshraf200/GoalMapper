@@ -1,4 +1,5 @@
 import '../../entity/taskEntity.dart';
+import '../../entity/task_enum.dart';
 import '../../repo_interface/repoTask.dart';
 
 class GetTasksByPriorityUseCase {
@@ -7,7 +8,7 @@ class GetTasksByPriorityUseCase {
   GetTasksByPriorityUseCase(this.repository);
 
 
-  Future<List<TaskDetails>> call(String priority) async {
+  Future<List<TaskDetails>> call(TaskPriority? priority) async {
     return await repository.getTasksByPriority(priority);
   }
 }

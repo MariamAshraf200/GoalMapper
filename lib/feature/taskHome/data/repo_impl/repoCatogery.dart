@@ -1,9 +1,9 @@
 import '../../domain/repo_interface/repoCatogery.dart';
-import '../dataSource/catogeryLocalData.dart';
+import '../dataSource/abstract_data_scource.dart';
 import '../model/categoryModel.dart';
 
 class CategoryRepositoryImpl implements CategoryRepository {
-  final HiveCategoryLocalDataSource localDataSource;
+  final CategoryLocalDataSource localDataSource;
 
   CategoryRepositoryImpl(this.localDataSource);
 

@@ -1,4 +1,5 @@
 import '../../domain/entity/taskEntity.dart';
+import '../../domain/entity/task_enum.dart';
 import '../../domain/repo_interface/repoTask.dart';
 import '../dataSource/abstract_data_scource.dart';
 import '../model/taskModel.dart';
@@ -19,7 +20,7 @@ class TaskRepositoryImpl implements TaskRepository {
   }
 
   @override
-  Future<List<TaskDetails>> getTasksByStatus(String status) async {
+  Future<List<TaskDetails>> getTasksByStatus(TaskStatus? status) async {
     try {
       final taskModels = await dataSource.getTasksByStatus(status);
       return taskModels.map((taskModel) => taskModel.toEntity()).toList();
@@ -29,12 +30,12 @@ class TaskRepositoryImpl implements TaskRepository {
   }
 
   @override
-  Future<List<TaskDetails>> getTasksByPriority(String priority) async {
+  Future<List<TaskDetails>> getTasksByPriority(TaskPriority? priority) async {
     try {
       final taskModels = await dataSource.getTasksByPriority(priority);
       return taskModels.map((taskModel) => taskModel.toEntity()).toList();
     } catch (e) {
-      throw Exception("Error loading tasks with priority '$priority': $e");
+      throw Exception("Error loading tasks with priority '");
     }
   }
 
