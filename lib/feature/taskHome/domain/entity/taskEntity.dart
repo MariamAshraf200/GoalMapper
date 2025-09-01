@@ -10,8 +10,8 @@ class TaskDetails {
   final String priority;
   final String category;
   String status;
-  String? updatedTime; // Field to track the last update time
-  String? planId; // New nullable field for plan ID
+  String? updatedTime;
+  String? planId;
 
   TaskDetails({
     required this.id,
@@ -23,11 +23,10 @@ class TaskDetails {
     required this.priority,
     required this.status,
     required this.category,
-    this.updatedTime, // Optional, as it might not always be provided
-    this.planId, // Optional, for backward compatibility
+    this.updatedTime,
+    this.planId,
   });
 
-  /// `copyWith` method for creating a new instance with updated fields.
   TaskDetails copyWith({
     String? id,
     String? title,
@@ -38,8 +37,8 @@ class TaskDetails {
     String? priority,
     String? status,
     String? category,
-    String? updatedTime, // Included updatedTime in copyWith
-    String? planId, // Included planId in copyWith
+    String? updatedTime,
+    String? planId,
   }) {
     return TaskDetails(
       id: id ?? this.id,
@@ -51,12 +50,11 @@ class TaskDetails {
       priority: priority ?? this.priority,
       status: status ?? this.status,
       category: category ?? this.category,
-      updatedTime: updatedTime ?? this.updatedTime, // Copying updatedTime
-      planId: planId ?? this.planId, // Copying planId
+      updatedTime: updatedTime ?? this.updatedTime,
+      planId: planId ?? this.planId,
     );
   }
 
-  /// Converts `TaskDetails` to `TaskModel`.
   TaskModel toModel() {
     return TaskModel(
       category: category,

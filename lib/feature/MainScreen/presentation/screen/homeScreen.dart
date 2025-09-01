@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
-
 import '../../../../core/customColor.dart';
 import '../../../../core/util/widgets/custom_FAB.dart';
 import '../bloc/main_bloc.dart';
 import '../bloc/main_event.dart';
 import '../bloc/main_state.dart';
 import 'home_screen_form.dart';
-import 'package:mapperapp/main.dart'; // Ensure this imports your global routeObserver
+import 'package:mapperapp/app_bootstrapper.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -127,7 +126,7 @@ class _HomeScreenState extends State<HomeScreen> with RouteAware {
               borderRadius: const BorderRadius.all(Radius.circular(30)),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.1),
+                  color: Color.fromRGBO(0, 0, 0, 0.1),
                   offset: const Offset(0, 5),
                 ),
               ],
@@ -172,7 +171,7 @@ class _HomeScreenState extends State<HomeScreen> with RouteAware {
                               value: value,
                               strokeWidth: 6,
                               valueColor: const AlwaysStoppedAnimation(Colors.white),
-                              backgroundColor: Colors.white.withOpacity(0.2),
+                              backgroundColor: Color.fromRGBO(255, 255, 255, 0.2),
                             );
                           },
                         ),
