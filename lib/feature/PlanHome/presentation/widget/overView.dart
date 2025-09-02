@@ -24,8 +24,8 @@ class OverviewContent extends StatelessWidget {
         } else if (state is TaskLoaded) {
           final tasks = state.tasks;
 
-          final allTasksCompleted = tasks.every((task) => task.status == 'Done');
-          final hasToDoTasks = tasks.any((task) => task.status == 'to do');
+          final allTasksCompleted = tasks.every((task) => task.status == TaskStatus.done.toTaskStatusString());
+          final hasToDoTasks = tasks.any((task) => task.status == TaskStatus.toDo.toTaskStatusString());
 
           if (allTasksCompleted && plan.status != 'Completed') {
             context.read<PlanBloc>().add(
@@ -174,12 +174,12 @@ class OverviewContent extends StatelessWidget {
                               Row(
                                 children: [
                                   Checkbox(
-                                    value: task.status == 'Done',
+                                    value: task.status == TaskStatus.done.toTaskStatusString(),
                                     onChanged: (value) {
                                       context.read<TaskBloc>().add(
                                         UpdateTaskStatusEvent(
                                           task.id,
-                                          value! ? TaskStatus.completed : TaskStatus.pending,
+                                          value! ? TaskStatus.done : TaskStatus.toDo,
                                           updatedTime: '',
                                         ),
                                       );
@@ -193,7 +193,7 @@ class OverviewContent extends StatelessWidget {
                                         .textTheme
                                         .bodyMedium
                                         ?.copyWith(
-                                      decoration: task.status == 'Done'
+                                      decoration: task.status == TaskStatus.done.toTaskStatusString()
                                           ? TextDecoration.lineThrough
                                           : TextDecoration.none,
                                     ),

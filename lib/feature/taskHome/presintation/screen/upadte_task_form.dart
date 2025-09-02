@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../domain/entity/taskEntity.dart';
-import '../Widget/upadte_task_form.dart';
+import '../Widget/form/upadte_task_form.dart';
 
 class UpdateTaskScreen extends StatelessWidget {
   final TaskDetails task;

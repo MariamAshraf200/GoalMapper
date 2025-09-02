@@ -5,7 +5,7 @@ import '../../../../core/constants/app_colors.dart';
 import '../../../../core/util/widgets/custom_card.dart';
 import '../../domain/entity/task_enum.dart';
 import '../Widget/data_format.dart';
-import '../Widget/task_items.dart';
+import '../Widget/item/task_items.dart';
 import '../bloc/taskBloc/bloc.dart';
 import '../bloc/taskBloc/event.dart';
 import '../bloc/taskBloc/state.dart';

@@ -1,6 +1,6 @@
 enum TaskFilterType { date, priority, status }
 enum TaskPriority { low, medium, high }
-enum TaskStatus { pending, inProgress, completed }
+enum TaskStatus { toDo, pending, done, missed }
 
 extension TaskFilterTypeExtension on TaskFilterType {
   static TaskFilterType fromString(String? type) {
@@ -57,12 +57,14 @@ extension TaskPriorityExtension on TaskPriority {
 extension TaskStatusExtension on TaskStatus {
   static TaskStatus fromString(String? status) {
     switch (status?.toUpperCase()) {
+      case 'TO DO':
+        return TaskStatus.toDo;
       case 'PENDING':
         return TaskStatus.pending;
-      case 'IN_PROGRESS':
-        return TaskStatus.inProgress;
-      case 'COMPLETED':
-        return TaskStatus.completed;
+      case 'DONE':
+        return TaskStatus.done;
+      case 'MISSED':
+        return TaskStatus.missed;
       default:
         throw ArgumentError('Invalid TaskStatus: $status');
     }
@@ -70,12 +72,14 @@ extension TaskStatusExtension on TaskStatus {
 
   String toTaskStatusString() {
     switch (this) {
+      case TaskStatus.toDo:
+        return 'TO DO';
       case TaskStatus.pending:
         return 'PENDING';
-      case TaskStatus.inProgress:
-        return 'IN_PROGRESS';
-      case TaskStatus.completed:
-        return 'COMPLETED';
+      case TaskStatus.done:
+        return 'DONE';
+      case TaskStatus.missed:
+        return 'MISSED';
     }
   }
 }

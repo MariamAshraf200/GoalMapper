@@ -1,23 +1,19 @@
 import 'package:flutter/material.dart';
-
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../data/model/categoryModel.dart';
 import '../bloc/catogeryBloc/CatogeryBloc.dart';
 import '../bloc/catogeryBloc/Catogeryevent.dart';
 import '../bloc/catogeryBloc/Catogerystate.dart';
 
-
+/// CategorySelector widget for selecting, adding, and deleting categories.
 class CategorySelector extends StatefulWidget {
   final void Function(String selectedCategory)? onCategorySelected;
 
-  const CategorySelector({
-    super.key,
-    this.onCategorySelected,
-  });
+  const CategorySelector({super.key, this.onCategorySelected});
 
   @override
-  _CategorySelectorState createState() =>
-      _CategorySelectorState();
+  State<CategorySelector> createState() => _CategorySelectorState();
 }
 
 class _CategorySelectorState extends State<CategorySelector> {
@@ -26,148 +22,124 @@ class _CategorySelectorState extends State<CategorySelector> {
   @override
   void initState() {
     super.initState();
-    // Load categories when the widget is initialized
+    // Load categories on widget initialization
     context.read<CategoryBloc>().add(LoadCategoriesEvent());
-  }
-
-  void _showAddCategoryDialog(BuildContext context) {
-    final TextEditingController newCategoryController =
-    TextEditingController();
-
-    showDialog(
-      context: context,
-      builder: (dialogContext) {
-        return AlertDialog(
-          title: const Text("Add New Category"),
-          content: TextField(
-            controller: newCategoryController,
-            decoration: const InputDecoration(
-              labelText: "Category Name",
-              border: OutlineInputBorder(),
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(dialogContext).pop();
-              },
-              child: const Text("Cancel"),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                final newCategory = newCategoryController.text.trim();
-                if (newCategory.isNotEmpty) {
-                  context
-                      .read<CategoryBloc>()
-                      .add(AddCategoryEvent(categoryName: newCategory));
-                  Navigator.of(dialogContext).pop();
-                } else {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text("Category name cannot be empty."),
-                    ),
-                  );
-                }
-              },
-              child: const Text("Add"),
-            ),
-          ],
-        );
-      },
-    );
   }
 
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<CategoryBloc, CategoryState>(
       builder: (context, state) {
-        if (state is CategoryLoading) {
-          return const Center(child: CircularProgressIndicator());
-        } else if (state is CategoryError) {
-          return Center(child: Text('Error: ${state.message}'));
-        } else if (state is CategoryLoaded) {
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  TextButton(
-                    onPressed: () => {},
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          "Category",
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: Theme.of(context).colorScheme.primary,
-                          ),
-                        ),
-                        const SizedBox(width: 8), // Optional spacing between text and icon
-                        const Icon(
-                          Icons.open_in_new, // Replace with your desired icon
-                          size: 18,
-                        ),
-                      ],
-                    ),
-                  ),
-
-                  // Text(
-                  //   'Category',
-                  //   style: TextStyle(
-                  //     fontSize: 16,
-                  //     fontWeight: FontWeight.bold,
-                  //     color: Theme.of(context).colorScheme.primary,
-                  //   ),
-                  // ),
-                  const Spacer(),
-                  TextButton.icon(
-                    onPressed: () => _showAddCategoryDialog(context),
-                    icon: const Icon(
-                      Icons.add, // Replace with the desired icon
-                      size: 18,  // Adjust the size to match the text
-                    ),
-                    label: const Text(
-                      "Add New",
-                      style: TextStyle(fontSize: 14),
-                    ),
-                  ),
-
-
-                ],
-              ),
-              const SizedBox(height: 8),
-              Wrap(
-                spacing: 8.0,
-                runSpacing: 8.0,
-                children: state.categories.map((category) {
-                  final isSelected = _selectedCategory == category.categoryName;
-                  return ChoiceChip(
-                    label: Text(category.categoryName),
-                    selected: isSelected,
-                    onSelected: (selected) {
-                      setState(() {
-                        _selectedCategory = selected ? category.categoryName : null;
-                      });
-                      if (widget.onCategorySelected != null) {
-                        widget.onCategorySelected!(category.categoryName);
-                      }
-                    },
-                    selectedColor: Theme.of(context).colorScheme.primary,
-                    backgroundColor: Colors.grey[200],
-                    labelStyle: TextStyle(
-                      color: isSelected ? Colors.white : Colors.black,
-                    ),
-                  );
-                }).toList(),
-              ),
-            ],
-          );
-        } else {
-          return const Center(child: Text('No categories available.'));
-        }
+        return switch (state) {
+          CategoryLoading() => const Center(child: CircularProgressIndicator()),
+          CategoryError(:final message) => Center(child: Text('Error: $message')),
+          CategoryLoaded(:final categories) =>
+              _buildCategoryContent(context, categories),
+          _ => const Center(child: Text('No categories available.')),
+        };
       },
+    );
+  }
+
+  Widget _buildCategoryContent(BuildContext context, List<CategoryModel> categories) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _buildHeader(context),
+        const SizedBox(height: 8),
+        Wrap(
+          spacing: 8.0,
+          runSpacing: 8.0,
+          children: categories.map((category) {
+            final isSelected = _selectedCategory == category.categoryName;
+            return InputChip(
+              label: Text(category.categoryName),
+              selected: isSelected,
+              onSelected: (_) => _handleCategorySelected(category.categoryName),
+              selectedColor: Theme.of(context).colorScheme.primary,
+              backgroundColor: Colors.grey[200],
+              labelStyle: TextStyle(
+                color: isSelected ? Colors.white : Colors.black,
+              ),
+              deleteIcon: const Icon(Icons.close, size: 18),
+              onDeleted: () => _handleCategoryDeleted(category),
+            );
+          }).toList(),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildHeader(BuildContext context) {
+    return Row(
+      children: [
+        Text(
+          "Category",
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+            color: Theme.of(context).colorScheme.primary,
+          ),
+        ),
+        const Spacer(),
+        TextButton.icon(
+          onPressed: () => _showAddCategoryDialog(context),
+          icon: const Icon(Icons.add, size: 18),
+          label: const Text("Add New", style: TextStyle(fontSize: 14)),
+        ),
+      ],
+    );
+  }
+
+  // ----------------- Logic -----------------
+
+  void _handleCategorySelected(String categoryName) {
+    setState(() => _selectedCategory = categoryName);
+    widget.onCategorySelected?.call(categoryName);
+  }
+
+  void _handleCategoryDeleted(CategoryModel category) {
+    context.read<CategoryBloc>().add(DeleteCategoryEvent(id: category.id));
+    if (_selectedCategory == category.categoryName) {
+      setState(() => _selectedCategory = null);
+    }
+  }
+
+  void _showAddCategoryDialog(BuildContext context) {
+    final controller = TextEditingController();
+
+    showDialog(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text("Add New Category"),
+        content: TextField(
+          controller: controller,
+          decoration: const InputDecoration(
+            labelText: "Category Name",
+            border: OutlineInputBorder(),
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(),
+            child: const Text("Cancel"),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              final newCategory = controller.text.trim();
+              if (newCategory.isEmpty) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text("Category name cannot be empty.")),
+                );
+                return;
+              }
+              context.read<CategoryBloc>().add(AddCategoryEvent(categoryName: newCategory));
+              Navigator.of(dialogContext).pop();
+            },
+            child: const Text("Add"),
+          ),
+        ],
+      ),
     );
   }
 }

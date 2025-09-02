@@ -1,5 +1,4 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'event.dart';
 import 'state.dart';
 import '../../../../../injection_imports.dart';
 

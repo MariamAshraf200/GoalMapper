@@ -43,6 +43,12 @@ export 'feature/taskHome/domain/entity/task_enum.dart';
 export 'feature/taskHome/domain/entity/taskEntity.dart';
 export 'feature/taskHome/domain/entity/task_filters.dart';
 export 'feature/taskHome/data/model/categoryModel.dart';
+export 'feature/taskHome/presintation/Widget/form/task_ form.dart';
+export 'feature/taskHome/presintation/Widget/item/task_card_helper.dart';
+export 'feature/taskHome/presintation/Widget/item/task_time_column.dart';
+export 'feature/taskHome/presintation/screen/upadte_task_form.dart';
+export 'core/util/widgets/custom_card.dart';
+export 'core/util/widgets/custom_dilog.dart';
 
 // Main screen
 export 'feature/MainScreen/domain/task_usecase/filter_usecase.dart';
@@ -64,3 +70,10 @@ export 'core/constants/date_and_time_form.dart';
 // Core - utilities/widgets
 export 'core/util/widgets/custom_FAB.dart';
 export 'core/util/functions/string_manipulations_and_search.dart';
+export 'core/util/widgets/custom_text_field.dart';
+export 'core/util/widgets/date_and_time/date_filed.dart';
+export 'core/util/widgets/date_and_time/time_field.dart';
+export 'core/util/widgets/loading_elevate_icon_button.dart';
+export 'feature/taskHome/presintation/Widget/category_selector.dart';
+export 'feature/taskHome/presintation/Widget/priority_selector.dart';
+export 'feature/taskHome/presintation/bloc/taskBloc/event.dart';
