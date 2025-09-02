@@ -11,6 +11,7 @@ export 'feature/PlanHome/domain/usecase/getByStatus_plan_useCase.dart';
 export 'feature/PlanHome/domain/usecase/UpdateStatus_plan_usecase.dart';
 export 'feature/PlanHome/presentation/bloc/bloc.dart';
 export 'feature/PlanHome/presentation/bloc/event.dart';
+export 'feature/PlanHome/presentation/bloc/state.dart';
 export 'feature/PlanHome/data/model/planModel.dart';
 
 // Task feature
@@ -36,7 +37,12 @@ export 'feature/taskHome/domain/usecse/catogery/DeleteCategoryUseCase.dart';
 export 'feature/taskHome/presintation/bloc/taskBloc/bloc.dart';
 export 'feature/taskHome/presintation/bloc/catogeryBloc/CatogeryBloc.dart';
 export 'feature/taskHome/presintation/bloc/catogeryBloc/Catogeryevent.dart';
+export 'feature/taskHome/presintation/bloc/catogeryBloc/Catogerystate.dart';
 export 'feature/taskHome/data/dataSource/abstract_data_scource.dart';
+export 'feature/taskHome/domain/entity/task_enum.dart';
+export 'feature/taskHome/domain/entity/taskEntity.dart';
+export 'feature/taskHome/domain/entity/task_filters.dart';
+export 'feature/taskHome/data/model/categoryModel.dart';
 
 // Main screen
 export 'feature/MainScreen/domain/task_usecase/filter_usecase.dart';

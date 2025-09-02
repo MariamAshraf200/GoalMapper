@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:get_it/get_it.dart';
 import 'injection_imports.dart';
 
@@ -133,7 +134,11 @@ Future<void> init() async {
         getPlansByStatusUseCase: sl<GetPlansByStatusUseCase>(),
         updatePlanStatusUseCase: sl<UpdatePlanStatusUseCase>()));
   } catch (e, stackTrace) {
-    print("Error during DI initialization: $e");
-    print(stackTrace);
+    if (kDebugMode) {
+      print("Error during DI initialization: $e");
+    }
+    if (kDebugMode) {
+      print(stackTrace);
+    }
   }
 }

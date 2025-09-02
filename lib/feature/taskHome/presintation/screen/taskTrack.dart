@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/util/widgets/custom_card.dart';
+import '../../domain/entity/task_enum.dart';
 import '../Widget/data_format.dart';
 import '../Widget/task_items.dart';
 import '../bloc/taskBloc/bloc.dart';
@@ -29,14 +30,14 @@ class _TaskTrackState extends State<TaskTrack> {
 
     // Retrieve selected filters from the TaskBloc
     final taskBloc = context.read<TaskBloc>();
-    selectedPriority = taskBloc.selectedPriority;
-    selectedStatus = taskBloc.selectedStatus;
+    selectedPriority = taskBloc.selectedPriority?.toTaskPriorityString();
+    selectedStatus = taskBloc.selectedStatus?.toTaskStatusString();
 
     // Trigger the filter event with the saved filters
     context.read<TaskBloc>().add(FilterTasksEvent(
       date: selectedDate,
-      status: selectedStatus,
-      priority: selectedPriority,
+      status: selectedStatus != null ? TaskStatusExtension.fromString(selectedStatus) : null,
+      priority: selectedPriority != null ? TaskPriorityExtension.fromString(selectedPriority) : null,
     ));
   }
 
@@ -62,8 +63,8 @@ class _TaskTrackState extends State<TaskTrack> {
     context.read<TaskBloc>().add(
       FilterTasksEvent(
         date: selectedDate,
-        priority: selectedPriority,
-        status: selectedStatus,
+        priority: selectedPriority != null ? TaskPriorityExtension.fromString(selectedPriority) : null,
+        status: selectedStatus != null ? TaskStatusExtension.fromString(selectedStatus) : null,
       ),
     );
   }

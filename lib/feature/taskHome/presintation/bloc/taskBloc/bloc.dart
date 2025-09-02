@@ -1,311 +1,169 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:mapperapp/feature/taskHome/presintation/bloc/taskBloc/state.dart';
-
-import '../../../domain/entity/taskEntity.dart';
-import '../../../domain/entity/task_enum.dart';
-import '../../../domain/entity/task_filters.dart';
-import '../../../domain/usecse/task/addUsecase.dart';
-import '../../../domain/usecse/task/deleteUsecase.dart';
-import '../../../domain/usecse/task/filter_tasks.dart';
-import '../../../domain/usecse/task/getByPlanId_task_usecase.dart';
-import '../../../domain/usecse/task/getTaskByDateUsecase.dart';
-import '../../../domain/usecse/task/getTaskByPriorityUseCase.dart';
-import '../../../domain/usecse/task/getTaskBystatus.dart';
-import '../../../domain/usecse/task/getUsecase.dart';
-import '../../../domain/usecse/task/updateStatues.dart';
-import '../../../domain/usecse/task/updateUsecase.dart';
 import 'event.dart';
+import 'state.dart';
+import '../../../../../injection_imports.dart';
 
 class TaskBloc extends Bloc<TaskEvent, TaskState> {
   final GetAllTasksUseCase getAllTasksUseCase;
   final GetTasksByStatusUseCase getTasksByStatusUseCase;
+  final GetTasksByPriorityUseCase getTasksByPriorityUseCase;
+  final GetTasksByDateUseCase getTasksByDateUseCase;
+  final GetTasksByPlanIdUseCase getTasksByPlanIdUseCase;
+  final FilterTasksUseCase filterTasksUseCase;
   final AddTaskUseCase addTaskUseCase;
   final UpdateTaskUseCase updateTaskUseCase;
   final UpdateTaskStatusUseCase updateTaskStatusUseCase;
-  final GetTasksByPriorityUseCase getTasksByPriorityUseCase;
   final DeleteTaskUseCase deleteTaskUseCase;
-  final GetTasksByDateUseCase getTasksByDateUseCase;
-  final FilterTasksUseCase filterTasksUseCase;
-  final GetTasksByPlanIdUseCase getTasksByPlanIdUseCase; // Add this use case
 
-  // Add properties to store selected filters
-  String? _selectedPriority;
-  String? _selectedStatus;
-
-  String? get selectedPriority => _selectedPriority;
-  String? get selectedStatus => _selectedStatus;
+  TaskPriority? selectedPriority;
+  TaskStatus? selectedStatus;
 
   TaskBloc({
     required this.getAllTasksUseCase,
     required this.getTasksByStatusUseCase,
     required this.getTasksByPriorityUseCase,
+    required this.getTasksByDateUseCase,
+    required this.getTasksByPlanIdUseCase,
+    required this.filterTasksUseCase,
     required this.addTaskUseCase,
     required this.updateTaskUseCase,
     required this.updateTaskStatusUseCase,
     required this.deleteTaskUseCase,
-    required this.getTasksByDateUseCase,
-    required this.filterTasksUseCase,
-    required this.getTasksByPlanIdUseCase, // Add this use case
   }) : super(TaskInitial()) {
-    on<GetAllTasksEvent>(_onGetAllTasks);
-    on<GetTasksByStatusEvent>(_onGetTasksByStatus);
-    on<GetTasksByPriorityEvent>(_onGetTasksByPriority);
-    on<GetTasksByDateEvent>(_onGetTasksByDate);
-    on<AddTaskEvent>(_onAddTask);
-    on<UpdateTaskEvent>(_onUpdateTask);
-    on<UpdateTaskStatusEvent>(_onUpdateTaskStatus);
-    on<DeleteTaskEvent>(_onDeleteTask);
-    on<FilterTasksEvent>(_onFilterTasks);
-    on<GetTasksByPlanIdEvent>(_onGetTasksByPlanId); // Add this handler
+    on<GetAllTasksEvent>(_handleGetAllTasks);
+    on<GetTasksByStatusEvent>(_handleGetTasksByStatus);
+    on<GetTasksByPriorityEvent>(_handleGetTasksByPriority);
+    on<GetTasksByDateEvent>(_handleGetTasksByDate);
+    on<GetTasksByPlanIdEvent>(_handleGetTasksByPlanId);
+    on<FilterTasksEvent>(_handleFilterTasks);
+    on<AddTaskEvent>(_handleAddTask);
+    on<UpdateTaskEvent>(_handleUpdateTask);
+    on<UpdateTaskStatusEvent>(_handleUpdateTaskStatus);
+    on<DeleteTaskEvent>(_handleDeleteTask);
   }
 
-  Future<List<TaskDetails>> _fetchAndFilterTasks(TaskFilters? filters) async {
-    final tasks = await getTasksByDateUseCase(filters?.date ?? '');
-    return tasks.where((task) {
-      final matchesPriority = filters?.priority == null ||
-          filters?.priority == TaskPriorityExtension.fromString(task.priority);
-      final matchesStatus = filters?.status == null ||
-          filters?.status == TaskStatusExtension.fromString(task.status);
-      return matchesPriority && matchesStatus;
-    }).toList();
+  /// Common executor for async task operations
+  Future<void> _execute(
+    Emitter<TaskState> emit,
+    Future<List<TaskDetails>> Function() taskOperation, {
+    TaskFilters? filters,
+  }) async {
+    emit(TaskLoading());
+    try {
+      final tasks = await taskOperation();
+      emit(TaskLoaded(tasks, filters: filters ?? TaskFilters()));
+    } catch (e) {
+      emit(TaskError("Error: $e"));
+    }
   }
 
-  Future<void> _onGetAllTasks(
+  // ---------------- Event Handlers ----------------
+
+  Future<void> _handleGetAllTasks(
     GetAllTasksEvent event,
     Emitter<TaskState> emit,
   ) async {
-    emit(TaskLoading());
-    try {
-      final tasks = await getAllTasksUseCase();
-      emit(TaskLoaded(tasks,
-          filters: TaskFilters(date: '', priority: null, status: null)));
-    } catch (e) {
-      emit(TaskError("Failed to load tasks: $e"));
-    }
+    await _execute(emit, () => getAllTasksUseCase());
   }
 
-  Future<void> _onGetTasksByStatus(
+  Future<void> _handleGetTasksByStatus(
     GetTasksByStatusEvent event,
     Emitter<TaskState> emit,
   ) async {
-    emit(TaskLoading());
-    try {
-      final tasks = await getTasksByStatusUseCase(event.status);
-      emit(TaskLoaded(
-        tasks,
-        filters: TaskFilters(date: '', priority: null, status: event.status),
-      ));
-    } catch (e) {
-      emit(TaskError("Failed to load tasks by status: $e"));
-    }
+    await _execute(
+      emit,
+      () => getTasksByStatusUseCase(event.status),
+      filters: TaskFilters(status: event.status),
+    );
   }
 
-  Future<void> _onGetTasksByPriority(
+  Future<void> _handleGetTasksByPriority(
     GetTasksByPriorityEvent event,
     Emitter<TaskState> emit,
   ) async {
-    emit(TaskLoading());
-    try {
-      final tasks = await getTasksByPriorityUseCase(event.priority);
-      emit(TaskLoaded(
-        tasks,
-        filters: TaskFilters(date: '', priority: event.priority, status: null),
-      ));
-    } catch (e) {
-      emit(TaskError("Failed to load tasks by priority: $e"));
-    }
+    await _execute(
+      emit,
+      () => getTasksByPriorityUseCase(event.priority),
+      filters: TaskFilters(priority: event.priority),
+    );
   }
 
-  Future<void> _onGetTasksByDate(
+  Future<void> _handleGetTasksByDate(
     GetTasksByDateEvent event,
     Emitter<TaskState> emit,
   ) async {
-    emit(TaskLoading());
-    try {
-      final tasks = await getTasksByDateUseCase(event.date);
-      emit(TaskLoaded(
-        tasks,
-        filters: TaskFilters(date: event.date, priority: null, status: null),
-      ));
-    } catch (e) {
-      emit(TaskError("Failed to load tasks by date: $e"));
-    }
+    await _execute(
+      emit,
+      () => getTasksByDateUseCase(event.date),
+      filters: TaskFilters(date: event.date),
+    );
   }
 
-  Future<void> _onFilterTasks(
-    FilterTasksEvent event,
-    Emitter<TaskState> emit,
-  ) async {
-    emit(TaskLoading());
-    try {
-      // Update selected filters
-      _selectedPriority = event.priority;
-      _selectedStatus = event.status;
-
-      final filteredTasks = await _fetchAndFilterTasks(TaskFilters(
-        priority: event.priority != null
-            ? TaskPriorityExtension.fromString(event.priority)
-            : null,
-        status: event.status != null
-            ? TaskStatusExtension.fromString(event.status)
-            : null,
-      ));
-      emit(TaskLoaded(
-        filteredTasks,
-        filters: TaskFilters(
-          date: event.date,
-          priority: TaskPriorityExtension.fromString(event.priority),
-          status: TaskStatusExtension.fromString(event.status),
-        ),
-      ));
-    } catch (e) {
-      emit(TaskError("Failed to filter tasks: $e"));
-    }
-  }
-
-  Future<void> _onAddTask(
-    AddTaskEvent event,
-    Emitter<TaskState> emit,
-  ) async {
-    TaskLoaded? previousState;
-
-    try {
-      if (state is TaskLoaded) {
-        previousState = state as TaskLoaded;
-        final updatedTasks = List<TaskDetails>.from(previousState.tasks)
-          ..add(event.task);
-        emit(TaskLoaded(updatedTasks, filters: previousState.filters));
-      }
-
-      await addTaskUseCase(event.task);
-
-      final tasks = await _fetchAndFilterTasks(previousState?.filters);
-      emit(TaskLoaded(tasks,
-          filters: previousState?.filters ??
-              TaskFilters(date: '', priority: null, status: null)));
-    } catch (e) {
-      if (previousState != null) {
-        emit(previousState);
-      }
-      emit(TaskError("Failed to add task: $e"));
-    }
-  }
-
-  Future<void> _onUpdateTask(
-    UpdateTaskEvent event,
-    Emitter<TaskState> emit,
-  ) async {
-    TaskLoaded? previousState;
-
-    try {
-      if (state is TaskLoaded) {
-        previousState = state as TaskLoaded;
-        final updatedTasks = previousState.tasks.map((task) {
-          return task.id == event.task.id ? event.task : task;
-        }).toList();
-        emit(TaskLoaded(updatedTasks, filters: previousState.filters));
-      }
-
-      await updateTaskUseCase(event.task);
-
-      final tasks = await _fetchAndFilterTasks(previousState?.filters);
-      emit(TaskLoaded(tasks,
-          filters: previousState?.filters ??
-              TaskFilters(date: '', priority: null, status: null)));
-    } catch (e) {
-      if (previousState != null) {
-        emit(previousState);
-      }
-      emit(TaskError("Failed to update task: $e"));
-    }
-  }
-
-  Future<void> _onDeleteTask(
-    DeleteTaskEvent event,
-    Emitter<TaskState> emit,
-  ) async {
-    TaskLoaded? previousState;
-
-    try {
-      if (state is TaskLoaded) {
-        previousState = state as TaskLoaded;
-        final updatedTasks = previousState.tasks
-            .where((task) => task.id != event.taskId)
-            .toList();
-        emit(TaskLoaded(updatedTasks, filters: previousState.filters));
-      }
-
-      await deleteTaskUseCase(event.taskId);
-
-      final tasks = await _fetchAndFilterTasks(previousState?.filters);
-      emit(TaskLoaded(tasks,
-          filters: previousState?.filters ??
-              TaskFilters(date: '', priority: null, status: null)));
-    } catch (e) {
-      if (previousState != null) {
-        emit(previousState);
-      }
-      emit(TaskError("Failed to delete task: $e"));
-    }
-  }
-
-  Future<void> _onUpdateTaskStatus(
-    UpdateTaskStatusEvent event,
-    Emitter<TaskState> emit,
-  ) async {
-    TaskLoaded? previousState;
-
-    try {
-      if (state is TaskLoaded) {
-        previousState = state as TaskLoaded;
-        final updatedTasks = previousState.tasks.map((task) {
-          // Check if this is the task being updated
-          if (task.id == event.taskId) {
-            // Update status and time
-            return task.copyWith(
-              status: event.newStatus?.toTaskStatusString(),
-              updatedTime: event.updatedTime, // Update time to now
-            );
-          }
-          return task;
-        }).toList();
-        emit(TaskLoaded(updatedTasks, filters: previousState.filters));
-      }
-
-      // Update the status in the backend or database
-      await updateTaskStatusUseCase(event.taskId,
-          event.newStatus?.toTaskStatusString() ?? '', event.updatedTime);
-
-      // Fetch and filter tasks again after update
-      final tasks = await _fetchAndFilterTasks(previousState?.filters);
-      emit(TaskLoaded(
-        tasks,
-        filters: previousState?.filters ??
-            TaskFilters(date: '', priority: null, status: null),
-      ));
-    } catch (e) {
-      // Revert to previous state if error occurs
-      if (previousState != null) {
-        emit(previousState);
-      }
-      emit(TaskError("Failed to update task status: $e"));
-    }
-  }
-
-  // Handler for GetTasksByPlanIdEvent
-  Future<void> _onGetTasksByPlanId(
+  Future<void> _handleGetTasksByPlanId(
     GetTasksByPlanIdEvent event,
     Emitter<TaskState> emit,
   ) async {
-    emit(TaskLoading());
-    try {
-      final tasks = await getTasksByPlanIdUseCase(event.planId);
-      emit(TaskLoaded(
-        tasks,
-        filters: TaskFilters(date: '', priority: null, status: null),
-      ));
-    } catch (e) {
-      emit(TaskError("Failed to load tasks by plan ID: $e"));
-    }
+    await _execute(
+      emit,
+      () => getTasksByPlanIdUseCase(event.planId),
+    );
+  }
+
+  Future<void> _handleFilterTasks(
+    FilterTasksEvent event,
+    Emitter<TaskState> emit,
+  ) async {
+    selectedPriority = event.priority;
+    selectedStatus = event.status;
+    final filters = TaskFilters(
+      date: event.date,
+      priority: event.priority,
+      status: event.status,
+    );
+    await _execute(
+      emit,
+      () => filterTasksUseCase(
+        date: filters.date ?? '',
+        priority: filters.priority?.toTaskPriorityString(),
+        status: filters.status?.toTaskStatusString(),
+      ),
+      filters: filters,
+    );
+  }
+
+  Future<void> _handleAddTask(
+    AddTaskEvent event,
+    Emitter<TaskState> emit,
+  ) async {
+    await addTaskUseCase(event.task);
+    add(GetAllTasksEvent()); // reload list
+  }
+
+  Future<void> _handleUpdateTask(
+    UpdateTaskEvent event,
+    Emitter<TaskState> emit,
+  ) async {
+    await updateTaskUseCase(event.task);
+    add(GetAllTasksEvent());
+  }
+
+  Future<void> _handleUpdateTaskStatus(
+    UpdateTaskStatusEvent event,
+    Emitter<TaskState> emit,
+  ) async {
+    await updateTaskStatusUseCase(
+      event.taskId,
+      event.newStatus?.toTaskStatusString() ?? '',
+      event.updatedTime,
+    );
+    add(GetAllTasksEvent());
+  }
+
+  Future<void> _handleDeleteTask(
+    DeleteTaskEvent event,
+    Emitter<TaskState> emit,
+  ) async {
+    await deleteTaskUseCase(event.taskId);
+    add(GetAllTasksEvent());
   }
 }
