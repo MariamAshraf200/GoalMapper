@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart' as intl;
 
-import '../../../main.dart';
+import '../../../app_bootstrapper.dart';
 
 
 final _context = navigatorKey.currentContext!;

@@ -6,6 +6,7 @@ import '../../../taskHome/presintation/bloc/catogeryBloc/Catogerystate.dart';
 import '../bloc/bloc.dart';
 import '../bloc/event.dart';
 import '../bloc/state.dart';
+import '../widget/add_plan_form.dart';
 import '../widget/plan_items.dart';
 
 
@@ -36,13 +37,21 @@ class _PlanTrackerScreenState extends State<PlanTrackerScreen> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text(
-                  'My Plans',
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.deepPurple,
-                  ),
+                Row(
+                  children: [
+                    IconButton(
+                      icon: const Icon(Icons.arrow_back, color: Colors.deepPurple, size: 28),
+                      onPressed: () => Navigator.of(context).pop(),
+                    ),
+                    const Text(
+                      'My Plans',
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.deepPurple,
+                      ),
+                    ),
+                  ],
                 ),
                 BlocBuilder<CategoryBloc, CategoryState>(
                   builder: (context, state) {
@@ -124,7 +133,12 @@ class _PlanTrackerScreenState extends State<PlanTrackerScreen> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          // Navigate to Add Plan Screen
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const AddPlanForm(),
+            ),
+          );
         },
         child: const Icon(Icons.add),
       ),

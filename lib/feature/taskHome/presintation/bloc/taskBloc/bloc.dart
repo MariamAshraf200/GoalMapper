@@ -2,6 +2,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mapperapp/feature/taskHome/presintation/bloc/taskBloc/state.dart';
 
 import '../../../domain/entity/taskEntity.dart';
+import '../../../domain/entity/task_enum.dart';
 import '../../../domain/entity/task_filters.dart';
 import '../../../domain/usecse/task/addUsecase.dart';
 import '../../../domain/usecse/task/deleteUsecase.dart';
@@ -61,18 +62,18 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
   Future<List<TaskDetails>> _fetchAndFilterTasks(TaskFilters? filters) async {
     final tasks = await getTasksByDateUseCase(filters?.date ?? '');
     return tasks.where((task) {
-      final matchesPriority =
-          filters?.priority == null || task.priority == filters?.priority;
-      final matchesStatus =
-          filters?.status == null || task.status == filters?.status;
+      final matchesPriority = filters?.priority == null ||
+          filters?.priority == TaskPriorityExtension.fromString(task.priority);
+      final matchesStatus = filters?.status == null ||
+          filters?.status == TaskStatusExtension.fromString(task.status);
       return matchesPriority && matchesStatus;
     }).toList();
   }
 
   Future<void> _onGetAllTasks(
-      GetAllTasksEvent event,
-      Emitter<TaskState> emit,
-      ) async {
+    GetAllTasksEvent event,
+    Emitter<TaskState> emit,
+  ) async {
     emit(TaskLoading());
     try {
       final tasks = await getAllTasksUseCase();
@@ -84,9 +85,9 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
   }
 
   Future<void> _onGetTasksByStatus(
-      GetTasksByStatusEvent event,
-      Emitter<TaskState> emit,
-      ) async {
+    GetTasksByStatusEvent event,
+    Emitter<TaskState> emit,
+  ) async {
     emit(TaskLoading());
     try {
       final tasks = await getTasksByStatusUseCase(event.status);
@@ -100,9 +101,9 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
   }
 
   Future<void> _onGetTasksByPriority(
-      GetTasksByPriorityEvent event,
-      Emitter<TaskState> emit,
-      ) async {
+    GetTasksByPriorityEvent event,
+    Emitter<TaskState> emit,
+  ) async {
     emit(TaskLoading());
     try {
       final tasks = await getTasksByPriorityUseCase(event.priority);
@@ -116,9 +117,9 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
   }
 
   Future<void> _onGetTasksByDate(
-      GetTasksByDateEvent event,
-      Emitter<TaskState> emit,
-      ) async {
+    GetTasksByDateEvent event,
+    Emitter<TaskState> emit,
+  ) async {
     emit(TaskLoading());
     try {
       final tasks = await getTasksByDateUseCase(event.date);
@@ -132,9 +133,9 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
   }
 
   Future<void> _onFilterTasks(
-      FilterTasksEvent event,
-      Emitter<TaskState> emit,
-      ) async {
+    FilterTasksEvent event,
+    Emitter<TaskState> emit,
+  ) async {
     emit(TaskLoading());
     try {
       // Update selected filters
@@ -142,14 +143,20 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
       _selectedStatus = event.status;
 
       final filteredTasks = await _fetchAndFilterTasks(TaskFilters(
-        date: event.date,
-        priority: event.priority,
-        status: event.status,
+        priority: event.priority != null
+            ? TaskPriorityExtension.fromString(event.priority)
+            : null,
+        status: event.status != null
+            ? TaskStatusExtension.fromString(event.status)
+            : null,
       ));
       emit(TaskLoaded(
         filteredTasks,
         filters: TaskFilters(
-            date: event.date, priority: event.priority, status: event.status),
+          date: event.date,
+          priority: TaskPriorityExtension.fromString(event.priority),
+          status: TaskStatusExtension.fromString(event.status),
+        ),
       ));
     } catch (e) {
       emit(TaskError("Failed to filter tasks: $e"));
@@ -157,9 +164,9 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
   }
 
   Future<void> _onAddTask(
-      AddTaskEvent event,
-      Emitter<TaskState> emit,
-      ) async {
+    AddTaskEvent event,
+    Emitter<TaskState> emit,
+  ) async {
     TaskLoaded? previousState;
 
     try {
@@ -185,9 +192,9 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
   }
 
   Future<void> _onUpdateTask(
-      UpdateTaskEvent event,
-      Emitter<TaskState> emit,
-      ) async {
+    UpdateTaskEvent event,
+    Emitter<TaskState> emit,
+  ) async {
     TaskLoaded? previousState;
 
     try {
@@ -214,9 +221,9 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
   }
 
   Future<void> _onDeleteTask(
-      DeleteTaskEvent event,
-      Emitter<TaskState> emit,
-      ) async {
+    DeleteTaskEvent event,
+    Emitter<TaskState> emit,
+  ) async {
     TaskLoaded? previousState;
 
     try {
@@ -243,9 +250,9 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
   }
 
   Future<void> _onUpdateTaskStatus(
-      UpdateTaskStatusEvent event,
-      Emitter<TaskState> emit,
-      ) async {
+    UpdateTaskStatusEvent event,
+    Emitter<TaskState> emit,
+  ) async {
     TaskLoaded? previousState;
 
     try {
@@ -256,7 +263,7 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
           if (task.id == event.taskId) {
             // Update status and time
             return task.copyWith(
-              status: event.newStatus,
+              status: event.newStatus?.toTaskStatusString(),
               updatedTime: event.updatedTime, // Update time to now
             );
           }
@@ -266,7 +273,8 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
       }
 
       // Update the status in the backend or database
-      await updateTaskStatusUseCase(event.taskId, event.newStatus, event.updatedTime);
+      await updateTaskStatusUseCase(event.taskId,
+          event.newStatus?.toTaskStatusString() ?? '', event.updatedTime);
 
       // Fetch and filter tasks again after update
       final tasks = await _fetchAndFilterTasks(previousState?.filters);
@@ -286,9 +294,9 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
 
   // Handler for GetTasksByPlanIdEvent
   Future<void> _onGetTasksByPlanId(
-      GetTasksByPlanIdEvent event,
-      Emitter<TaskState> emit,
-      ) async {
+    GetTasksByPlanIdEvent event,
+    Emitter<TaskState> emit,
+  ) async {
     emit(TaskLoading());
     try {
       final tasks = await getTasksByPlanIdUseCase(event.planId);

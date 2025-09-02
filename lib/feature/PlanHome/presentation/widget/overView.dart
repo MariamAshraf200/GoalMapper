@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mapperapp/feature/PlanHome/domain/entities/plan_entity.dart';
 import 'package:mapperapp/feature/PlanHome/presentation/bloc/bloc.dart';
+import '../../../taskHome/domain/entity/task_enum.dart';
 import '../../../taskHome/presintation/bloc/taskBloc/bloc.dart';
 import '../../../taskHome/presintation/bloc/taskBloc/event.dart';
 import '../../../taskHome/presintation/bloc/taskBloc/state.dart';
@@ -60,7 +61,7 @@ class OverviewContent extends StatelessWidget {
                     ),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.deepPurple.withOpacity(0.1),
+                        color: Colors.deepPurple.withAlpha( 50),
                         blurRadius: 10,
                         offset: const Offset(0, 5),
                       ),
@@ -178,7 +179,7 @@ class OverviewContent extends StatelessWidget {
                                       context.read<TaskBloc>().add(
                                         UpdateTaskStatusEvent(
                                           task.id,
-                                          value! ? 'Done' : 'to do',
+                                          value! ? TaskStatus.completed : TaskStatus.pending,
                                           updatedTime: '',
                                         ),
                                       );

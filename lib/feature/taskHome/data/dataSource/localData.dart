@@ -1,5 +1,6 @@
 import 'package:hive/hive.dart';
 import '../../../../core/hiveServices.dart';
+import '../../domain/entity/task_enum.dart';
 import '../model/taskModel.dart';
 import 'abstract_data_scource.dart';
 
@@ -31,7 +32,7 @@ class HiveTaskLocalDataSource implements TaskLocalDataSource {
   }
 
   @override
-  Future<List<TaskModel>> getTasksByStatus(String status) async {
+  Future<List<TaskModel>> getTasksByStatus(TaskStatus? status) async {
     return taskBox.values.where((task) => task.status == status).toList();
   }
 
@@ -41,8 +42,8 @@ class HiveTaskLocalDataSource implements TaskLocalDataSource {
   }
 
   @override
-  Future<List<TaskModel>> getTasksByPriority(String priority) async {
-    return taskBox.values.where((task) => task.priority == priority).toList();
+  Future<List<TaskModel>> getTasksByPriority(TaskPriority? priority) async {
+    return taskBox.values.where((task) => task.priority == priority?.toTaskPriorityString()).toList();
   }
 
   @override

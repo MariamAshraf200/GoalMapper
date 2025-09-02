@@ -1,9 +1,10 @@
 import '../entity/taskEntity.dart';
+import '../entity/task_enum.dart';
 
 abstract class TaskRepository {
   Future<List<TaskDetails>> getTasks();
-  Future<List<TaskDetails>> getTasksByStatus(String status);
-  Future<List<TaskDetails>> getTasksByPriority(String priority);
+  Future<List<TaskDetails>> getTasksByStatus(TaskStatus? status);
+  Future<List<TaskDetails>> getTasksByPriority(TaskPriority? priority);
   Future<void> addTask(TaskDetails task);
   Future<void> updateTask(TaskDetails task);
   Future<void> deleteTask(String taskId);
