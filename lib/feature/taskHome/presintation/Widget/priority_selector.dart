@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 
+import '../../domain/entity/task_enum.dart';
+
 class PrioritySelector extends StatelessWidget {
-  final String selectedPriority;
-  final void Function(String priority) onPrioritySelected;
+  final TaskPriority selectedPriority;
+  final void Function(TaskPriority priority) onPrioritySelected;
 
   const PrioritySelector({
     super.key,
@@ -12,7 +14,12 @@ class PrioritySelector extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final List<String> priorities = ['Low', 'Medium', 'High']; // Define priorities
+    // Use the enum values for priorities
+    final List<TaskPriority> priorities = [
+      TaskPriority.low,
+      TaskPriority.medium,
+      TaskPriority.high
+    ];
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -30,7 +37,7 @@ class PrioritySelector extends StatelessWidget {
             final bool isSelected = priority == selectedPriority;
             return ChoiceChip(
               label: Text(
-                priority,
+                priority.toTaskPriorityString().toLowerCase().capitalize(),
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                 ),
@@ -45,5 +52,12 @@ class PrioritySelector extends StatelessWidget {
         ),
       ],
     );
+  }
+}
+
+// Helper extension to capitalize the first letter of a string
+extension StringExtension on String {
+  String capitalize() {
+    return "${this[0].toUpperCase()}${this.substring(1)}";
   }
 }

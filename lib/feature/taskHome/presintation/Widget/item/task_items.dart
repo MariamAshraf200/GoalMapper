@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../domain/entity/taskEntity.dart';
-import '../Widget/task_item_card.dart';
+import '../../../domain/entity/taskEntity.dart';
+import 'task_item_card.dart';
 
 class TaskItems extends StatefulWidget {
   const TaskItems({

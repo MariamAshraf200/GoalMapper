@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-import '../../domain/entity/taskEntity.dart';
+import '../../../domain/entity/taskEntity.dart';
 
 class TaskTimeColumn extends StatelessWidget {
   final TaskDetails task;

@@ -11,6 +11,7 @@ import '../../../../core/util/widgets/date_and_time/date_filed.dart';
 import '../../../../core/util/widgets/loading_elevate_icon_button.dart';
 import '../../../taskHome/presintation/Widget/category_selector.dart';
 import '../../../taskHome/presintation/Widget/priority_selector.dart';
+import '../../../taskHome/domain/entity/task_enum.dart'; // Import for TaskPriority
 import '../../domain/entities/plan_entity.dart';
 import '../bloc/bloc.dart';
 import '../bloc/event.dart';
@@ -35,7 +36,7 @@ class _UpdatePlanFormState extends State<UpdatePlanForm>
   DateTime? _planStartDate;
   DateTime? _planEndDate;
   String? _selectedCategory;
-  late String _selectedPriority;
+  late TaskPriority _selectedPriority;
   XFile? _pickedImage;
 
   @override
@@ -49,7 +50,7 @@ class _UpdatePlanFormState extends State<UpdatePlanForm>
         ? DateFormat('dd/MM/yyyy').parse(widget.plan.endDate)
         : null;
     _selectedCategory = widget.plan.category;
-    _selectedPriority = widget.plan.priority;
+    _selectedPriority = TaskPriorityExtension.fromString(widget.plan.priority);
   }
 
   @override
@@ -202,7 +203,7 @@ class _UpdatePlanFormState extends State<UpdatePlanForm>
       description: _planDescriptionController.text.trim(),
       startDate: formattedStartDate,
       endDate: formattedEndDate,
-      priority: _selectedPriority,
+      priority: _selectedPriority.toTaskPriorityString(),
       category: _selectedCategory ?? 'General',
       image: _pickedImage?.path ?? widget.plan.image,
     );

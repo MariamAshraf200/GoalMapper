@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:mapperapp/feature/taskHome/domain/entity/task_enum.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../../../core/constants/app_spaces.dart';
@@ -35,7 +36,7 @@ class _AddPlanFormState extends State<AddPlanForm>
   DateTime? _planStartDate;
   DateTime? _planEndDate;
   String? _selectedCategory;
-  String _selectedPriority = 'Medium';
+  TaskPriority _selectedPriority = TaskPriority.medium;
   XFile? _pickedImage;
 
   @override
@@ -173,7 +174,7 @@ class _AddPlanFormState extends State<AddPlanForm>
       description: _planDescriptionController.text.trim(),
       startDate: formattedStartDate,
       endDate: formattedEndDate,
-      priority: _selectedPriority,
+      priority: _selectedPriority.toTaskPriorityString(),
       category: _selectedCategory ?? 'General',
       status: 'Not Completed',
       image: _pickedImage?.path, 
