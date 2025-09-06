@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:intl/intl.dart';
 import '../../../../../injection_imports.dart';
+
 
 
 class TaskItemCard extends StatelessWidget {
@@ -12,13 +12,16 @@ class TaskItemCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Automatically mark missed if needed
+    // Auto-mark as missed
     if (task.shouldBeMissed(DateTime.now())) {
       context.read<TaskBloc>().add(
         UpdateTaskStatusEvent(
           task.id,
           TaskStatus.missed,
-          updatedTime: DateFormat('hh:mm a').format(DateTime.now()),
+          updatedTime: TimeFormatUtil.formatTime(
+            TimeOfDay.fromDateTime(DateTime.now()),
+          ) ??
+              '',
         ),
       );
     }
@@ -40,41 +43,149 @@ class TaskItemCard extends StatelessWidget {
     );
   }
 
+  // ---------------- Swipe Backgrounds ----------------
   Widget _buildEditBackground() => Container(
-    color: Colors.blue,
+    color: Colors.blueAccent,
     alignment: Alignment.centerLeft,
     padding: const EdgeInsets.symmetric(horizontal: 20),
-    child: const Icon(Icons.edit, color: Colors.white),
+    child: const Icon(Icons.edit, color: Colors.white, size: 28),
   );
 
   Widget _buildDeleteBackground() => Container(
-    color: Colors.red,
+    color: Colors.redAccent,
     alignment: Alignment.centerRight,
     padding: const EdgeInsets.symmetric(horizontal: 20),
-    child: const Icon(Icons.delete, color: Colors.white),
+    child: const Icon(Icons.delete, color: Colors.white, size: 28),
   );
 
+  // ---------------- Main Content ----------------
   Widget _buildContent(BuildContext context) {
-    return GestureDetector(
-      onLongPress: () => _handleLongPress(context),
+    final Color priorityColor = TaskPriorityColorExtension(task.priority).toPriorityColor();
+
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(18),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withAlpha(15),
+            blurRadius: 10,
+            offset: const Offset(0, 3),
+          ),
+        ],
+      ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          TaskTimeColumn(task: task),
-          const SizedBox(width: 8),
-          Expanded(
-            child: CustomCard(
-              margin: const EdgeInsets.symmetric(vertical: 8),
-              padding: const EdgeInsets.all(12),
-              borderRadius: BorderRadius.circular(15),
-              elevation: 4,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  _buildInfoSection(),
-                  _buildStatusIcon(context),
-                ],
+          // Timeline stripe + dot
+          Column(
+            children: [
+              Container(
+                width: 10,
+                height: 10,
+                decoration: BoxDecoration(
+                  color: priorityColor,
+                  shape: BoxShape.circle,
+                ),
               ),
+              Container(
+                width: 2,
+                height: 55,
+                color: priorityColor.withAlpha( 100),
+                margin: const EdgeInsets.only(top: 4),
+              ),
+            ],
+          ),
+          const SizedBox(width: 12),
+
+          // Task info
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Top row: Priority + Category + Status
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Wrap(
+                      spacing: 8,
+                      children: [
+                        _buildPriorityChip(priorityColor),
+                        if (task.category.isNotEmpty)
+                          _buildCategoryChip(task.category),
+                      ],
+                    ),
+                    _buildStatusIcon(context),
+                  ],
+                ),
+                const SizedBox(height: 6),
+
+                // Title
+                Text(
+                  task.title,
+                  style: const TextStyle(
+                    fontSize: 17,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black87,
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                ),
+
+                // Description
+                if (task.description.isNotEmpty) ...[
+                  const SizedBox(height: 4),
+                  Text(
+                    task.description,
+                    style: const TextStyle(
+                      fontSize: 14,
+                      color: Colors.black54,
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
+
+                const SizedBox(height: 6),
+
+                // Date & Time
+                Row(
+                  children: [
+                    if (task.date.isNotEmpty)
+                      Row(
+                        children: [
+                          const Icon(Icons.calendar_today,
+                              size: 14, color: Colors.grey),
+                          const SizedBox(width: 4),
+                          Text(
+                            DateFormatUtil.formatFullDate(task.date),
+                            style: const TextStyle(
+                                fontSize: 13, color: Colors.grey),
+                          ),
+                        ],
+                      ),
+                    if (task.time.isNotEmpty) ...[
+                      const SizedBox(width: 14),
+                      Row(
+                        children: [
+                          const Icon(Icons.access_time,
+                              size: 14, color: Colors.grey),
+                          const SizedBox(width: 4),
+                          Text(
+                            TimeFormatUtil.formatTime(
+                              TimeFormatUtil.parseTime(task.time),
+                            ) ??
+                                '',
+                            style: const TextStyle(
+                                fontSize: 13, color: Colors.grey),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ],
+                ),
+              ],
             ),
           ),
         ],
@@ -82,47 +193,44 @@ class TaskItemCard extends StatelessWidget {
     );
   }
 
-  Widget _buildInfoSection() => Expanded(
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        _buildPriorityLabel(),
-        const SizedBox(height: 8),
-        Text(
-          task.title,
-          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
-          overflow: TextOverflow.ellipsis,
-        ),
-        const SizedBox(height: 4),
-        Text(
-          task.description,
-          style: const TextStyle(fontSize: 14, color: Colors.grey),
-          overflow: TextOverflow.ellipsis,
-        ),
-      ],
-    ),
-  );
-
-  Widget _buildPriorityLabel() => Container(
-    padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+  // ---------------- Chips ----------------
+  Widget _buildPriorityChip(Color color) => Container(
+    padding: const EdgeInsets.symmetric(vertical: 3, horizontal: 10),
     decoration: BoxDecoration(
-      color: task.priority.toPriorityColor(),
-      borderRadius: BorderRadius.circular(8),
+      color: color.withAlpha( 30),
+      borderRadius: BorderRadius.circular(20),
     ),
     child: Text(
       task.priority,
-      style: const TextStyle(
-        color: Colors.white,
+      style: TextStyle(
+        color: color,
         fontSize: 12,
-        fontWeight: FontWeight.bold,
+        fontWeight: FontWeight.w600,
       ),
     ),
   );
 
+  Widget _buildCategoryChip(String category) => Container(
+    padding: const EdgeInsets.symmetric(vertical: 3, horizontal: 10),
+    decoration: BoxDecoration(
+      color: Colors.grey.shade200,
+      borderRadius: BorderRadius.circular(20),
+    ),
+    child: Text(
+      category,
+      style: const TextStyle(
+        color: Colors.black87,
+        fontSize: 12,
+        fontWeight: FontWeight.w500,
+      ),
+    ),
+  );
+
+  // ---------------- Status ----------------
   Widget _buildStatusIcon(BuildContext context) {
     return GestureDetector(
       child: AnimatedSwitcher(
-        duration: const Duration(milliseconds: 350),
+        duration: const Duration(milliseconds: 300),
         transitionBuilder: (child, anim) =>
             ScaleTransition(scale: anim, child: child),
         child: _statusIcon(),
@@ -133,14 +241,26 @@ class TaskItemCard extends StatelessWidget {
 
   Widget _statusIcon() {
     if (task.isCompleted) {
-      return SvgPicture.asset(AppAssets.rightCheckBox,
-          width: 30, height: 30, key: const ValueKey('completed'));
+      return SvgPicture.asset(
+        AppAssets.rightCheckBox,
+        width: 30,
+        height: 30,
+        key: const ValueKey('completed'),
+      );
     } else if (task.isMissed) {
-      return Image.asset('assets/images/missid.png',
-          width: 30, height: 30, key: const ValueKey('missed'));
+      return Image.asset(
+        AppAssets.missedIcon,
+        width: 30,
+        height: 30,
+        key: const ValueKey('missed'),
+      );
     } else if (task.isPending) {
-      return Image.asset('assets/images/pending-clock-icon.webp',
-          width: 30, height: 30, key: const ValueKey('pending'));
+      return Image.asset(
+        AppAssets.pendingClockIcon,
+        width: 30,
+        height: 30,
+        key: const ValueKey('pending'),
+      );
     }
     return Container(
       key: const ValueKey('notCompleted'),
@@ -150,10 +270,11 @@ class TaskItemCard extends StatelessWidget {
         shape: BoxShape.circle,
         border: Border.all(color: Colors.grey, width: 2),
       ),
+      child: const Icon(Icons.check, size: 18, color: Colors.grey),
     );
   }
 
-  // ----------------- Event handlers -----------------
+  // ---------------- Events ----------------
   void _toggleStatus(BuildContext context) {
     if (task.isMissed) return _showErrorDialog(context);
 
@@ -162,24 +283,20 @@ class TaskItemCard extends StatelessWidget {
     context.read<TaskBloc>().add(UpdateTaskStatusEvent(
       task.id,
       newStatus,
-      updatedTime: DateFormat('hh:mm a').format(DateTime.now()),
+      updatedTime: TimeFormatUtil.formatTime(
+        TimeOfDay.fromDateTime(DateTime.now()),
+      ) ??
+          '',
     ));
 
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text('Task marked as ${newStatus.toTaskStatusString()}'),
         duration: const Duration(seconds: 1),
-        backgroundColor: newStatus == TaskStatus.done ? Colors.green : Colors.orange,
+        backgroundColor:
+        newStatus == TaskStatus.done ? Colors.green : Colors.orange,
       ),
     );
-  }
-
-  void _handleLongPress(BuildContext context) {
-    if (task.isCompleted || task.isMissed) {
-      _showErrorDialog(context);
-    } else {
-      _toggleStatus(context);
-    }
   }
 
   void _showErrorDialog(BuildContext context) {
@@ -188,7 +305,8 @@ class TaskItemCard extends StatelessWidget {
       builder: (_) => const AlertDialog(
         title: Text('Task Not Editable'),
         content: Text(
-            'This task is already completed or missed and cannot be changed.'),
+          'This task is already completed or missed and cannot be changed.',
+        ),
       ),
     );
   }
@@ -198,7 +316,7 @@ class TaskItemCard extends StatelessWidget {
       context: context,
       builder: (_) => CustomDialog(
         title: 'Update Task',
-        description: 'Are you sure you want to update this task?',
+        description: 'Do you want to update this task?',
         icon: Icons.update,
         operation: 'Update',
         color: Colors.blue,
@@ -230,5 +348,20 @@ class TaskItemCard extends StatelessWidget {
         onCanceled: () => Navigator.of(context).pop(),
       ),
     );
+  }
+}
+
+extension TaskPriorityColorExtension on String {
+  Color toPriorityColor() {
+    switch (toLowerCase()) {
+      case 'high':
+        return Colors.redAccent;
+      case 'medium':
+        return Colors.orangeAccent;
+      case 'low':
+        return Colors.green;
+      default:
+        return Colors.blueGrey; // fallback
+    }
   }
 }

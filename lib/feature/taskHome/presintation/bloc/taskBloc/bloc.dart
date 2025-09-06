@@ -1,5 +1,4 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'state.dart';
 import '../../../../../injection_imports.dart';
 
 class TaskBloc extends Bloc<TaskEvent, TaskState> {
@@ -16,6 +15,7 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
 
   TaskPriority? selectedPriority;
   TaskStatus? selectedStatus;
+  String? selectedDate;
 
   TaskBloc({
     required this.getAllTasksUseCase,
@@ -57,6 +57,20 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
   }
 
   // ---------------- Event Handlers ----------------
+
+
+  void _refreshWithFilters() {
+    if (selectedDate != null || selectedPriority != null || selectedStatus != null) {
+      add(FilterTasksEvent(
+        date: selectedDate,
+        priority: selectedPriority,
+        status: selectedStatus,
+      ));
+    } else {
+      add(GetAllTasksEvent());
+    }
+  }
+
 
   Future<void> _handleGetAllTasks(
     GetAllTasksEvent event,
@@ -107,21 +121,23 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
       () => getTasksByPlanIdUseCase(event.planId),
     );
   }
-
   Future<void> _handleFilterTasks(
-    FilterTasksEvent event,
-    Emitter<TaskState> emit,
-  ) async {
+      FilterTasksEvent event,
+      Emitter<TaskState> emit,
+      ) async {
     selectedPriority = event.priority;
     selectedStatus = event.status;
+    selectedDate = event.date; // keep track
+
     final filters = TaskFilters(
       date: event.date,
       priority: event.priority,
       status: event.status,
     );
+
     await _execute(
       emit,
-      () => filterTasksUseCase(
+          () => filterTasksUseCase(
         date: filters.date ?? '',
         priority: filters.priority?.toTaskPriorityString(),
         status: filters.status?.toTaskStatusString(),
@@ -131,38 +147,39 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
   }
 
   Future<void> _handleAddTask(
-    AddTaskEvent event,
-    Emitter<TaskState> emit,
-  ) async {
+      AddTaskEvent event,
+      Emitter<TaskState> emit,
+      ) async {
     await addTaskUseCase(event.task);
-    add(GetAllTasksEvent()); // reload list
+    _refreshWithFilters();
   }
 
   Future<void> _handleUpdateTask(
-    UpdateTaskEvent event,
-    Emitter<TaskState> emit,
-  ) async {
+      UpdateTaskEvent event,
+      Emitter<TaskState> emit,
+      ) async {
     await updateTaskUseCase(event.task);
-    add(GetAllTasksEvent());
+    _refreshWithFilters();
   }
 
   Future<void> _handleUpdateTaskStatus(
-    UpdateTaskStatusEvent event,
-    Emitter<TaskState> emit,
-  ) async {
+      UpdateTaskStatusEvent event,
+      Emitter<TaskState> emit,
+      ) async {
     await updateTaskStatusUseCase(
       event.taskId,
       event.newStatus?.toTaskStatusString() ?? '',
       event.updatedTime,
     );
-    add(GetAllTasksEvent());
+    _refreshWithFilters();
   }
 
   Future<void> _handleDeleteTask(
-    DeleteTaskEvent event,
-    Emitter<TaskState> emit,
-  ) async {
+      DeleteTaskEvent event,
+      Emitter<TaskState> emit,
+      ) async {
     await deleteTaskUseCase(event.taskId);
-    add(GetAllTasksEvent());
+    _refreshWithFilters();
   }
+
 }

@@ -1,10 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:uuid/uuid.dart';
-
-import '../../data/model/taskModel.dart';
-import 'task_enum.dart';
+import '../../../../../injection_imports.dart';
 
 class TaskDetails extends Equatable {
   final String id;
@@ -63,10 +60,10 @@ class TaskDetails extends Equatable {
     BuildContext? context,
   }) {
     final formattedDate =
-    date != null ? DateFormat('dd/MM/yyyy').format(date) : '';
+        date != null ? DateFormatUtil.formatDate(date) : '';
 
-    final formattedStart = _formatTime(startTime, context) ?? '';
-    final formattedEnd = _formatTime(endTime, context) ?? '';
+    final formattedStart = TimeFormatUtil.formatTime(startTime, context) ?? '';
+    final formattedEnd = TimeFormatUtil.formatTime(endTime, context) ?? '';
 
     return (existingTask ?? TaskDetails.empty()).copyWith(
       id: existingTask?.id ?? const Uuid().v4(),
@@ -125,17 +122,6 @@ class TaskDetails extends Equatable {
     updatedTime: updatedTime,
     planId: planId,
   );
-
-  /// Helper to format time
-  static String? _formatTime(TimeOfDay? timeOfDay, BuildContext? context) {
-    if (timeOfDay == null) return null;
-    if (context != null) return timeOfDay.format(context);
-
-    final hour = timeOfDay.hourOfPeriod == 0 ? 12 : timeOfDay.hourOfPeriod;
-    final minute = timeOfDay.minute.toString().padLeft(2, '0');
-    final period = timeOfDay.period == DayPeriod.am ? 'AM' : 'PM';
-    return '$hour:$minute $period';
-  }
 
   @override
   List<Object?> get props => [
