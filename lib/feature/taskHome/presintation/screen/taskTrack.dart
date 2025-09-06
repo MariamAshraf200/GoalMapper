@@ -1,21 +1,12 @@
+import '../../../../../injection_imports.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:intl/intl.dart';
-import '../../../../core/constants/app_colors.dart';
-import '../../../../core/util/widgets/custom_card.dart';
-import '../../domain/entity/task_enum.dart';
-import '../Widget/data_format.dart';
-import '../Widget/item/task_items.dart';
-import '../bloc/taskBloc/bloc.dart';
-import '../bloc/taskBloc/event.dart';
-import '../bloc/taskBloc/state.dart';
-import 'add_task_screen.dart';
 
 class TaskTrack extends StatefulWidget {
   const TaskTrack({super.key});
 
   @override
-  _TaskTrackState createState() => _TaskTrackState();
+  State<TaskTrack> createState() => _TaskTrackState();
 }
 
 class _TaskTrackState extends State<TaskTrack> {
@@ -26,36 +17,12 @@ class _TaskTrackState extends State<TaskTrack> {
   @override
   void initState() {
     super.initState();
-    selectedDate = DateFormat('dd/MM/yyyy').format(DateTime.now());
+    selectedDate = DateFormatUtil.getCurrentDateFormatted();
 
-    // Retrieve selected filters from the TaskBloc
     final taskBloc = context.read<TaskBloc>();
     selectedPriority = taskBloc.selectedPriority?.toTaskPriorityString();
     selectedStatus = taskBloc.selectedStatus?.toTaskStatusString();
 
-    // Trigger the filter event with the saved filters
-    context.read<TaskBloc>().add(FilterTasksEvent(
-      date: selectedDate,
-      status: selectedStatus != null ? TaskStatusExtension.fromString(selectedStatus) : null,
-      priority: selectedPriority != null ? TaskPriorityExtension.fromString(selectedPriority) : null,
-    ));
-  }
-
-  void _onDateSelected(DateTime date) {
-    final formattedDate = DateFormat('dd/MM/yyyy').format(date);
-    if (formattedDate != selectedDate) {
-      setState(() => selectedDate = formattedDate);
-      _triggerFilterEvent();
-    }
-  }
-
-  void _onPrioritySelected(String? priority) {
-    setState(() => selectedPriority = priority);
-    _triggerFilterEvent();
-  }
-
-  void _onStatusSelected(String? status) {
-    setState(() => selectedStatus = status);
     _triggerFilterEvent();
   }
 
@@ -63,30 +30,31 @@ class _TaskTrackState extends State<TaskTrack> {
     context.read<TaskBloc>().add(
       FilterTasksEvent(
         date: selectedDate,
-        priority: selectedPriority != null ? TaskPriorityExtension.fromString(selectedPriority) : null,
-        status: selectedStatus != null ? TaskStatusExtension.fromString(selectedStatus) : null,
+        priority: selectedPriority != null
+            ? TaskPriorityExtension.fromString(selectedPriority)
+            : null,
+        status: selectedStatus != null
+            ? TaskStatusExtension.fromString(selectedStatus)
+            : null,
       ),
     );
   }
 
-  void _showDatePicker() async {
-    final initialDate = DateFormat('dd/MM/yyyy').parse(selectedDate);
-    final DateTime? pickedDate = await showDatePicker(
-      context: context,
-      initialDate: initialDate,
-      firstDate: DateTime(2000),
-      lastDate: DateTime(2100),
-    );
-
-    if (pickedDate != null && pickedDate != initialDate) {
-      setState(() {
-        selectedDate = DateFormat('dd/MM/yyyy').format(pickedDate);
-      });
-      _triggerFilterEvent();
-    }
+  void _updateDate(String newDate) {
+    setState(() => selectedDate = newDate);
+    _triggerFilterEvent();
   }
 
 
+  void _updatePriority(String? priority) {
+    setState(() => selectedPriority = priority);
+    _triggerFilterEvent();
+  }
+
+  void _updateStatus(String? status) {
+    setState(() => selectedStatus = status);
+    _triggerFilterEvent();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -96,200 +64,251 @@ class _TaskTrackState extends State<TaskTrack> {
         padding: const EdgeInsets.all(8),
         elevation: 0.0,
         borderRadius: BorderRadius.circular(15),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 40.0, horizontal: 4.0),
-          child: Column(
-            children: [
-              // Title Section with Button and Year
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween, // Align items to the edges
-                children: [
-                  // Left side: "My Task" title and year
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start, // Align text to the left
-                    children: [
-                      Row(
-                        children: [
-                          IconButton(
-                            icon: const Icon(Icons.arrow_back, size: 28),
-                            onPressed: () => Navigator.of(context).pop(),
-                          ),
-                          Text(
-                            ' My Task',
-                            style: TextStyle(
-                              color: AppColors.secondaryColor,
-                              fontSize: 30,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          const SizedBox(width: 5),
-                          IconButton(
-                            icon: const Icon(Icons.date_range_sharp, size: 25),
-                            onPressed: _showDatePicker, // Trigger date picker
-                          ),
-                        ],
-                      ),
-                      // Display the year of the selected date
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text(
-                          DateFormat('yyyy/MM/dd').format(DateFormat('dd/MM/yyyy').parse(selectedDate)),
-                          style: TextStyle(
-                            color: AppColors.secondaryColor,
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  // Right side: Add task button
-                  Container(
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      border: Border.all(color: AppColors.secondaryColor, width: 2),
-                    ),
-                    child: IconButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const AddTaskScreen(),
-                          ),
-                        );
-                      },
-                      icon: Icon(
-                        Icons.add,
-                        color: AppColors.secondaryColor,
-                      ),
-                    ),
-                  ),
-                ],
+        child: Column(
+          children: [
+            TaskHeader(
+              selectedDate: selectedDate,
+              onDatePicked: _updateDate,
+            ),
+            const SizedBox(height: 10),
+            TaskDateSelector(
+              selectedDate: selectedDate,
+              onDateSelected: _updateDate,
+            ),
+            const SizedBox(height: 16),
+            TaskFilters(
+              selectedPriority: selectedPriority,
+              selectedStatus: selectedStatus,
+              onPriorityChanged: _updatePriority,
+              onStatusChanged: _updateStatus,
+            ),
+            const SizedBox(height: 16),
+            const TaskListSection(),
+          ],
+        ),
+      ),
+    );
+  }
+}
+class TaskHeader extends StatelessWidget {
+  final String selectedDate;
+  final ValueChanged<String> onDatePicked;
+
+  const TaskHeader({
+    super.key,
+    required this.selectedDate,
+    required this.onDatePicked,
+  });
+
+  void _showDatePicker(BuildContext context) async {
+    final initialDate = DateFormatUtil.parseDate(selectedDate);
+    final DateTime? pickedDate = await showDatePicker(
+      context: context,
+      initialDate: initialDate,
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2100),
+    );
+    if (pickedDate != null) {
+      onDatePicked(DateFormatUtil.formatDate(pickedDate));
+    }
+  }
+
+  Widget _circleIconButton({
+    required IconData icon,
+    required VoidCallback onPressed,
+  }) {
+    return Container(
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        border: Border.all(color: Colors.grey.shade400, width: 1.5),
+      ),
+      child: IconButton(
+        icon: Icon(icon, size: 22, color: Colors.black87),
+        onPressed: onPressed,
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          // Back button with circle border
+          _circleIconButton(
+            icon: Icons.arrow_back_ios_new,
+            onPressed: () => Navigator.of(context).pop(),
+          ),
+
+          // Centered full date
+          GestureDetector(
+            onTap: () => _showDatePicker(context),
+            child: Text(
+              DateFormatUtil.formatFullDate(selectedDate), // e.g. April 20, 2024
+              style: const TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
               ),
-              const SizedBox(height: 20),
-              // Date Picker with Selected Date Highlight
-              DataFormat(
-                selectedDate: selectedDate,
-                onDateSelected: _onDateSelected,
-              ),
-              const SizedBox(height: 16),
-              Row(
-                children: [
-                  Expanded(
-                    child: Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(12),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.grey.withAlpha( 20),
-                            spreadRadius: 1,
-                            blurRadius: 5,
-                            offset: const Offset(0, 3), // Shadow position
-                          ),
-                        ],
-                      ),
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                      child: Row(
-                        children: [
-                          const Icon(Icons.filter_list, color: Colors.blue),
-                          const SizedBox(width: 8),
-                          Expanded(
-                            child: DropdownButton<String>(
-                              value: selectedPriority,
-                              hint: const Text(
-                                "Select Priority",
-                                style: TextStyle(fontSize: 14, color: Colors.grey),
-                              ),
-                              isExpanded: true,
-                              underline: const SizedBox(), // Remove the underline
-                              items: ['High', 'Medium', 'Low', null]
-                                  .map((priority) => DropdownMenuItem<String>(
-                                value: priority,
-                                child: Text(priority ?? "All Priorities"),
-                              ))
-                                  .toList(),
-                              onChanged: _onPrioritySelected,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 16), // Adjust spacing between dropdowns
-                  // Update the status dropdown to include the new status "Missed"
-                  Expanded(
-                    child: Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(12),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.grey.withAlpha( 20),
-                            spreadRadius: 1,
-                            blurRadius: 5,
-                            offset: const Offset(0, 3), // Shadow position
-                          ),
-                        ],
-                      ),
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                      child: Row(
-                        children: [
-                          const Icon(Icons.task_alt, color: Colors.green),
-                          const SizedBox(width: 8),
-                          Expanded(
-                            child: DropdownButton<String>(
-                              value: selectedStatus,
-                              hint: const Text(
-                                "Select Status",
-                                style: TextStyle(fontSize: 14, color: Colors.grey),
-                              ),
-                              isExpanded: true,
-                              underline: const SizedBox(), // Remove the underline
-                              items: ['Done', 'Pending', 'to do', 'Missed', null]
-                                  .map((status) => DropdownMenuItem<String>(
-                                value: status,
-                                child: Text(status ?? "All Statuses"),
-                              ))
-                                  .toList(),
-                              onChanged: _onStatusSelected,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 16),
-              // Tasks Display Section
-              Expanded(
-                child: BlocBuilder<TaskBloc, TaskState>(
-                  builder: (context, state) {
-                    if (state is TaskLoading) {
-                      return const Center(child: CircularProgressIndicator());
-                    } else if (state is TaskLoaded) {
-                      return state.tasks.isEmpty
-                          ? const Center(
-                        child: Text(
-                          "No tasks match the filters.",
-                          style: TextStyle(fontSize: 18),
-                        ),
-                      )
-                          : TaskItems(tasks: state.tasks);
-                    } else if (state is TaskError) {
-                      return Center(
-                        child: Text(
-                          state.message,
-                          style: const TextStyle(fontSize: 18),
-                        ),
-                      );
-                    }
-                    return const SizedBox();
-                  },
-                ),
-              ),
+            ),
+          ),
+
+          // Add button with circle border
+          _circleIconButton(
+            icon: Icons.add,
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const AddTaskScreen()),
+              );
+            },
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+
+class TaskDateSelector extends StatelessWidget {
+  final String selectedDate;
+  final ValueChanged<String> onDateSelected; // changed to String
+
+  const TaskDateSelector({
+    super.key,
+    required this.selectedDate,
+    required this.onDateSelected,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return DataFormat(
+      selectedDate: selectedDate,
+      onDateSelected: (date) {
+        // format DateTime → String before passing back
+        final formatted = DateFormatUtil.formatDate(date);
+        onDateSelected(formatted);
+      },
+    );
+  }
+}
+
+
+class TaskFilters extends StatelessWidget {
+  final String? selectedPriority;
+  final String? selectedStatus;
+  final ValueChanged<String?> onPriorityChanged;
+  final ValueChanged<String?> onStatusChanged;
+
+  const TaskFilters({
+    super.key,
+    required this.selectedPriority,
+    required this.selectedStatus,
+    required this.onPriorityChanged,
+    required this.onStatusChanged,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Expanded(
+          child: _FilterDropdown<String>(
+            icon: const Icon(Icons.filter_list, color: Colors.blue),
+            value: selectedPriority,
+            hint: "Select Priority",
+            items: [
+              ...TaskPriority.values.map((p) =>
+                  DropdownMenuItem(value: p.toTaskPriorityString(), child: Text(p.toTaskPriorityString()))),
+              const DropdownMenuItem(value: null, child: Text("All Priorities")),
             ],
+            onChanged: onPriorityChanged,
           ),
         ),
+        const SizedBox(width: 16),
+        Expanded(
+          child: _FilterDropdown<String>(
+            icon: const Icon(Icons.task_alt, color: Colors.green),
+            value: selectedStatus,
+            hint: "Select Status",
+            items: [
+              ...TaskStatus.values.map((s) =>
+                  DropdownMenuItem(value: s.toTaskStatusString(), child: Text(s.toTaskStatusString()))),
+              const DropdownMenuItem(value: null, child: Text("All Statuses")),
+            ],
+            onChanged: onStatusChanged,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _FilterDropdown<T> extends StatelessWidget {
+  final Widget icon;
+  final T? value;
+  final String hint;
+  final List<DropdownMenuItem<T>> items;
+  final ValueChanged<T?> onChanged;
+
+  const _FilterDropdown({
+    required this.icon,
+    required this.value,
+    required this.hint,
+    required this.items,
+    required this.onChanged,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [BoxShadow(color: Colors.grey.withAlpha(20), blurRadius: 5)],
+      ),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      child: Row(
+        children: [
+          icon,
+          const SizedBox(width: 8),
+          Expanded(
+            child: DropdownButton<T>(
+              value: value,
+              hint: Text(hint, style: const TextStyle(fontSize: 14, color: Colors.grey)),
+              isExpanded: true,
+              underline: const SizedBox(),
+              items: items,
+              onChanged: onChanged,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+
+class TaskListSection extends StatelessWidget {
+  const TaskListSection({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      child: BlocBuilder<TaskBloc, TaskState>(
+        builder: (context, state) {
+          if (state is TaskLoading) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (state is TaskLoaded) {
+            if (state.tasks.isEmpty) {
+              return const Center(child: Text("No tasks match the filters.", style: TextStyle(fontSize: 18)));
+            }
+            return TaskItems(tasks: state.tasks);
+          } else if (state is TaskError) {
+            return Center(child: Text(state.message, style: const TextStyle(fontSize: 18)));
+          }
+          return const SizedBox();
+        },
       ),
     );
   }

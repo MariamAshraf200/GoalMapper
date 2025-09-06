@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import '../../../../../injection_imports.dart';
 
 enum TaskFormMode { add, update }
@@ -54,18 +53,16 @@ class _TaskFormState extends State<TaskForm>
     _descriptionController = TextEditingController(text: task.description);
 
     try {
-      _date = DateFormat('dd/MM/yyyy').parse(task.date);
+      _date = DateFormatUtil.parseDate(task.date);
     } catch (_) {}
 
     try {
-      final parsedStart = DateFormat('hh:mm a').parse(task.time);
-      _startTime = TimeOfDay.fromDateTime(parsedStart);
+      _startTime = TimeFormatUtil.parseTime(task.time);
     } catch (_) {}
 
     try {
       if (task.endTime.isNotEmpty) {
-        final parsedEnd = DateFormat('hh:mm a').parse(task.endTime);
-        _endTime = TimeOfDay.fromDateTime(parsedEnd);
+        _endTime = TimeFormatUtil.parseTime(task.endTime);
       }
     } catch (_) {}
 
@@ -208,5 +205,6 @@ class _TaskFormState extends State<TaskForm>
     );
 
     widget.onSubmit(task);
+    Navigator.of(context).pop();
   }
 }

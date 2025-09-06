@@ -80,7 +80,7 @@ class GetTasksByDateEvent extends TaskEvent {
 }
 
 class FilterTasksEvent extends TaskEvent {
-  final String date; // Filter by date
+  final String? date; // Filter by date
   final TaskPriority? priority; // Filter by priority (optional)
   final TaskStatus? status; // Filter by status (optional)
 
