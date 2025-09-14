@@ -60,99 +60,103 @@ class _AddPlanFormState extends State<AddPlanForm>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-
-    return Padding(
-      padding: AppSpaces.calculatePaddingFromScreenWidth(context),
-      child: Form(
-        key: _formKey,
-        child: ListView(
-          children: [
-            const SizedBox(height: 10.0),
-            CustomTextField(
-              isRequired: true,
-              outSideTitle: 'Plan Title',
-              borderRadius: 10,
-              labelText: 'Add your plan title',
-              controller: _planTitleController,
-              maxLength: 42,
-              validator: (value) {
-                if (value.trim().isEmpty) {
-                  return 'Plan title is required';
-                }
-                return null;
-              },
-            ),
-            CustomTextField(
-              outSideTitle: 'Description',
-              labelText: 'Add your plan description',
-              controller: _planDescriptionController,
-              maxLines: 3,
-              canBeNull: true,
-            ),
-            DateFiled(
-              onDateSelected: (selectedDate) {
-                setState(() {
-                  _planStartDate = selectedDate;
-                });
-              },
-              isRequired: true,
-              outSideTitle: "Plan Start Date",
-              labelText: 'dd/mm/yyyy',
-              suffixIcon: const Icon(Icons.date_range),
-              initialDate: _planStartDate,
-            ),
-            const SizedBox(height: 16.0),
-            DateFiled(
-              onDateSelected: (selectedDate) {
-                setState(() {
-                  _planEndDate = selectedDate;
-                });
-              },
-              isRequired: false,
-              outSideTitle: "Plan End Date",
-              labelText: 'dd/mm/yyyy',
-              suffixIcon: const Icon(Icons.date_range),
-              initialDate: _planEndDate,
-            ),
-            const SizedBox(height: 16.0),
-            CategorySelector(
-              onCategorySelected: (selectedCategory) {
-                setState(() {
-                  _selectedCategory = selectedCategory;
-                });
-              },
-            ),
-            const SizedBox(height: 16.0),
-            PrioritySelector(
-              selectedPriority: _selectedPriority,
-              onPrioritySelected: (priority) {
-                setState(() {
-                  _selectedPriority = priority;
-                });
-              },
-            ),
-
-            // Image Picker for Plan Image
-            _pickedImage == null
-                ? ElevatedButton(
-              onPressed: _pickImage,
-              child: const Text('Pick Plan Image'),
-            )
-                : Image.file(
-              File(_pickedImage!.path),
-              height: 150,
-              width: 150,
-              fit: BoxFit.cover,
-            ),
-
-            // Save Button
-            LoadingElevatedButton(
-              onPressed: _handleSave,
-              buttonText: 'Add Plan',
-              icon: const Icon(Icons.add),
-              showLoading: true,
-            ),
-          ],
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Add Plan'),
+        backgroundColor: Colors.deepPurple,
+        foregroundColor: Colors.white,
+      ),
+      body: Padding(
+        padding: AppSpaces.calculatePaddingFromScreenWidth(context),
+        child: Form(
+          key: _formKey,
+          child: ListView(
+            children: [
+              const SizedBox(height: 10.0),
+              CustomTextField(
+                isRequired: true,
+                outSideTitle: 'Plan Title',
+                borderRadius: 10,
+                labelText: 'Add your plan title',
+                controller: _planTitleController,
+                maxLength: 42,
+                validator: (value) {
+                  if (value.trim().isEmpty) {
+                    return 'Plan title is required';
+                  }
+                  return null;
+                },
+              ),
+              CustomTextField(
+                outSideTitle: 'Description',
+                labelText: 'Add your plan description',
+                controller: _planDescriptionController,
+                maxLines: 3,
+                canBeNull: true,
+              ),
+              DateFiled(
+                onDateSelected: (selectedDate) {
+                  setState(() {
+                    _planStartDate = selectedDate;
+                  });
+                },
+                isRequired: true,
+                outSideTitle: "Plan Start Date",
+                labelText: 'dd/mm/yyyy',
+                suffixIcon: const Icon(Icons.date_range),
+                initialDate: _planStartDate,
+              ),
+              const SizedBox(height: 16.0),
+              DateFiled(
+                onDateSelected: (selectedDate) {
+                  setState(() {
+                    _planEndDate = selectedDate;
+                  });
+                },
+                isRequired: false,
+                outSideTitle: "Plan End Date",
+                labelText: 'dd/mm/yyyy',
+                suffixIcon: const Icon(Icons.date_range),
+                initialDate: _planEndDate,
+              ),
+              const SizedBox(height: 16.0),
+              CategorySelector(
+                onCategorySelected: (selectedCategory) {
+                  setState(() {
+                    _selectedCategory = selectedCategory;
+                  });
+                },
+              ),
+              const SizedBox(height: 16.0),
+              PrioritySelector(
+                selectedPriority: _selectedPriority,
+                onPrioritySelected: (priority) {
+                  setState(() {
+                    _selectedPriority = priority;
+                  });
+                },
+              ),
+              // Image Picker for Plan Image
+              _pickedImage == null
+                  ? ElevatedButton(
+                      onPressed: _pickImage,
+                      child: const Text('Pick Plan Image'),
+                    )
+                  : Image.file(
+                      File(_pickedImage!.path),
+                      height: 150,
+                      width: 150,
+                      fit: BoxFit.cover,
+                    ),
+              // Save Button
+              LoadingElevatedButton(
+                onPressed: _handleSave,
+                buttonText: 'Add Plan',
+                icon: const Icon(Icons.add),
+                showLoading: true,
+              ),
+            ],
+          ),
         ),
       ),
     );

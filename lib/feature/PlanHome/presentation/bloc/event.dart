@@ -1,6 +1,4 @@
 import 'package:equatable/equatable.dart';
-
-import '../../../taskHome/domain/entity/taskEntity.dart';
 import '../../domain/entities/plan_entity.dart';
 
 abstract class PlanEvent extends Equatable {
@@ -10,11 +8,11 @@ abstract class PlanEvent extends Equatable {
   List<Object?> get props => [];
 }
 
+// 🔹 Plans Events
 class GetAllPlansEvent extends PlanEvent {}
 
 class GetPlansByCategoryEvent extends PlanEvent {
   final String category;
-
   const GetPlansByCategoryEvent(this.category);
 
   @override
@@ -23,7 +21,6 @@ class GetPlansByCategoryEvent extends PlanEvent {
 
 class GetPlansByPriorityEvent extends PlanEvent {
   final String priority;
-
   const GetPlansByPriorityEvent(this.priority);
 
   @override
@@ -32,7 +29,6 @@ class GetPlansByPriorityEvent extends PlanEvent {
 
 class AddPlanEvent extends PlanEvent {
   final PlanDetails plan;
-
   const AddPlanEvent(this.plan);
 
   @override
@@ -41,7 +37,6 @@ class AddPlanEvent extends PlanEvent {
 
 class UpdatePlanEvent extends PlanEvent {
   final PlanDetails plan;
-
   const UpdatePlanEvent(this.plan);
 
   @override
@@ -50,7 +45,6 @@ class UpdatePlanEvent extends PlanEvent {
 
 class DeletePlanEvent extends PlanEvent {
   final String planId;
-
   const DeletePlanEvent(this.planId);
 
   @override
@@ -60,7 +54,6 @@ class DeletePlanEvent extends PlanEvent {
 class UpdatePlanStatusEvent extends PlanEvent {
   final String planId;
   final String newStatus;
-
   const UpdatePlanStatusEvent(this.planId, this.newStatus);
 
   @override
@@ -68,8 +61,7 @@ class UpdatePlanStatusEvent extends PlanEvent {
 }
 
 class GetPlansByDateEvent extends PlanEvent {
-  final String date; // Assuming date is in String format
-
+  final String date;
   const GetPlansByDateEvent(this.date);
 
   @override
@@ -77,10 +69,10 @@ class GetPlansByDateEvent extends PlanEvent {
 }
 
 class FilterPlansEvent extends PlanEvent {
-  final String date; // Filter by date
-  final String? priority; // Filter by priority (optional)
-  final String? category; // Filter by category (optional)
-  final String? status; // Filter by status (optional)
+  final String date;
+  final String? priority;
+  final String? category;
+  final String? status;
 
   const FilterPlansEvent({
     required this.date,
@@ -94,16 +86,45 @@ class FilterPlansEvent extends PlanEvent {
 }
 
 class GetPlansByStatusEvent extends PlanEvent {
-  final String status; // Status can be 'Completed', 'Not Completed', etc.
-
+  final String status;
   const GetPlansByStatusEvent(this.status);
 
   @override
   List<Object?> get props => [status];
 }
+
+// 🔹 Tasks Events
+class GetAllTasksPlanEvent extends PlanEvent {
+  final String planId;
+  const GetAllTasksPlanEvent(this.planId);
+
+  @override
+  List<Object?> get props => [planId];
+}
+
 class AddTaskToPlanEvent extends PlanEvent {
   final String planId;
-  final TaskDetails task;
-
+  final String task;
   const AddTaskToPlanEvent({required this.planId, required this.task});
+
+  @override
+  List<Object?> get props => [planId, task];
+}
+
+class DeleteTaskFromPlanEvent extends PlanEvent {
+  final String planId;
+  final String taskName;
+  const DeleteTaskFromPlanEvent({required this.planId, required this.taskName});
+
+  @override
+  List<Object?> get props => [planId, taskName];
+}
+
+class DeleteTaskAtIndexEvent extends PlanEvent {
+  final String planId;
+  final int index;
+  const DeleteTaskAtIndexEvent({required this.planId, required this.index});
+
+  @override
+  List<Object?> get props => [planId, index];
 }

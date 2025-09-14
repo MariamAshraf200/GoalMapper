@@ -55,13 +55,8 @@ class PlanList extends StatelessWidget {
 
                 // Calculate completeness
                 final totalTasks = plan.tasks.length;
-                print(totalTasks);
-                final completedTasks = plan.tasks
-                    .where((task) => task.status == "Done")
-                    .length;
-                final completeness = totalTasks > 0
-                    ? completedTasks / totalTasks
-                    : 0.0;
+                // Since tasks are now strings, we can't check status. Set completeness to 0.0 or null.
+                final completeness = 0.0;
 
                 // Render fallback card for invalid data
                 if (startDate == null || endDate == null || totalDays <= 0) {

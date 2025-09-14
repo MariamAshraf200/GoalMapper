@@ -1,4 +1,3 @@
-import '../../../taskHome/domain/entity/taskEntity.dart';
 import '../../data/model/planModel.dart';
 import 'package:equatable/equatable.dart';
 
@@ -16,7 +15,8 @@ class PlanDetails extends Equatable {
   final String? updatedTime;
   final String? image;
   final bool completed;
-  final List<TaskDetails> tasks;
+  final List<String> tasks;
+  final double? progress;
 
   const PlanDetails({
     required this.id,
@@ -31,6 +31,7 @@ class PlanDetails extends Equatable {
     this.image,
     this.completed = false,
     this.tasks = const [],
+    this.progress,
   });
 
   PlanDetails copyWith({
@@ -45,7 +46,8 @@ class PlanDetails extends Equatable {
     Object? updatedTime = _noValue,
     Object? image = _noValue,
     bool? completed,
-    List<TaskDetails>? tasks,
+    List<String>? tasks,
+    double? progress,
   }) {
     return PlanDetails(
       id: id ?? this.id,
@@ -60,6 +62,7 @@ class PlanDetails extends Equatable {
       image: image != _noValue ? image as String? : this.image,
       completed: completed ?? this.completed,
       tasks: tasks ?? this.tasks,
+      progress: progress ?? this.progress,
     );
   }
 
@@ -76,9 +79,11 @@ class PlanDetails extends Equatable {
       updatedTime: updatedTime,
       image: image,
       completed: completed,
-      tasks: tasks.map((task) => task.toModel()).toList(),
+      tasks: tasks,
     );
   }
+
+  bool get isCompleted => status.toLowerCase() == 'completed' || completed;
 
   @override
   List<Object?> get props => [
@@ -94,5 +99,6 @@ class PlanDetails extends Equatable {
     image,
     completed,
     tasks,
+    progress,
   ];
 }

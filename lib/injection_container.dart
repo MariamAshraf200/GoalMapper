@@ -94,6 +94,10 @@ Future<void> init() async {
         () => GetPlansByStatusUseCase(sl<PlanRepository>()));
     sl.registerLazySingleton(
         () => UpdatePlanStatusUseCase(sl<PlanRepository>()));
+    // Plan task use cases
+    sl.registerLazySingleton(() => GetAllTasksPlanUseCase(sl<PlanRepository>()));
+    sl.registerLazySingleton(() => AddTaskPlanUseCase(sl<PlanRepository>()));
+    sl.registerLazySingleton(() => DeleteTaskAtPlanUseCase(sl<PlanRepository>()));
 
     ///////////////////////// Blocs / Cubits /////////////////////////////
     /////////////////////////////////////////////////////////////////////
@@ -132,7 +136,11 @@ Future<void> init() async {
         deletePlanUseCase: sl<DeletePlanUseCase>(),
         getPlansByCategoryUseCase: sl<GetPlansByCategoryUseCase>(),
         getPlansByStatusUseCase: sl<GetPlansByStatusUseCase>(),
-        updatePlanStatusUseCase: sl<UpdatePlanStatusUseCase>()));
+        updatePlanStatusUseCase: sl<UpdatePlanStatusUseCase>(),
+        getAllTasksPlanUseCase: sl<GetAllTasksPlanUseCase>(),
+        addTaskPlanUseCase: sl<AddTaskPlanUseCase>(),
+        deleteTaskAtPlanUseCase: sl<DeleteTaskAtPlanUseCase>(),
+      ));
   } catch (e, stackTrace) {
     if (kDebugMode) {
       print("Error during DI initialization: $e");
