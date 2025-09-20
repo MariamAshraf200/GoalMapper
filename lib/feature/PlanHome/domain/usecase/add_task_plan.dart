@@ -1,4 +1,4 @@
-import '../repo_interface/repoPlanInterface.dart';
+import '../repo_interface/repo_plan_interface.dart';
 
 class AddTaskPlanUseCase {
   final PlanRepository repository;
@@ -9,3 +9,4 @@ class AddTaskPlanUseCase {
     return await repository.addTask(planId, task);
   }
 }
+

@@ -1,5 +1,5 @@
 import '../../domain/entities/plan_entity.dart';
-import '../../domain/repo_interface/repoPlanInterface.dart';
+import '../../domain/repo_interface/repo_plan_interface.dart';
 import '../dataSource/abstractLocalDataSource.dart';
 import '../dataSource/localData.dart';
 import '../model/planModel.dart';

@@ -1,4 +1,5 @@
-import '../repo_interface/repoPlanInterface.dart';
+
+import '../repo_interface/repo_plan_interface.dart';
 
 class UpdatePlanStatusUseCase {
   final PlanRepository repository;

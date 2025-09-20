@@ -1,7 +1,6 @@
 // Plan feature
 export 'feature/PlanHome/data/dataSource/localData.dart';
 export 'feature/PlanHome/data/repo_impl/repoPlan.dart';
-export 'feature/PlanHome/domain/repo_interface/repoPlanInterface.dart';
 export 'feature/PlanHome/domain/usecase/add_plan_usecase.dart';
 export 'feature/PlanHome/domain/usecase/delete_plan_useCase.dart';
 export 'feature/PlanHome/domain/usecase/getAll_plan_usecase.dart';
@@ -13,8 +12,7 @@ export 'feature/PlanHome/presentation/bloc/bloc.dart';
 export 'feature/PlanHome/presentation/bloc/event.dart';
 export 'feature/PlanHome/data/model/planModel.dart';
 export 'feature/PlanHome/domain/usecase/add_task_plan.dart';
-export 'feature/PlanHome/domain/usecase/delet_task_plan.dart';
-export 'feature/PlanHome/domain/usecase/get_all_task_plan.dart';
+
 export 'feature/PlanHome/presentation/bloc/state.dart';
 export 'feature/PlanHome/presentation/widget/add_plan_form.dart';
 export 'feature/PlanHome/presentation/widget/plan_details.dart';

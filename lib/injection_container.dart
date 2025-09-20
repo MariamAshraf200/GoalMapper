@@ -1,5 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:get_it/get_it.dart';
+import 'feature/PlanHome/domain/repo_interface/repo_plan_interface.dart';
+import 'feature/PlanHome/domain/usecase/delet_task_plan.dart';
+import 'feature/PlanHome/domain/usecase/getAll_tasks_plan_usecase.dart';
 import 'injection_imports.dart';
 
 final sl = GetIt.instance;

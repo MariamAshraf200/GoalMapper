@@ -1,5 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../../injection_imports.dart';
+import '../../domain/usecase/delet_task_plan.dart';
+import '../../domain/usecase/getAll_tasks_plan_usecase.dart';
 import 'state.dart';
 
 class PlanBloc extends Bloc<PlanEvent, PlanState> {
