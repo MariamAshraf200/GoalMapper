@@ -1,5 +1,6 @@
 import 'package:hive/hive.dart';
 import '../../domain/entities/plan_entity.dart';
+import '../../domain/entities/taskPlan.dart';
 
 part 'planModel.g.dart';
 
@@ -39,7 +40,7 @@ class PlanModel {
   final bool completed; // New field to track if the plan is completed
 
   @HiveField(11)
-  final List<String> tasks; // Changed from List<TaskModel> to List<String>
+  final List<TaskPlan> tasks;
 
   // Constructor
   const PlanModel({
@@ -65,13 +66,13 @@ class PlanModel {
       description: description,
       startDate: startDate,
       endDate: endDate,
-      category: category,
       priority: priority,
-      updatedTime: updatedTime, // Mapping updatedTime to the entity
-      status: status, // Mapping status to the entity
-      image: image, // Mapping image to the entity
-      completed: completed, // Mapping completed to the entity
-      tasks: tasks, // Directly assign List<String>
+      category: category,
+      status: status,
+      updatedTime: updatedTime,
+      image: image,
+      completed: completed,
+      tasks: tasks,
     );
   }
 
@@ -85,11 +86,11 @@ class PlanModel {
       endDate: entity.endDate,
       category: entity.category,
       priority: entity.priority,
-      updatedTime: entity.updatedTime, // Mapping updatedTime from the entity
-      status: entity.status, // Mapping status from the entity
-      image: entity.image, // Mapping image from the entity
-      completed: entity.completed, // Mapping completed from the entity
-      tasks: entity.tasks, // Directly assign List<String>
+      updatedTime: entity.updatedTime,
+      status: entity.status,
+      image: entity.image,
+      completed: entity.completed,
+      tasks: entity.tasks,
     );
   }
 
@@ -106,7 +107,7 @@ class PlanModel {
     String? status, // Added status to the copyWith method
     String? image, // Optional image
     bool? completed, // Added completed to the copyWith method
-    List<String>? tasks, // Changed from List<TaskModel>? to List<String>?
+    List<TaskPlan>? tasks, // Changed from List<TaskModel>? to List<TaskPlan>?
   }) {
     return PlanModel(
       id: id ?? this.id,

@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:mapperapp/feature/PlanHome/domain/entities/taskPlan.dart';
 import '../../domain/entities/plan_entity.dart';
 
 abstract class PlanEvent extends Equatable {
@@ -104,7 +105,7 @@ class GetAllTasksPlanEvent extends PlanEvent {
 
 class AddTaskToPlanEvent extends PlanEvent {
   final String planId;
-  final String task;
+  final TaskPlan task;
   const AddTaskToPlanEvent({required this.planId, required this.task});
 
   @override
@@ -113,11 +114,11 @@ class AddTaskToPlanEvent extends PlanEvent {
 
 class DeleteTaskFromPlanEvent extends PlanEvent {
   final String planId;
-  final String taskName;
-  const DeleteTaskFromPlanEvent({required this.planId, required this.taskName});
+  final String taskId;
+  const DeleteTaskFromPlanEvent({required this.planId, required this.taskId});
 
   @override
-  List<Object?> get props => [planId, taskName];
+  List<Object?> get props => [planId, taskId];
 }
 
 class DeleteTaskAtIndexEvent extends PlanEvent {
@@ -127,4 +128,13 @@ class DeleteTaskAtIndexEvent extends PlanEvent {
 
   @override
   List<Object?> get props => [planId, index];
+}
+class ToggleTaskStatusEvent extends PlanEvent {
+  final String planId;
+  final TaskPlan task;
+
+  const ToggleTaskStatusEvent({required this.planId, required this.task});
+
+  @override
+  List<Object?> get props => [planId, task];
 }

@@ -1,3 +1,4 @@
+import '../entities/taskPlan.dart';
 import '../repo_interface/repo_plan_interface.dart';
 
 class AddTaskPlanUseCase {
@@ -5,8 +6,7 @@ class AddTaskPlanUseCase {
 
   AddTaskPlanUseCase(this.repository);
 
-  Future<void> call(String planId, String task) async {
+  Future<void> call(String planId, TaskPlan task) async {
     return await repository.addTask(planId, task);
   }
 }
-

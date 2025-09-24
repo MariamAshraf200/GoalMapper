@@ -1,3 +1,4 @@
+import '../../domain/entities/taskPlan.dart';
 import '../model/planModel.dart';
 
 abstract class PlanLocalDataSource {
@@ -10,6 +11,9 @@ abstract class PlanLocalDataSource {
   Future<List<PlanModel>> getPlansByStatus(String status);
 
   // 🔹 Tasks inside a Plan
-  Future<List<String>> getAllTasks(String planId);
-  Future<void> deleteTask(String planId, String task);
+  Future<List<TaskPlan>> getAllTasks(String planId);
+  Future<void> deleteTask(String planId, String taskId);
+  Future<void> deleteTaskAt(String planId, int index);
+  Future<void> addTask(String planId, TaskPlan task);
+  Future<void> updateTaskStatus(String planId, TaskPlan updatedTask);
 }

@@ -1,4 +1,5 @@
 import '../entities/plan_entity.dart';
+import '../entities/taskPlan.dart';
 
 abstract class PlanRepository {
   // 🔹 Plans CRUD
@@ -12,8 +13,9 @@ abstract class PlanRepository {
   Future<void> deletePlan(String planId);
 
   // 🔹 Tasks inside Plan
-  Future<List<String>> getAllTasks(String planId);
-  Future<void> addTask(String planId, String task);
+  Future<List<TaskPlan>> getAllTasks(String planId);
+  Future<void> addTask(String planId, TaskPlan task);
   Future<void> deleteTask(String planId, String task);
   Future<void> deleteTaskAt(String planId, int index);
+  Future<void> updateTaskStatus(String planId, TaskPlan updatedTask);
 }

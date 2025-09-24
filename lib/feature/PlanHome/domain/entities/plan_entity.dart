@@ -1,6 +1,8 @@
 import '../../data/model/planModel.dart';
 import 'package:equatable/equatable.dart';
 
+import 'taskPlan.dart';
+
 
 class PlanDetails extends Equatable {
   static const _noValue = Object();
@@ -15,7 +17,7 @@ class PlanDetails extends Equatable {
   final String? updatedTime;
   final String? image;
   final bool completed;
-  final List<String> tasks;
+  final List<TaskPlan> tasks;
   final double? progress;
 
   const PlanDetails({
@@ -46,7 +48,7 @@ class PlanDetails extends Equatable {
     Object? updatedTime = _noValue,
     Object? image = _noValue,
     bool? completed,
-    List<String>? tasks,
+    List<TaskPlan>? tasks,
     double? progress,
   }) {
     return PlanDetails(

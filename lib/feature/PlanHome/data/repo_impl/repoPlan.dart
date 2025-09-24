@@ -1,4 +1,5 @@
 import '../../domain/entities/plan_entity.dart';
+import '../../domain/entities/taskPlan.dart';
 import '../../domain/repo_interface/repo_plan_interface.dart';
 import '../dataSource/abstractLocalDataSource.dart';
 import '../dataSource/localData.dart';
@@ -82,17 +83,19 @@ class PlanRepositoryImpl implements PlanRepository {
     }
   }
 
-  // 🔹 Get all tasks of a plan
-  Future<List<String>> getAllTasks(String planId) async {
+  @override
+  Future<List<TaskPlan>> getAllTasks(String planId) async {
     try {
-      return await dataSource.getAllTasks(planId);
+      final rawTasks = await dataSource.getAllTasks(planId);
+      return rawTasks;
     } catch (e) {
+      print("Error while loading tasks: $e");
       throw Exception("Error loading tasks for plan '$planId': $e");
     }
   }
 
   // 🔹 Add a task to a plan
-  Future<void> addTask(String planId, String task) async {
+  Future<void> addTask(String planId, TaskPlan task) async {
     try {
       if (dataSource is HivePlanLocalDataSource) {
         await (dataSource as HivePlanLocalDataSource).addTask(planId, task);
@@ -122,5 +125,10 @@ class PlanRepositoryImpl implements PlanRepository {
       throw Exception(
           "Error deleting task at index $index from plan '$planId': $e");
     }
+  }
+
+  @override
+  Future<void> updateTaskStatus(String planId, TaskPlan updatedTask) async {
+    await dataSource.updateTaskStatus(planId, updatedTask);
   }
 }

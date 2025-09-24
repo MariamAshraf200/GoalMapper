@@ -1,7 +1,6 @@
-import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-
 import '../feature/PlanHome/data/model/planModel.dart';
+import '../feature/PlanHome/data/model/taskPlanAdapter.dart';
 import '../feature/taskHome/data/model/categoryModel.dart';
 import '../feature/taskHome/data/model/taskModel.dart';
 
@@ -23,6 +22,11 @@ class HiveService {
     // Register PlanModelAdapter (typeId = 3)
     if (!Hive.isAdapterRegistered(3)) {
       Hive.registerAdapter(PlanModelAdapter());
+    }
+
+    // Register TaskPlanAdapter (typeId = 4)
+    if (!Hive.isAdapterRegistered(4)) {
+      Hive.registerAdapter(TaskPlanAdapter());
     }
 
     await Hive.initFlutter();

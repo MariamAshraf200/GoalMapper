@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
 import '../../data/model/planModel.dart';
 import '../../domain/entities/plan_entity.dart';
+import '../../domain/entities/taskPlan.dart';
 
 abstract class PlanState extends Equatable {
   const PlanState();
@@ -54,7 +55,7 @@ class PlanAddSuccess extends PlanState {
 class TasksLoading extends PlanState {}
 
 class TasksLoaded extends PlanState {
-  final List<String> tasks;
+  final List<TaskPlan> tasks;
   const TasksLoaded(this.tasks);
 
   @override
@@ -80,7 +81,7 @@ class TaskError extends PlanState {
 
 class PlanAndTasksLoaded extends PlanState {
   final List<PlanDetails> plans;
-  final List<String> tasks;
+  final List<TaskPlan> tasks;
 
   const PlanAndTasksLoaded({required this.plans, required this.tasks});
 
