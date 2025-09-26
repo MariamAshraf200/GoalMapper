@@ -1,6 +1,8 @@
 import '../../domain/entities/plan_entity.dart';
-import '../../domain/repo_interface/repoPlanInterface.dart';
+import '../../domain/entities/taskPlan.dart';
+import '../../domain/repo_interface/repo_plan_interface.dart';
 import '../dataSource/abstractLocalDataSource.dart';
+import '../dataSource/localData.dart';
 import '../model/planModel.dart';
 
 class PlanRepositoryImpl implements PlanRepository {
@@ -61,13 +63,14 @@ class PlanRepositoryImpl implements PlanRepository {
   @override
   Future<void> updatePlanStatus(String planId, String newStatus) async {
     try {
-      final plan = (await dataSource.getAllPlans()).firstWhere((plan) => plan.id == planId);
+      final plan = (await dataSource.getAllPlans())
+          .firstWhere((plan) => plan.id == planId);
       final updatedPlan = plan.copyWith(
         status: newStatus,
       );
       await dataSource.updatePlan(updatedPlan);
     } catch (e) {
-      throw Exception("Error updating plan priority: $e");
+      throw Exception("Error updating plan status: $e");
     }
   }
 
@@ -78,5 +81,54 @@ class PlanRepositoryImpl implements PlanRepository {
     } catch (e) {
       throw Exception("Error deleting plan from local data source: $e");
     }
+  }
+
+  @override
+  Future<List<TaskPlan>> getAllTasks(String planId) async {
+    try {
+      final rawTasks = await dataSource.getAllTasks(planId);
+      return rawTasks;
+    } catch (e) {
+      print("Error while loading tasks: $e");
+      throw Exception("Error loading tasks for plan '$planId': $e");
+    }
+  }
+
+  // 🔹 Add a task to a plan
+  Future<void> addTask(String planId, TaskPlan task) async {
+    try {
+      if (dataSource is HivePlanLocalDataSource) {
+        await (dataSource as HivePlanLocalDataSource).addTask(planId, task);
+      }
+    } catch (e) {
+      throw Exception("Error adding task to plan '$planId': $e");
+    }
+  }
+
+  // 🔹 Delete a task by value
+  Future<void> deleteTask(String planId, String task) async {
+    try {
+      await dataSource.deleteTask(planId, task);
+    } catch (e) {
+      throw Exception("Error deleting task from plan '$planId': $e");
+    }
+  }
+
+  // 🔹 Delete a task by index
+  Future<void> deleteTaskAt(String planId, int index) async {
+    try {
+      if (dataSource is HivePlanLocalDataSource) {
+        await (dataSource as HivePlanLocalDataSource)
+            .deleteTaskAt(planId, index);
+      }
+    } catch (e) {
+      throw Exception(
+          "Error deleting task at index $index from plan '$planId': $e");
+    }
+  }
+
+  @override
+  Future<void> updateTaskStatus(String planId, TaskPlan updatedTask) async {
+    await dataSource.updateTaskStatus(planId, updatedTask);
   }
 }

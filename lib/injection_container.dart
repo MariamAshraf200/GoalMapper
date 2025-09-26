@@ -1,5 +1,9 @@
 import 'package:flutter/foundation.dart';
 import 'package:get_it/get_it.dart';
+import 'feature/PlanHome/domain/repo_interface/repo_plan_interface.dart';
+import 'feature/PlanHome/domain/usecase/delet_task_plan.dart';
+import 'feature/PlanHome/domain/usecase/getAll_tasks_plan_usecase.dart';
+import 'feature/PlanHome/domain/usecase/update_task_status_plan.dart';
 import 'injection_imports.dart';
 
 final sl = GetIt.instance;
@@ -94,6 +98,11 @@ Future<void> init() async {
         () => GetPlansByStatusUseCase(sl<PlanRepository>()));
     sl.registerLazySingleton(
         () => UpdatePlanStatusUseCase(sl<PlanRepository>()));
+    // Plan task use cases
+    sl.registerLazySingleton(() => GetAllTasksPlanUseCase(sl<PlanRepository>()));
+    sl.registerLazySingleton(() => AddTaskPlanUseCase(sl<PlanRepository>()));
+    sl.registerLazySingleton(() => DeleteTaskAtPlanUseCase(sl<PlanRepository>()));
+    sl.registerLazySingleton(() => UpdateTaskStatusPlanUseCase(sl<PlanRepository>()));
 
     ///////////////////////// Blocs / Cubits /////////////////////////////
     /////////////////////////////////////////////////////////////////////
@@ -132,7 +141,12 @@ Future<void> init() async {
         deletePlanUseCase: sl<DeletePlanUseCase>(),
         getPlansByCategoryUseCase: sl<GetPlansByCategoryUseCase>(),
         getPlansByStatusUseCase: sl<GetPlansByStatusUseCase>(),
-        updatePlanStatusUseCase: sl<UpdatePlanStatusUseCase>()));
+        updatePlanStatusUseCase: sl<UpdatePlanStatusUseCase>(),
+        getAllTasksPlanUseCase: sl<GetAllTasksPlanUseCase>(),
+        addTaskPlanUseCase: sl<AddTaskPlanUseCase>(),
+        deleteTaskAtPlanUseCase: sl<DeleteTaskAtPlanUseCase>(),
+        updateTaskStatusPlanUseCase: sl<UpdateTaskStatusPlanUseCase>(),
+      ));
   } catch (e, stackTrace) {
     if (kDebugMode) {
       print("Error during DI initialization: $e");

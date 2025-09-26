@@ -1,138 +1,122 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:mapperapp/feature/PlanHome/presentation/widget/plan_details.dart';
-
 import '../../domain/entities/plan_entity.dart';
-import '../bloc/bloc.dart';
-import '../bloc/event.dart';
-import '../screen/updatePlan.dart';
+import '../screen/plan_details.dart'; // 👈 استورد شاشة التفاصيل
 
 class PlanItemCard extends StatelessWidget {
   final PlanDetails plan;
+  final VoidCallback? onTap;
 
-  const PlanItemCard({super.key, required this.plan});
+  const PlanItemCard({super.key, required this.plan, this.onTap});
+
+  Color _getCategoryColor(String category) {
+    switch (category.toLowerCase()) {
+      case "work":
+        return Colors.purple.shade200;
+      case "personal":
+        return Colors.blue.shade200;
+      case "study":
+        return Colors.amber.shade200;
+      case "health":
+        return Colors.pink.shade200;
+      default:
+        return Colors.grey.shade300;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onLongPress: () {
+    return InkWell(
+      borderRadius: BorderRadius.circular(20),
+      onTap: () {
+        if (onTap != null) {
+          onTap!();
+          return;
+        }
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => PlanDetailsScreen(plan: plan),
+            builder: (_) => PlanDetailsScreen(plan: plan), // 👈 ابعت plan
           ),
         );
       },
-      child: Dismissible(
-        key: Key(plan.id),
-        background: _buildSwipeBackground(
-          color: Colors.blue,
-          icon: Icons.edit,
-          label: "Update",
-          alignment: Alignment.centerLeft,
+      child: Card(
+        elevation: 3,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
         ),
-        secondaryBackground: _buildSwipeBackground(
-          color: Colors.red,
-          icon: Icons.delete,
-          label: "Delete",
-          alignment: Alignment.centerRight,
-        ),
-        confirmDismiss: (direction) async {
-          if (direction == DismissDirection.startToEnd) {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => UpdatePlanScreen(plan: plan),
-              ),
-            );
-            return false; // Prevent dismissal
-          } else if (direction == DismissDirection.endToStart) {
-            return await _confirmDelete(context);
-          }
-          return false;
-        },
-        child: Card(
-          elevation: 6,
-          margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-          ),
+        margin: const EdgeInsets.only(bottom: 16),
+        child: Padding(
+          padding: const EdgeInsets.all(16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Status at the top
-              ClipPath(
-                clipper: WavyClipper(),
-                child: Container(
-                  height: 90,
-                  decoration: BoxDecoration(
-                    color: plan.status=='Completed' ? Colors.green : Colors.orange,
-                  ),
-                  child: Center(
+              // 🔹 Title + Category Badge
+              Row(
+                children: [
+                  Expanded(
                     child: Text(
-                      plan.status,
+                      plan.title,
                       style: const TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
                         fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black87,
                       ),
                     ),
                   ),
-                ),
-              ),
-              // Main content
-              Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Title
-                    Text(
-                      plan.title,
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
+                  if (plan.category != null)
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: _getCategoryColor(plan.category!),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Text(
+                        plan.category!,
+                        style: const TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.black87,
+                        ),
                       ),
                     ),
-                    const SizedBox(height: 8),
-                    // Date and Priority
-                    Row(
-                      children: [
-                        Icon(Icons.calendar_today,
-                            size: 16, color: Colors.grey[700]),
-                        const SizedBox(width: 8),
-                        Text(
-                          "${plan.startDate} - ${plan.endDate}",
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodySmall
-                              ?.copyWith(
-                            color: Colors.grey[700],
-                          ),
-                        ),
-                        const Spacer(),
-                        Icon(
-                          Icons.priority_high,
-                          size: 16,
-                          color: plan.priority == "High"
-                              ? Colors.red
-                              : Colors.orange,
-                        ),
-                        const SizedBox(width: 4),
-                        Text(
-                          plan.priority,
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodySmall
-                              ?.copyWith(
-                            color: plan.priority == "High"
-                                ? Colors.red
-                                : Colors.orange,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
+                ],
+              ),
+
+              const SizedBox(height: 8),
+
+              // 🔹 Description
+              if (plan.description != null && plan.description!.isNotEmpty)
+                Text(
+                  plan.description!,
+                  style: const TextStyle(
+                    fontSize: 14,
+                    color: Colors.black54,
+                  ),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
                 ),
+
+              const SizedBox(height: 12),
+
+              // 🔹 Bottom row (date + status)
+              Row(
+                children: [
+                  const Icon(Icons.calendar_today, size: 16, color: Colors.deepPurple),
+                  const SizedBox(width: 6),
+                  Text(
+                    plan.endDate ?? "",
+                    style: const TextStyle(
+                      fontSize: 12,
+                      color: Colors.black54,
+                    ),
+                  ),
+                  const Spacer(),
+                  Icon(
+                    plan.isCompleted ? Icons.check_circle : Icons.radio_button_unchecked,
+                    color: plan.isCompleted ? Colors.green : Colors.orange,
+                    size: 18,
+                  ),
+                ],
               ),
             ],
           ),
@@ -140,95 +124,4 @@ class PlanItemCard extends StatelessWidget {
       ),
     );
   }
-
-  // Build swipe background for dismiss actions
-  Widget _buildSwipeBackground({
-    required Color color,
-    required IconData icon,
-    required String label,
-    required Alignment alignment,
-  }) {
-    return Container(
-      color: color,
-      alignment: alignment,
-      padding: const EdgeInsets.symmetric(horizontal: 20),
-      child: Row(
-        mainAxisAlignment: alignment == Alignment.centerLeft
-            ? MainAxisAlignment.start
-            : MainAxisAlignment.end,
-        children: [
-          Icon(icon, color: Colors.white),
-          const SizedBox(width: 8),
-          Text(
-            label,
-            style: const TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  // Confirm delete dialog
-  Future<bool> _confirmDelete(BuildContext context) async {
-    final shouldDelete = await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text("Confirm Delete"),
-        content: const Text("Are you sure you want to delete this plan?"),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(false),
-            child: const Text("Cancel"),
-          ),
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(true),
-            child: const Text("Delete"),
-          ),
-        ],
-      ),
-    ) ??
-        false;
-
-    if (shouldDelete) {
-      BlocProvider.of<PlanBloc>(context).add(DeletePlanEvent(plan.id));
-      _showSnackbar(context, "Plan deleted successfully.");
-    }
-    return shouldDelete;
-  }
-
-  // Show Snackbar
-  void _showSnackbar(BuildContext context, String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message)),
-    );
-  }
-}
-
-class WavyClipper extends CustomClipper<Path> {
-  @override
-  Path getClip(Size size) {
-    Path path = Path();
-    path.lineTo(0, size.height - 20);
-    path.quadraticBezierTo(
-      size.width / 4,
-      size.height,
-      size.width / 2,
-      size.height - 20,
-    );
-    path.quadraticBezierTo(
-      size.width * 3 / 4,
-      size.height - 40,
-      size.width,
-      size.height - 20,
-    );
-    path.lineTo(size.width, 0);
-    path.close();
-    return path;
-  }
-
-  @override
-  bool shouldReclip(CustomClipper<Path> oldClipper) => false;
 }

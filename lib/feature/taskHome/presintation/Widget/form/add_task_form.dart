@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../../injection_imports.dart';
+import '../../bloc/taskBloc/event.dart';
 
 
 class AddTaskForm extends StatelessWidget {
@@ -15,9 +16,6 @@ class AddTaskForm extends StatelessWidget {
       planId: planId,
       onSubmit: (task) {
         context.read<TaskBloc>().add(AddTaskEvent(task, planId: planId));
-        if (planId != null) {
-          context.read<PlanBloc>().add(AddTaskToPlanEvent(task: task, planId: planId!));
-        }
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Task added successfully!')),
         );

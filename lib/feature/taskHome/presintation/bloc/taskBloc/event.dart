@@ -89,13 +89,3 @@ class FilterTasksEvent extends TaskEvent {
   @override
   List<Object?> get props => [date, priority, status];
 }
-
-// New event to fetch tasks by planId
-class GetTasksByPlanIdEvent extends TaskEvent {
-  final String planId; // Plan ID to filter tasks
-
-  const GetTasksByPlanIdEvent(this.planId);
-
-  @override
-  List<Object?> get props => [planId];
-}

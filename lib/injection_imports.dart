@@ -1,7 +1,6 @@
 // Plan feature
 export 'feature/PlanHome/data/dataSource/localData.dart';
 export 'feature/PlanHome/data/repo_impl/repoPlan.dart';
-export 'feature/PlanHome/domain/repo_interface/repoPlanInterface.dart';
 export 'feature/PlanHome/domain/usecase/add_plan_usecase.dart';
 export 'feature/PlanHome/domain/usecase/delete_plan_useCase.dart';
 export 'feature/PlanHome/domain/usecase/getAll_plan_usecase.dart';
@@ -11,8 +10,22 @@ export 'feature/PlanHome/domain/usecase/getByStatus_plan_useCase.dart';
 export 'feature/PlanHome/domain/usecase/UpdateStatus_plan_usecase.dart';
 export 'feature/PlanHome/presentation/bloc/bloc.dart';
 export 'feature/PlanHome/presentation/bloc/event.dart';
-export 'feature/PlanHome/presentation/bloc/state.dart';
 export 'feature/PlanHome/data/model/planModel.dart';
+export 'feature/PlanHome/domain/usecase/add_task_plan.dart';
+export 'feature/PlanHome/presentation/bloc/state.dart';
+export 'feature/PlanHome/presentation/screen/plan_details.dart';
+export 'feature/PlanHome/presentation/widget/plan_items_card.dart';
+export 'feature/PlanHome/domain/entities/plan_enums.dart';
+export 'feature/PlanHome/domain/entities/plan_entity.dart';
+export 'feature/PlanHome/domain/entities/taskPlan.dart';
+export 'feature/PlanHome/presentation/screen/updatePlan.dart';
+export 'feature/PlanHome/presentation/widget/plan_details/plan_details_header.dart';
+export 'feature/PlanHome/presentation/widget/plan_details/plan_details_title_description.dart';
+export 'feature/PlanHome/presentation/widget/plan_details/plan_details_progress.dart';
+export 'feature/PlanHome/presentation/widget/plan_details/plan_details_dates.dart';
+export 'feature/PlanHome/presentation/widget/plan_details/plan_details_subtasks.dart';
+export 'feature/PlanHome/presentation/widget/plan_details/plan_details_subtask_card.dart';
+export 'feature/PlanHome/presentation/widget/plan_details/plan_details_bottom_button.dart';
 
 // Task feature
 export 'feature/taskHome/data/dataSource/localData.dart';
@@ -51,7 +64,6 @@ export 'core/util/widgets/custom_card.dart';
 export 'core/util/widgets/custom_dilog.dart';
 export 'feature/taskHome/presintation/Widget/data_format.dart';
 export 'feature/taskHome/presintation/Widget/item/task_items.dart';
-export 'feature/taskHome/presintation/bloc/taskBloc/state.dart';
 export 'feature/taskHome/presintation/screen/add_task_screen.dart';
 
 // Main screen
@@ -80,7 +92,7 @@ export 'core/util/widgets/date_and_time/time_field.dart';
 export 'core/util/widgets/loading_elevate_icon_button.dart';
 export 'feature/taskHome/presintation/Widget/category_selector.dart';
 export 'feature/taskHome/presintation/Widget/priority_selector.dart';
-export 'feature/taskHome/presintation/bloc/taskBloc/event.dart';
 export 'core/util/date_format_util.dart';
 export 'core/util/time_format_util.dart';
 export 'feature/taskHome/data/model/taskModel.dart';
+export 'feature/taskHome/presintation/bloc/taskBloc/event.dart';

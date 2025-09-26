@@ -1,6 +1,7 @@
 import '../../../../../injection_imports.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../bloc/taskBloc/state.dart' as taskState;
 
 class TaskTrack extends StatefulWidget {
   const TaskTrack({super.key});
@@ -295,16 +296,16 @@ class TaskListSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Expanded(
-      child: BlocBuilder<TaskBloc, TaskState>(
+      child: BlocBuilder<TaskBloc, taskState.TaskState>(
         builder: (context, state) {
-          if (state is TaskLoading) {
+          if (state is taskState.TaskLoading) {
             return const Center(child: CircularProgressIndicator());
-          } else if (state is TaskLoaded) {
+          } else if (state is taskState.TaskLoaded) {
             if (state.tasks.isEmpty) {
               return const Center(child: Text("No tasks match the filters.", style: TextStyle(fontSize: 18)));
             }
             return TaskItems(tasks: state.tasks);
-          } else if (state is TaskError) {
+          } else if (state is taskState.TaskError) {
             return Center(child: Text(state.message, style: const TextStyle(fontSize: 18)));
           }
           return const SizedBox();

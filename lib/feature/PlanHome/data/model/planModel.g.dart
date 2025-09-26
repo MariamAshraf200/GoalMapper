@@ -28,7 +28,7 @@ class PlanModelAdapter extends TypeAdapter<PlanModel> {
       status: fields[8] as String,
       image: fields[9] as String?,
       completed: fields[10] as bool,
-      tasks: (fields[11] as List?)?.cast<TaskModel>() ?? [],
+      tasks: (fields[11] as List).cast<TaskPlan>(),
     );
   }
 

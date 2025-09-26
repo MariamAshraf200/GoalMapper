@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
-
-import '../widget/add_plan_form.dart';
+import '../widget/plan_form.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import '../bloc/bloc.dart';
+import '../bloc/event.dart';
 
 
 class AddPlanScreen extends StatelessWidget {
@@ -38,10 +40,17 @@ class AddPlanScreen extends StatelessWidget {
         ),
       ),
 
-      body:  const AddPlanForm(),
+      body:  PlanForm(
+        isUpdate: false,
+        onSubmit: (plan) {
+          context.read<PlanBloc>().add(AddPlanEvent(plan));
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Plan added successfully!')),
+          );
+          Navigator.of(context).pop();
+        },
+      ),
 
     );
   }
 }
-
-
