@@ -12,12 +12,20 @@ export 'feature/PlanHome/presentation/bloc/bloc.dart';
 export 'feature/PlanHome/presentation/bloc/event.dart';
 export 'feature/PlanHome/data/model/planModel.dart';
 export 'feature/PlanHome/domain/usecase/add_task_plan.dart';
-
 export 'feature/PlanHome/presentation/bloc/state.dart';
-export 'feature/PlanHome/presentation/widget/add_plan_form.dart';
-export 'feature/PlanHome/presentation/widget/plan_details.dart';
+export 'feature/PlanHome/presentation/screen/plan_details.dart';
 export 'feature/PlanHome/presentation/widget/plan_items_card.dart';
 export 'feature/PlanHome/domain/entities/plan_enums.dart';
+export 'feature/PlanHome/domain/entities/plan_entity.dart';
+export 'feature/PlanHome/domain/entities/taskPlan.dart';
+export 'feature/PlanHome/presentation/screen/updatePlan.dart';
+export 'feature/PlanHome/presentation/widget/plan_details/plan_details_header.dart';
+export 'feature/PlanHome/presentation/widget/plan_details/plan_details_title_description.dart';
+export 'feature/PlanHome/presentation/widget/plan_details/plan_details_progress.dart';
+export 'feature/PlanHome/presentation/widget/plan_details/plan_details_dates.dart';
+export 'feature/PlanHome/presentation/widget/plan_details/plan_details_subtasks.dart';
+export 'feature/PlanHome/presentation/widget/plan_details/plan_details_subtask_card.dart';
+export 'feature/PlanHome/presentation/widget/plan_details/plan_details_bottom_button.dart';
 
 // Task feature
 export 'feature/taskHome/data/dataSource/localData.dart';

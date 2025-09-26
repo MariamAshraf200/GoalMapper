@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../domain/entities/plan_entity.dart';
-import 'plan_details.dart'; // 👈 استورد شاشة التفاصيل
+import '../screen/plan_details.dart'; // 👈 استورد شاشة التفاصيل
 
 class PlanItemCard extends StatelessWidget {
   final PlanDetails plan;

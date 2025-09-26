@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../../injection_imports.dart';
+import '../../../../core/util/custom_builders/navigate_to_screen.dart';
+import 'addPlan.dart';
 
 class PlanTrackerScreen extends StatefulWidget {
   const PlanTrackerScreen({super.key});
@@ -52,9 +54,11 @@ class _PlanTrackerScreenState extends State<PlanTrackerScreen> {
             _PlanHeader(
               onBack: () => Navigator.of(context).pop(),
               onAdd: () {
-                Navigator.push(
+                navigateToScreenWithSlideTransition(
                   context,
-                  MaterialPageRoute(builder: (_) => const AddPlanForm()),
+                  const AddPlanScreen(),
+                  // Optionally: beginOffset: Offset(1, 0),
+                  // transitionDuration: Duration(milliseconds: 500),
                 ).then((_) {
                   if (!mounted) return;
                   if (!context.mounted) return;
