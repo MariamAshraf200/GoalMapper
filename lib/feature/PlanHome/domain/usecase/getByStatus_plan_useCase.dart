@@ -1,4 +1,5 @@
 import '../entities/plan_entity.dart';
+import '../entities/plan_enums.dart';
 import '../repo_interface/repo_plan_interface.dart';
 
 class GetPlansByStatusUseCase {
@@ -6,7 +7,7 @@ class GetPlansByStatusUseCase {
 
   GetPlansByStatusUseCase(this.repository);
 
-  Future<List<PlanDetails>> call(String status) async {
+  Future<List<PlanDetails>> call(PlanStatus status) async {
     return await repository.getPlansByStatus(status);
   }
 }

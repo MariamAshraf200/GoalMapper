@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
 import '../../domain/entities/plan_entity.dart';
 import '../widget/plan_form.dart';
 import '../bloc/bloc.dart';
 import '../bloc/event.dart';
 
-
 class UpdatePlanScreen extends StatelessWidget {
   const UpdatePlanScreen({super.key, required this.plan});
   final PlanDetails plan;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -28,7 +27,7 @@ class UpdatePlanScreen extends StatelessWidget {
                 Navigator.of(context).pop();
               },
             ),
-            const Spacer(), // Push the text to the center
+            const Spacer(),
             Text(
               'Update Your Plan',
               style: TextStyle(
@@ -37,11 +36,10 @@ class UpdatePlanScreen extends StatelessWidget {
                 color: Theme.of(context).colorScheme.primary,
               ),
             ),
-            const Spacer(), // Balances the spacing on the right
+            const Spacer(),
           ],
         ),
       ),
-
       body: PlanForm(
         isUpdate: true,
         initialPlan: plan,
@@ -50,10 +48,11 @@ class UpdatePlanScreen extends StatelessWidget {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Plan updated successfully!')),
           );
-          Navigator.of(context).pop(updatedPlan);
+
+          // ✅ مش محتاج تبعت الـ plan
+          Navigator.of(context).pop();
         },
       ),
-
     );
   }
 }

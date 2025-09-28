@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:intl/intl.dart';
 import 'package:mapperapp/feature/MainScreen/presentation/wedgit/plan_card.dart';
 import '../../../PlanHome/presentation/bloc/bloc.dart';
 import '../../../PlanHome/presentation/bloc/state.dart';
+import '../../../PlanHome/domain/entities/taskPlan.dart'; // 👈 عشان TaskPlan
 
 class PlanList extends StatelessWidget {
   const PlanList({super.key});
@@ -16,8 +16,8 @@ class PlanList extends StatelessWidget {
           return const Center(
             child: CircularProgressIndicator(),
           );
-        } else if (state is PlanLoaded) {
-          final plans = state.plans;
+        } else if (state is PlanLoaded || state is PlanAndTasksLoaded) {
+          final plans = state is PlanLoaded ? state.plans : (state as PlanAndTasksLoaded).plans;
 
           if (plans.isEmpty) {
             return const Center(
@@ -37,43 +37,14 @@ class PlanList extends StatelessWidget {
               itemBuilder: (context, index) {
                 final plan = plans[index];
 
-                // Parse start and end dates with error handling
-                DateTime? startDate, endDate;
-                try {
-                  startDate = DateFormat('dd/MM/yyyy').parse(plan.startDate);
-                  endDate = DateFormat('dd/MM/yyyy').parse(plan.endDate);
-                } catch (e) {
-                  debugPrint("Invalid date format for plan: ${plan.title}");
-                }
+                // Pass raw end date and raw time to the card; the card will format using util functions
+                final tasks = plan.tasks.cast<TaskPlan>();
 
-                // Calculate daysLeft and totalDays
-                final daysLeft = endDate?.difference(DateTime.now()).inDays ?? 0;
-                final totalDays = (startDate != null && endDate != null)
-                    ? endDate.difference(startDate).inDays
-                    : 0;
-
-
-                // Calculate completeness
-                final totalTasks = plan.tasks.length;
-                // Since tasks are now strings, we can't check status. Set completeness to 0.0 or null.
-                final completeness = 0.0;
-
-                // Render fallback card for invalid data
-                if (startDate == null || endDate == null || totalDays <= 0) {
-                  return PlanCardCombined(
-                    title: plan.title,
-                    daysLeft: 0,
-                    totalDay: 0,
-                    completeness: 0.0,
-                  );
-                }
-
-                // Valid plan card rendering
                 return PlanCardCombined(
                   title: plan.title,
-                  daysLeft: daysLeft < 0 ? 0 : daysLeft, // Avoid negatives
-                  totalDay: totalDays,
-                  completeness: completeness,
+                  tasks: tasks,
+                  endDateRaw: plan.endDate,
+                  updatedTimeRaw: plan.updatedTime,
                 );
               },
             ),

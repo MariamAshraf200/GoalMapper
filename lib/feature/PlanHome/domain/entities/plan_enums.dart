@@ -22,9 +22,9 @@ extension PlanStatusExtension on PlanStatus {
       case PlanStatus.all:
         return 'ALL';
       case PlanStatus.completed:
-        return 'COMPLETED';
+        return 'Completed';
       case PlanStatus.notCompleted:
-        return 'NOT_COMPLETED';
+        return 'Not Completed';
     }
   }
 }

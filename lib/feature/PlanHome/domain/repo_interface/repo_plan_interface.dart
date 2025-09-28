@@ -1,11 +1,12 @@
 import '../entities/plan_entity.dart';
+import '../entities/plan_enums.dart';
 import '../entities/taskPlan.dart';
 
 abstract class PlanRepository {
   // 🔹 Plans CRUD
   Future<List<PlanDetails>> getPlans();
   Future<List<PlanDetails>> getPlansByCategory(String category);
-  Future<List<PlanDetails>> getPlansByStatus(String status);
+  Future<List<PlanDetails>> getPlansByStatus(PlanStatus status);
 
   Future<void> addPlan(PlanDetails plan);
   Future<void> updatePlan(PlanDetails plan);

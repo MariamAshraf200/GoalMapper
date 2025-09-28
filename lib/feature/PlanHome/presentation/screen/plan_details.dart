@@ -14,15 +14,11 @@ class PlanDetailsScreen extends StatefulWidget {
 }
 
 class _PlanDetailsScreenState extends State<PlanDetailsScreen> {
-  late PlanDetails plan;
-
   @override
   void initState() {
     super.initState();
-    plan = widget.plan;
-
-    // 🔹 Load tasks for this plan
-    context.read<PlanBloc>().add(GetAllTasksPlanEvent(plan.id));
+    // ✅ خليك في البلوك، هات التاسكات للخطة دي
+    context.read<PlanBloc>().add(GetAllTasksPlanEvent(widget.plan.id));
   }
 
   void _showAddTaskDialog(BuildContext context) {
@@ -62,8 +58,9 @@ class _PlanDetailsScreenState extends State<PlanDetailsScreen> {
                     text: controller.text.trim(),
                     status: TaskPlanStatus.toDo,
                   );
+                  // ✅ البلوك هيتكفل بالتحديث
                   context.read<PlanBloc>().add(
-                    AddTaskToPlanEvent(planId: plan.id, task: newTask),
+                    AddTaskToPlanEvent(planId: widget.plan.id, task: newTask),
                   );
                   Navigator.pop(context);
                 }
@@ -85,52 +82,74 @@ class _PlanDetailsScreenState extends State<PlanDetailsScreen> {
           children: [
             PlanDetailsHeader(
               onBack: () {
-                Navigator.pop(context, plan);
+                Navigator.pop(context); // ❌ بدون true — مش محتاج
               },
               onMore: () {},
             ),
             Expanded(
               child: SingleChildScrollView(
                 padding: const EdgeInsets.all(20),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    PlanDetailsTitleDescription(plan: plan),
-                    const SizedBox(height: 16),
-                    BlocBuilder<PlanBloc, PlanState>(
-                      builder: (context, state) {
-                        if (state is PlanAndTasksLoaded) {
-                          return PlanDetailsProgress(tasks: state.tasks);
-                        } else if (state is TasksLoading) {
-                          return const LinearProgressIndicator();
-                        }
-                        return PlanDetailsProgress(tasks: []);
-                      },
-                    ),
-                    const SizedBox(height: 24),
-                    PlanDetailsDates(plan: plan),
-                    const SizedBox(height: 24),
-                    PlanDetailsSubtasks(
-                      plan: plan,
-                      onAddTask: _showAddTaskDialog,
-                      subTaskCardBuilder: (context, task) => PlanDetailsSubtaskCard(plan: plan, task: task),
-                    ),
-                  ],
+                child: BlocBuilder<PlanBloc, PlanState>(
+                  builder: (context, state) {
+                    if (state is TasksLoading) {
+                      return const Center(child: CircularProgressIndicator());
+                    } else if (state is PlanAndTasksLoaded) {
+                      final currentPlan = state.plans.firstWhere(
+                            (p) => p.id == widget.plan.id,
+                        orElse: () => widget.plan, // fallback
+                      );
+                      final tasks = state.tasks;
+
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          PlanDetailsTitleDescription(plan: currentPlan),
+                          const SizedBox(height: 16),
+
+                          // ✅ Progress bar
+                          PlanDetailsProgress(tasks: tasks),
+                          const SizedBox(height: 24),
+
+                          // ✅ Dates
+                          PlanDetailsDates(plan: currentPlan),
+                          const SizedBox(height: 24),
+
+                          // ✅ Subtasks
+                          PlanDetailsSubtasks(
+                            plan: currentPlan,
+                            onAddTask: _showAddTaskDialog,
+                            subTaskCardBuilder: (context, task) =>
+                                PlanDetailsSubtaskCard(
+                                  plan: currentPlan,
+                                  task: task,
+                                ),
+                          ),
+                        ],
+                      );
+                    } else if (state is TaskError) {
+                      return Center(
+                        child: Text("Error: ${state.message}",
+                            style: const TextStyle(color: Colors.red)),
+                      );
+                    }
+                    return const Center(child: Text("No data available."));
+                  },
                 ),
               ),
             ),
             PlanDetailsBottomButton(
               onEdit: () async {
-                final updatedPlan = await navigateToScreenWithSlideTransition(
+                final updatedPlan =
+                await navigateToScreenWithSlideTransition(
                   context,
-                  UpdatePlanScreen(plan: plan),
-                  // Optionally: beginOffset: Offset(1, 0),
-                  // transitionDuration: Duration(milliseconds: 500),
+                  UpdatePlanScreen(plan: widget.plan),
                 );
-                if (updatedPlan != null && updatedPlan is PlanDetails && mounted) {
-                  setState(() {
-                    plan = updatedPlan;
-                  });
+
+                if (updatedPlan != null &&
+                    updatedPlan is PlanDetails &&
+                    mounted) {
+                  // ✅ البلوك فقط اللي يحدث
+                  context.read<PlanBloc>().add(UpdatePlanEvent(updatedPlan));
                 }
               },
             ),

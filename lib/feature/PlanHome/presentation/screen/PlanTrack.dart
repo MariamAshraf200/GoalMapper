@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../../injection_imports.dart';
 import '../../../../core/util/custom_builders/navigate_to_screen.dart';
 import 'addPlan.dart';
+import '../widget/plan_filters_widget.dart';
 
 class PlanTrackerScreen extends StatefulWidget {
   const PlanTrackerScreen({super.key});
@@ -22,7 +23,7 @@ class _PlanTrackerScreenState extends State<PlanTrackerScreen> {
     context.read<PlanBloc>().add(GetAllPlansEvent());
   }
 
-  void _updateCategory(String? category) {
+  void _onCategoryChanged(String? category) {
     setState(() => selectedCategory = category);
     if (category == null || category == "All") {
       context.read<PlanBloc>().add(GetAllPlansEvent());
@@ -31,13 +32,21 @@ class _PlanTrackerScreenState extends State<PlanTrackerScreen> {
     }
   }
 
-  void _updateStatus(PlanStatus? status) {
+  void _onStatusChanged(PlanStatus? status) {
     setState(() => selectedStatus = status);
     if (status == null || status == PlanStatus.all) {
       context.read<PlanBloc>().add(GetAllPlansEvent());
     } else {
-      context.read<PlanBloc>().add(GetPlansByStatusEvent(status.toPlanStatusString()));
+      context.read<PlanBloc>().add(GetPlansByStatusEvent(status));
     }
+  }
+
+  // ✅ بدون then
+  void _openDetails(PlanDetails plan) {
+    navigateToScreenWithSlideTransition(
+      context,
+      PlanDetailsScreen(plan: plan),
+    );
   }
 
   @override
@@ -57,27 +66,23 @@ class _PlanTrackerScreenState extends State<PlanTrackerScreen> {
                 navigateToScreenWithSlideTransition(
                   context,
                   const AddPlanScreen(),
-                  // Optionally: beginOffset: Offset(1, 0),
-                  // transitionDuration: Duration(milliseconds: 500),
-                ).then((_) {
-                  if (!mounted) return;
-                  if (!context.mounted) return;
-                });
+                );
               },
             ),
             const SizedBox(height: 12),
 
             // 🔹 Filters
-            _PlanFilters(
+            PlanFiltersWidget(
               selectedCategory: selectedCategory,
               selectedStatus: selectedStatus,
-              onCategoryChanged: _updateCategory,
-              onStatusChanged: _updateStatus,
+              onCategoryChanged: _onCategoryChanged,
+              onStatusChanged: _onStatusChanged,
             ),
+
             const SizedBox(height: 16),
 
             // 🔹 Plan list
-            const _PlanListSection(),
+            _PlanListSection(onItemTap: _openDetails),
           ],
         ),
       ),
@@ -127,127 +132,11 @@ class _PlanHeader extends StatelessWidget {
   }
 }
 
-// ---------------- Filters ----------------
-class _PlanFilters extends StatelessWidget {
-  final String? selectedCategory;
-  final PlanStatus? selectedStatus;
-  final ValueChanged<String?> onCategoryChanged;
-  final ValueChanged<PlanStatus?> onStatusChanged;
-
-  const _PlanFilters({
-    required this.selectedCategory,
-    required this.selectedStatus,
-    required this.onCategoryChanged,
-    required this.onStatusChanged,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Expanded(
-          child: BlocBuilder<CategoryBloc, CategoryState>(
-            builder: (context, state) {
-              List<String> categories = ["All"];
-              if (state is CategoryLoaded) {
-                categories.addAll(state.categories.map((c) => c.categoryName));
-              }
-              return _FilterDropdown<String>(
-                icon: const Icon(Icons.folder, color: Colors.deepPurple),
-                value: selectedCategory,
-                hint: "Select Category",
-                items: [
-                  ...categories.map(
-                        (c) => DropdownMenuItem(
-                      value: c,
-                      child: Text(c),
-                    ),
-                  ),
-                  const DropdownMenuItem(
-                      value: null, child: Text("All Categories")),
-                ],
-                onChanged: onCategoryChanged,
-              );
-            },
-          ),
-        ),
-        const SizedBox(width: 16),
-        Expanded(
-          child: _FilterDropdown<PlanStatus>(
-            icon: const Icon(Icons.check_circle, color: Colors.green),
-            value: selectedStatus,
-            hint: "Select Status",
-            items: PlanStatus.values.map((status) {
-              return DropdownMenuItem(
-                value: status,
-                child: Text(status.toPlanStatusString()),
-              );
-            }).toList()
-              ..insert(
-                0,
-                const DropdownMenuItem(
-                  value: null,
-                  child: Text("All Statuses"),
-                ),
-              ),
-            onChanged: onStatusChanged,
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class _FilterDropdown<T> extends StatelessWidget {
-  final Widget icon;
-  final T? value;
-  final String hint;
-  final List<DropdownMenuItem<T>> items;
-  final ValueChanged<T?> onChanged;
-
-  const _FilterDropdown({
-    required this.icon,
-    required this.value,
-    required this.hint,
-    required this.items,
-    required this.onChanged,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [BoxShadow(color: Colors.grey.withAlpha(20), blurRadius: 5)],
-        color: Colors.white,
-      ),
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-      child: Row(
-        children: [
-          icon,
-          const SizedBox(width: 8),
-          Expanded(
-            child: DropdownButton<T>(
-              value: value,
-              hint: Text(
-                hint,
-                style: const TextStyle(fontSize: 14, color: Colors.grey),
-              ),
-              isExpanded: true,
-              underline: const SizedBox(),
-              items: items,
-              onChanged: onChanged,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
 // ---------------- Plan List ----------------
 class _PlanListSection extends StatelessWidget {
-  const _PlanListSection();
+  final ValueChanged<PlanDetails> onItemTap;
+
+  const _PlanListSection({Key? key, required this.onItemTap}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -256,8 +145,9 @@ class _PlanListSection extends StatelessWidget {
         builder: (context, state) {
           if (state is PlanLoading) {
             return const Center(child: CircularProgressIndicator());
-          } else if (state is PlanLoaded) {
-            if (state.plans.isEmpty) {
+          } else if (state is PlanLoaded || state is PlanAndTasksLoaded) {
+            final plans = state is PlanLoaded ? state.plans : (state as PlanAndTasksLoaded).plans;
+            if (plans.isEmpty) {
               return const Center(
                 child: Text(
                   "No plans match the filters.",
@@ -268,22 +158,11 @@ class _PlanListSection extends StatelessWidget {
             return ListView.builder(
               physics: const BouncingScrollPhysics(),
               padding: const EdgeInsets.all(8),
-              itemCount: state.plans.length,
+              itemCount: plans.length,
               itemBuilder: (context, index) {
                 return PlanItemCard(
-                  plan: state.plans[index],
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => PlanDetailsScreen(plan: state.plans[index]),
-                      ),
-                    ).then((_) {
-                      // ✅ بعد الرجوع اعمل refresh
-                      if (!context.mounted) return;
-                      context.read<PlanBloc>().add(GetAllPlansEvent());
-                    });
-                  },
+                  plan: plans[index],
+                  onTap: () => onItemTap(plans[index]),
                 );
               },
             );

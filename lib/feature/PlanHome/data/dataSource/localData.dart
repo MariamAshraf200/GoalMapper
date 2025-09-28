@@ -1,5 +1,6 @@
 import 'package:hive/hive.dart';
 import '../../../../core/hiveServices.dart';
+import '../../domain/entities/plan_enums.dart';
 import '../../domain/entities/taskPlan.dart';
 import '../model/planModel.dart';
 import 'abstractLocalDataSource.dart';
@@ -37,8 +38,16 @@ class HivePlanLocalDataSource implements PlanLocalDataSource {
   }
 
   @override
-  Future<List<PlanModel>> getPlansByStatus(String status) async {
-    return planBox.values.where((plan) => plan.status == status).toList();
+  Future<List<PlanModel>> getPlansByStatus(PlanStatus status) async {
+    final allPlans = await getAllPlans();
+    switch (status) {
+      case PlanStatus.completed:
+        return allPlans.where((p) => p.completed == true).toList();
+      case PlanStatus.notCompleted:
+        return allPlans.where((p) => p.completed == false).toList();
+      case PlanStatus.all:
+      return allPlans;
+    }
   }
 
   // 🔹 Get all tasks for a plan

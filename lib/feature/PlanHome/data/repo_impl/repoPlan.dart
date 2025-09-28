@@ -1,4 +1,5 @@
 import '../../domain/entities/plan_entity.dart';
+import '../../domain/entities/plan_enums.dart';
 import '../../domain/entities/taskPlan.dart';
 import '../../domain/repo_interface/repo_plan_interface.dart';
 import '../dataSource/abstractLocalDataSource.dart';
@@ -31,13 +32,20 @@ class PlanRepositoryImpl implements PlanRepository {
   }
 
   @override
-  Future<List<PlanDetails>> getPlansByStatus(String status) async {
-    try {
-      final planModels = await dataSource.getPlansByStatus(status);
-      return planModels.map((planModel) => planModel.toEntity()).toList();
-    } catch (e) {
-      throw Exception("Error loading plans with status '$status': $e");
+  Future<List<PlanDetails>> getPlansByStatus(PlanStatus status) async {
+    final planModels = await dataSource.getAllPlans();
+    List<PlanModel> filtered;
+    switch (status) {
+      case PlanStatus.completed:
+        filtered = planModels.where((p) => p.completed == true).toList();
+        break;
+      case PlanStatus.notCompleted:
+        filtered = planModels.where((p) => p.completed == false).toList();
+        break;
+      case PlanStatus.all:
+      filtered = planModels;
     }
+    return filtered.map((planModel) => planModel.toEntity()).toList();
   }
 
   @override

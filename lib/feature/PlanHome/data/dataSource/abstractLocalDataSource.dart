@@ -1,3 +1,4 @@
+import '../../domain/entities/plan_enums.dart';
 import '../../domain/entities/taskPlan.dart';
 import '../model/planModel.dart';
 
@@ -8,7 +9,7 @@ abstract class PlanLocalDataSource {
   Future<void> deletePlan(String id);
   Future<List<PlanModel>> getAllPlans();
   Future<List<PlanModel>> getPlansByCategory(String category);
-  Future<List<PlanModel>> getPlansByStatus(String status);
+  Future<List<PlanModel>> getPlansByStatus(PlanStatus status);
 
   // 🔹 Tasks inside a Plan
   Future<List<TaskPlan>> getAllTasks(String planId);

@@ -4,7 +4,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../bloc/bloc.dart';
 import '../bloc/event.dart';
 
-
 class AddPlanScreen extends StatelessWidget {
   const AddPlanScreen({super.key});
 
@@ -26,7 +25,7 @@ class AddPlanScreen extends StatelessWidget {
                 Navigator.of(context).pop();
               },
             ),
-            const Spacer(), // Push the text to the center
+            const Spacer(),
             Text(
               'Create New Plan',
               style: TextStyle(
@@ -35,22 +34,23 @@ class AddPlanScreen extends StatelessWidget {
                 color: Theme.of(context).colorScheme.primary,
               ),
             ),
-            const Spacer(), // Balances the spacing on the right
+            const Spacer(),
           ],
         ),
       ),
-
-      body:  PlanForm(
+      body: PlanForm(
         isUpdate: false,
         onSubmit: (plan) {
           context.read<PlanBloc>().add(AddPlanEvent(plan));
+
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Plan added successfully!')),
           );
+
+          // ✅ مش محتاج تبعت true
           Navigator.of(context).pop();
         },
       ),
-
     );
   }
 }

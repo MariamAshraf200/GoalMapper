@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:mapperapp/feature/PlanHome/domain/entities/taskPlan.dart';
 import '../../domain/entities/plan_entity.dart';
+import '../../domain/entities/plan_enums.dart';
 
 abstract class PlanEvent extends Equatable {
   const PlanEvent();
@@ -87,7 +88,7 @@ class FilterPlansEvent extends PlanEvent {
 }
 
 class GetPlansByStatusEvent extends PlanEvent {
-  final String status;
+  final PlanStatus status;
   const GetPlansByStatusEvent(this.status);
 
   @override

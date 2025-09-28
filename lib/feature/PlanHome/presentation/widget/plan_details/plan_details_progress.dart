@@ -4,7 +4,7 @@ import '../../../domain/entities/taskPlan.dart';
 
 class PlanDetailsProgress extends StatelessWidget {
   final List<TaskPlan> tasks;
-  const PlanDetailsProgress({Key? key, required this.tasks}) : super(key: key);
+  const PlanDetailsProgress({super.key, required this.tasks});
 
   double _calculateProgress(List<TaskPlan> tasks) {
     if (tasks.isEmpty) return 0.0;
