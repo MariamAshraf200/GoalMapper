@@ -1,9 +1,9 @@
-# mapperapp
 
 # Task & Plan Manager App  
 
 ## License  
-This project is licensed under the MIT License © 2025 (https://github.com/MariamAshraf200).  
+This project is licensed under the MIT License © 2025  [Mariam Ashraf](https://github.com/MariamAshraf200).  
+).  
 
 ---
 
