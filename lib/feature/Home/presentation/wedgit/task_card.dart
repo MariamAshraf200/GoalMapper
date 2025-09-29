@@ -28,7 +28,7 @@ class TaskCard extends StatelessWidget {
             borderRadius: BorderRadius.circular(30),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.1),
+                color: Colors.black.withAlpha( 20),
                 blurRadius: 8,
                 offset: const Offset(0, 4),
               ),
@@ -53,10 +53,10 @@ class TaskCard extends StatelessWidget {
                     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                     decoration: BoxDecoration(
                       color: priority == "High"
-                          ? Colors.red.withOpacity(0.1)
+                          ? Colors.red.withAlpha(20)
                           : priority == "Medium"
-                          ? Colors.orange.withOpacity(0.1)
-                          : Colors.green.withOpacity(0.1),
+                          ? Colors.orange.withAlpha(20)
+                          : Colors.green.withAlpha(20),
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Text(
