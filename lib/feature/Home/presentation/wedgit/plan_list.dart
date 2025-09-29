@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:mapperapp/feature/MainScreen/presentation/wedgit/plan_card.dart';
 import '../../../PlanHome/presentation/bloc/bloc.dart';
 import '../../../PlanHome/presentation/bloc/state.dart';
-import '../../../PlanHome/domain/entities/taskPlan.dart'; // 👈 عشان TaskPlan
+import '../../../PlanHome/domain/entities/taskPlan.dart';
+import 'plan_card.dart'; // 👈 عشان TaskPlan
 
 class PlanList extends StatelessWidget {
   const PlanList({super.key});

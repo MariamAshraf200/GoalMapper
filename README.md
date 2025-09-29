@@ -63,7 +63,7 @@ lib
 │       └──widgets/
 │
 └──feature
-    ├──MainScreen/
+    ├──Home/
     ├──PlanHome/
     └──taskHome/
         

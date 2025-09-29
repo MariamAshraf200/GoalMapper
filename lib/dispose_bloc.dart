@@ -1,7 +1,4 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
-import 'app_bootstrapper.dart';
 import 'injection_container.dart';
 import 'injection_imports.dart';
 
@@ -20,7 +17,6 @@ class BlocDisposer implements DisposableBloc {
 }
 
 class AppBlocs {
-  static BuildContext get _context => navigatorKey.currentState!.context;
 
   static List<DisposableBloc> get allDisposableBlocs {
     return mainBlocs + taskBlocs + categoryBlocs + planBlocs;
