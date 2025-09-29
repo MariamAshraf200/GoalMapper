@@ -1,9 +1,7 @@
-# mapperapp
-
 # Task & Plan Manager App  
 
 ## License  
-This project is licensed under the MIT License © 2025 (https://github.com/MariamAshraf200).  
+This project is licensed under the MIT License © 2025  [Mariam Ashraf](https://github.com/MariamAshraf200)- see the [LICENSE](./LICENSE).  
 
 ---
 
@@ -38,46 +36,35 @@ This project is licensed under the MIT License © 2025 (https://github.com/Maria
 * Applying `Clean Architecture` layered design.  
 
 📌 Example Clean Architecture model used:  
-![image](link-to-your-model-image)  
+![image](assets/images/flutter_clean_arch.png)  
 
 ## Directory Structure  
 
+```
 lib
-│───main.dart
-│───l10n/
+│   app_bootstrapper.dart
+│   dispose_bloc.dart
+│   global_bloc.dart
+│   injection_container.dart
+│   injection_imports.dart
+│   main.dart
 │
-└───src
-│───core
-│ ├──error/
-│ ├──util/
-│ └──widgets/
+├──core
+│   ├──constants/
+│   ├──context_extensions.dart
+│   ├──custom_color.dart
+│   ├──failure.dart
+│   ├──hive_services.dart
+│   └──util/
+│       ├──custom_builders/
+│       ├──date_format_util.dart
+│       ├──functions/
+│       ├──time_format_util.dart
+│       └──widgets/
 │
-│───features
-│ ├──tasks/
-│ │ ├──data/
-│ │ ├──domain/
-│ │ └──presentation/
-│ │
-│ └──plans/
-│ ├──data/
-│ ├──domain/
-│ └──presentation/
-│
-│───app.dart
-└───injection_container.dart 
-
-
----
-
-# App pages  
-
-## Tasks Screens  
-  Add & Manage Tasks              | Mark Tasks Complete  
-:-------------------------:|:-------------------------:  
-![](link-to-screenshot) | ![](link-to-screenshot)  
-
-## Plan Screens  
-  Create Plan with Subtasks       | Track Plan Progress  
-:-------------------------:|:-------------------------:  
-![](link-to-screenshot) | ![](link-to-screenshot)  
-
+└──feature
+    ├──MainScreen/
+    ├──PlanHome/
+    └──taskHome/
+        
+```
