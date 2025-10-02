@@ -5,9 +5,9 @@ import 'package:mapperapp/core/util/time_format_util.dart';
 
 class PlanCardCombined extends StatelessWidget {
   final String title;
-  final List<TaskPlan> tasks; // ✅ بدل days/total هنعتمد على tasks
-  final String? endDateRaw; // raw date string from model (e.g., 'dd/MM/yyyy' or ISO)
-  final String? updatedTimeRaw; // raw time string (e.g., '3:30 PM' or '15:30')
+  final List<TaskPlan> tasks;
+  final String? endDateRaw;
+  final String? updatedTimeRaw;
 
   const PlanCardCombined({
     super.key,
@@ -17,7 +17,6 @@ class PlanCardCombined extends StatelessWidget {
     this.updatedTimeRaw,
   });
 
-  // 🔹 نفس لوجيك PlanDetailsProgress
   double _calculateProgress(List<TaskPlan> tasks) {
     if (tasks.isEmpty) return 0.0;
     final completed = tasks.where((t) => t.status == TaskPlanStatus.done).length;
@@ -39,22 +38,7 @@ class PlanCardCombined extends StatelessWidget {
     if (updatedTimeRaw == null) return null;
     final raw = updatedTimeRaw!.trim();
     if (raw.isEmpty) return null;
-    // Try AM/PM parser
-    try {
-      final tod = TimeFormatUtil.parseTime(raw);
-      return TimeFormatUtil.formatTime(tod, context);
-    } catch (_) {}
-    // Fallback: HH:mm 24h
-    final match = RegExp(r'^(\d{1,2}):(\d{2})$').firstMatch(raw);
-    if (match != null) {
-      final hour = int.tryParse(match.group(1)!) ?? 0;
-      final minute = int.tryParse(match.group(2)!) ?? 0;
-      if (hour >= 0 && hour <= 23 && minute >= 0 && minute <= 59) {
-        final tod = TimeOfDay(hour: hour, minute: minute);
-        return TimeFormatUtil.formatTime(tod, context);
-      }
-    }
-    return raw;
+    return TimeFormatUtil.formatFlexibleTime(raw, context);
   }
 
   @override
@@ -88,7 +72,6 @@ class PlanCardCombined extends StatelessWidget {
                     strokeWidth: 6,
                   ),
                 ),
-                // عدد التاسكات المكتملة/الكل
                 Text(
                   "${tasks.where((t) => t.status == TaskPlanStatus.done).length}/${tasks.length}",
                   style: const TextStyle(

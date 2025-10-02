@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:intl/intl.dart';
-import '../../../../core/customColor.dart';
 import '../../../../core/util/widgets/custom_FAB.dart';
+import '../../../../core/util/date_format_util.dart';
 import '../bloc/main_bloc.dart';
 import '../bloc/main_event.dart';
 import '../bloc/main_state.dart';
+import '../wedgit/home_header.dart';
+import '../wedgit/task_status_card.dart';
 import 'home_screen_form.dart';
-import 'package:mapperapp/app_bootstrapper.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -17,33 +17,14 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> with RouteAware {
-  CustomColor color = CustomColor();
-
   @override
   void initState() {
     super.initState();
-    // Initial data load
     context.read<MainTaskBloc>().add(GetMainTasksEvent());
   }
 
   @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    // Subscribe this screen to the route observer.
-    routeObserver.subscribe(this, ModalRoute.of(context)! as PageRoute);
-  }
-
-  @override
-  void dispose() {
-    // Unsubscribe from the route observer
-    routeObserver.unsubscribe(this);
-    super.dispose();
-  }
-
-  @override
   void didPopNext() {
-    // Called when the current route is re-shown (i.e. when returning from another screen)
-    // Refresh the tasks by dispatching the event.
     context.read<MainTaskBloc>().add(GetMainTasksEvent());
   }
 
@@ -56,138 +37,52 @@ class _HomeScreenState extends State<HomeScreen> with RouteAware {
             return const Center(child: CircularProgressIndicator());
           } else if (state is MainTaskLoaded) {
             final tasks = state.tasks;
-            final doneTasksCount =
-                tasks.where((task) => task.status.trim().toLowerCase() == "done").length;
-            final totalTasksCount = tasks.length;
 
-            final today = DateFormat('dd/MM/yyyy').format(DateTime.now());
-            final tasksForToday = tasks.where((task) {
-              return task.date == today && task.status.trim().toLowerCase() == "to do";
-            }).toList();
+            final today = DateFormatUtil.getCurrentDateFormatted();
+            final tasksForToday = tasks.where((task) => task.date == today).toList();
 
-            double taskCompletionPercentage =
-            totalTasksCount > 0 ? doneTasksCount / totalTasksCount : 0;
+            final doneTasksCount = tasksForToday
+                .where((task) => task.status.trim().toLowerCase() == "done")
+                .length;
+
+            final totalTasksCount = tasksForToday.length;
+
+            final taskCompletionPercentage =
+            totalTasksCount > 0 ? doneTasksCount / totalTasksCount : 0.0;
 
             return SingleChildScrollView(
               child: Column(
                 children: [
-                  _buildHeader(doneTasksCount, totalTasksCount, taskCompletionPercentage),
+                  // 🔹 New Header
+                  HomeHeader(username: "Mariam"),
+
+                  // 🔹 Stats card
+                  TaskStatsCard(
+                    doneTasks: doneTasksCount,
+                    totalTasks: totalTasksCount,
+                    completionPercentage: taskCompletionPercentage,
+                  ),
+
+                  // 🔹 Today’s tasks
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 15.0),
-                    child: HomeScreenForm(tasks: tasksForToday),
+                    child: HomeScreenForm(
+                      tasks: tasksForToday
+                          .where((task) =>
+                      task.status.trim().toLowerCase() == "to do")
+                          .toList(),
+                    ),
                   ),
                 ],
               ),
             );
           } else if (state is MainTaskError) {
             return Center(child: Text(state.message));
-          } else {
-            return const Center(child: Text("No tasks found."));
           }
+          return const Center(child: Text("No tasks found ."));
         },
       ),
       floatingActionButton: CustomFAB(context: context),
-    );
-  }
-
-  Widget _buildHeader(int doneTasksCount, int totalTasksCount, double taskCompletionPercentage) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Column(
-        children: [
-          SafeArea(
-            child: Row(
-              children: [
-                const Expanded(
-                  child: Text(
-                    'Hi Mariam',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.deepPurple,
-                    ),
-                  ),
-                ),
-                IconButton(
-                  onPressed: () {},
-                  icon: const Icon(Icons.notifications, color: Colors.deepPurple),
-                ),
-                IconButton(
-                  onPressed: () {},
-                  icon: const Icon(Icons.menu, color: Colors.deepPurple),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 10),
-          Container(
-            decoration: BoxDecoration(
-              color: Colors.deepPurple,
-              borderRadius: const BorderRadius.all(Radius.circular(30)),
-              boxShadow: [
-                BoxShadow(
-                  color: Color.fromRGBO(0, 0, 0, 0.1),
-                  offset: const Offset(0, 5),
-                ),
-              ],
-            ),
-            child: Padding(
-              padding: const EdgeInsets.all(15.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        'Today',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.grey,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        '$doneTasksCount/$totalTasksCount tasks',
-                        style: const TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ],
-                  ),
-                  Stack(
-                    alignment: Alignment.center,
-                    children: [
-                      SizedBox(
-                        width: 85,
-                        height: 85,
-                        child: TweenAnimationBuilder<double>(
-                          duration: const Duration(milliseconds: 800),
-                          tween: Tween<double>(begin: 0, end: taskCompletionPercentage),
-                          builder: (context, value, child) {
-                            return CircularProgressIndicator(
-                              value: value,
-                              strokeWidth: 6,
-                              valueColor: const AlwaysStoppedAnimation(Colors.white),
-                              backgroundColor: Color.fromRGBO(255, 255, 255, 0.2),
-                            );
-                          },
-                        ),
-                      ),
-                      const CircleAvatar(
-                        radius: 35,
-                        backgroundImage: AssetImage('assets/images/1.jpg'),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
     );
   }
 }
