@@ -26,4 +26,26 @@ class TimeFormatUtil {
     }
     throw FormatException('Invalid time format: $timeStr');
   }
+
+  /// Flexibly formats a time string in either 'hh:mm a' or 'HH:mm' format to a readable string.
+  static String? formatFlexibleTime(String raw, [BuildContext? context]) {
+    raw = raw.trim();
+    if (raw.isEmpty) return null;
+    // Try 'hh:mm a' format first
+    try {
+      final tod = parseTime(raw);
+      return formatTime(tod, context);
+    } catch (_) {}
+    // Fallback: HH:mm 24h
+    final match = RegExp(r'^(\d{1,2}):(\d{2})$').firstMatch(raw);
+    if (match != null) {
+      final hour = int.tryParse(match.group(1)!) ?? 0;
+      final minute = int.tryParse(match.group(2)!) ?? 0;
+      if (hour >= 0 && hour <= 23 && minute >= 0 && minute <= 59) {
+        final tod = TimeOfDay(hour: hour, minute: minute);
+        return formatTime(tod, context);
+      }
+    }
+    return null;
+  }
 }

@@ -19,14 +19,9 @@ class BlocDisposer implements DisposableBloc {
 class AppBlocs {
 
   static List<DisposableBloc> get allDisposableBlocs {
-    return mainBlocs + taskBlocs + categoryBlocs + planBlocs;
+    return  taskBlocs + categoryBlocs + planBlocs;
   }
 
-  static List<DisposableBloc> get mainBlocs {
-    return [
-      BlocDisposer(sl<MainTaskBloc>()),
-    ];
-  }
 
   static List<DisposableBloc> get taskBlocs {
     return [

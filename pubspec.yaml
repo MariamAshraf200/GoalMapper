@@ -45,12 +45,8 @@ dependencies:
   dartz: ^0.10.1
   path_provider: ^2.0.11
   uuid: ^4.5.1
-  speech_to_text: ^7.0.0
   flutter_speed_dial: ^7.0.0
-  fluttertoast: ^8.2.10
   image_picker: ^0.8.5+3
-  shared_preferences: ^2.1.0
-  package_info_plus: ^8.3.1
 
 
 dev_dependencies:
