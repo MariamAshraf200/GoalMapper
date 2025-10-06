@@ -54,7 +54,7 @@ class _HomeScreenState extends State<HomeScreen> with RouteAware {
               child: Column(
                 children: [
                   // 🔹 New Header
-                  HomeHeader(username: "Mariam"),
+                  HomeHeader(),
 
                   // 🔹 Stats card
                   TaskStatsCard(
