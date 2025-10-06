@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'feature/Home/presentation/bloc/main_bloc.dart';
 import 'injection_imports.dart';
 import 'injection_container.dart';
 
@@ -16,9 +15,6 @@ class GlobalBloc extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        BlocProvider<MainTaskBloc>(
-          create: (context) => sl<MainTaskBloc>(),
-        ),
         BlocProvider<TaskBloc>(
           create: (context) => sl<TaskBloc>(),
         ),

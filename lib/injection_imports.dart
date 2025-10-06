@@ -67,8 +67,6 @@ export 'feature/taskHome/presintation/Widget/item/task_items.dart';
 export 'feature/taskHome/presintation/screen/add_task_screen.dart';
 
 // Main screen
-export 'feature/Home/domain/task_usecase/filter_usecase.dart';
-export 'feature/Home/presentation/bloc/main_bloc.dart';
 export 'feature/Home/presentation/screen/homeScreen.dart';
 
 // Core

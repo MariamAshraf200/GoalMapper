@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/util/widgets/custom_FAB.dart';
 import '../../../../core/util/date_format_util.dart';
-import '../bloc/main_bloc.dart';
-import '../bloc/main_event.dart';
-import '../bloc/main_state.dart';
+import '../../../taskHome/presintation/bloc/taskBloc/bloc.dart';
+import '../../../taskHome/presintation/bloc/taskBloc/event.dart';
+import '../../../taskHome/presintation/bloc/taskBloc/state.dart' as taskState;
 import '../wedgit/home_header.dart';
 import '../wedgit/task_status_card.dart';
 import 'home_screen_form.dart';
@@ -20,22 +20,22 @@ class _HomeScreenState extends State<HomeScreen> with RouteAware {
   @override
   void initState() {
     super.initState();
-    context.read<MainTaskBloc>().add(GetMainTasksEvent());
+    context.read<TaskBloc>().add(GetAllTasksEvent());
   }
 
   @override
   void didPopNext() {
-    context.read<MainTaskBloc>().add(GetMainTasksEvent());
+    context.read<TaskBloc>().add(GetAllTasksEvent());
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: BlocBuilder<MainTaskBloc, MainState>(
+      body: BlocBuilder<TaskBloc, taskState.TaskState>(
         builder: (context, state) {
-          if (state is MainTaskLoading) {
+          if (state is taskState.TaskLoading) {
             return const Center(child: CircularProgressIndicator());
-          } else if (state is MainTaskLoaded) {
+          } else if (state is taskState.TaskLoaded) {
             final tasks = state.tasks;
 
             final today = DateFormatUtil.getCurrentDateFormatted();
@@ -76,7 +76,7 @@ class _HomeScreenState extends State<HomeScreen> with RouteAware {
                 ],
               ),
             );
-          } else if (state is MainTaskError) {
+          } else if (state is taskState.TaskError) {
             return Center(child: Text(state.message));
           }
           return const Center(child: Text("No tasks found ."));

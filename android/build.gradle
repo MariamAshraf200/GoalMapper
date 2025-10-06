@@ -1,9 +1,10 @@
-allprojects {
-    repositories {
-        google()
-        mavenCentral()
-    }
+repositories {
+    maven { url 'https://maven.aliyun.com/repository/google' }
+    maven { url 'https://maven.aliyun.com/repository/gradle-plugin' }
+    mavenCentral()
+    google()
 }
+
 
 rootProject.buildDir = "../build"
 subprojects {

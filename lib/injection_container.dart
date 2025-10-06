@@ -1,7 +1,5 @@
 import 'package:flutter/foundation.dart';
 import 'package:get_it/get_it.dart';
-import 'feature/Home/domain/task_usecase/filter_usecase.dart';
-import 'feature/Home/presentation/bloc/main_bloc.dart';
 import 'feature/PlanHome/domain/repo_interface/repo_plan_interface.dart';
 import 'feature/PlanHome/domain/usecase/delet_task_plan.dart';
 import 'feature/PlanHome/domain/usecase/getAll_tasks_plan_usecase.dart';
@@ -73,8 +71,6 @@ Future<void> init() async {
     sl.registerLazySingleton(() => GetTasksByDateUseCase(sl<TaskRepository>()));
     sl.registerLazySingleton(() => FilterTasksUseCase(sl<TaskRepository>()));
     sl.registerLazySingleton(
-        () => FilterMainTasksUseCase(sl<TaskRepository>()));
-    sl.registerLazySingleton(
         () => GetTasksByPlanIdUseCase(sl<TaskRepository>()));
 
     ///////////////////////// Use Cases - Categories /////////////////////////////
@@ -128,11 +124,6 @@ Future<void> init() async {
           addCategoryUseCase: sl<AddCategoryUseCase>(),
           getAllCategoriesUseCase: sl<GetAllCategoriesUseCase>(),
           deleteCategoryUseCase: sl<DeleteCategoryUseCase>(),
-        ));
-
-    // Register MainTaskBloc
-    sl.registerFactory(() => MainTaskBloc(
-          filterTasksUseCase: sl<FilterMainTasksUseCase>(),
         ));
 
     // Register PlanBloc
