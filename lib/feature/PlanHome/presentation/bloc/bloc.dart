@@ -49,6 +49,7 @@ class PlanBloc extends Bloc<PlanEvent, PlanState> {
     on<DeleteTaskFromPlanEvent>(_onDeleteTaskFromPlan);
   }
 
+
   // ---------------- Plans Handlers ----------------
   Future<void> _onGetAllPlans(GetAllPlansEvent event, Emitter<PlanState> emit) async {
     emit(PlanLoading());

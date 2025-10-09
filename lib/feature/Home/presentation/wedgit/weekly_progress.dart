@@ -1,0 +1,190 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
+import 'package:fl_chart/fl_chart.dart';
+import '../bloc/home_bloc.dart';
+import '../bloc/home_state.dart';
+
+class WeeklyProgressWidget extends StatelessWidget {
+  const WeeklyProgressWidget({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<HomeBloc, HomeState>(
+      builder: (context, state) {
+        if (state is! HomeLoaded) return const SizedBox.shrink();
+        final days = state.days;
+        final dailyProgress = state.dailyProgress;
+        final avgProgress = state.avgProgress;
+        final bestDayName = state.bestDayName;
+        final todayIndex = state.todayIndex;
+
+        return Container(
+          padding: const EdgeInsets.all(16),
+          margin: const EdgeInsets.only(top: 10, bottom: 8),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Colors.white, Colors.blue.shade50],
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+            ),
+            borderRadius: BorderRadius.circular(18),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withAlpha(13),
+                blurRadius: 8,
+                offset: const Offset(0, 3),
+              ),
+            ],
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                "📊 Weekly Progress Analysis",
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 18),
+
+              AspectRatio(
+                aspectRatio: 1.7,
+                child: LineChart(
+                  LineChartData(
+                    minY: 0,
+                    maxY: 1,
+                    gridData: FlGridData(
+                      show: true,
+                      drawVerticalLine: true,
+                      getDrawingHorizontalLine: (value) => FlLine(
+                        color: Colors.grey.withAlpha(25),
+                        strokeWidth: 1,
+                      ),
+                      getDrawingVerticalLine: (value) => FlLine(
+                        color: Colors.grey.withAlpha(20),
+                        strokeWidth: 1,
+                      ),
+                    ),
+                    borderData: FlBorderData(show: false),
+                    titlesData: FlTitlesData(
+                      leftTitles: AxisTitles(
+                        sideTitles: SideTitles(
+                          showTitles: true,
+                          reservedSize: 35,
+                          getTitlesWidget: (value, meta) => Text(
+                            "${(value * 100).toInt()}%",
+                            style:
+                            const TextStyle(fontSize: 10, color: Colors.grey),
+                          ),
+                          interval: 0.25,
+                        ),
+                      ),
+                      bottomTitles: AxisTitles(
+                        sideTitles: SideTitles(
+                          showTitles: true,
+                          getTitlesWidget: (value, meta) {
+                            final index = value.toInt();
+                            if (index < 0 || index >= days.length) {
+                              return const SizedBox.shrink();
+                            }
+                            final day = days[index];
+                            final label = DateFormat('E').format(day);
+                            final isToday = index == todayIndex;
+                            return Padding(
+                              padding: const EdgeInsets.only(top: 4.0),
+                              child: Text(
+                                label,
+                                style: TextStyle(
+                                  fontSize: 11,
+                                  fontWeight: isToday
+                                      ? FontWeight.bold
+                                      : FontWeight.normal,
+                                  color: isToday
+                                      ? Colors.blueAccent
+                                      : Colors.black87,
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                      rightTitles: const AxisTitles(
+                          sideTitles: SideTitles(showTitles: false)),
+                      topTitles: const AxisTitles(
+                          sideTitles: SideTitles(showTitles: false)),
+                    ),
+                    lineBarsData: [
+                      LineChartBarData(
+                        spots: List.generate(days.length, (i) {
+                          final progress = dailyProgress[days[i]] ?? 0.0;
+                          return FlSpot(i.toDouble(), progress);
+                        }),
+                        isCurved: true,
+                        gradient: const LinearGradient(
+                          colors: [Colors.greenAccent, Colors.blueAccent],
+                          begin: Alignment.centerLeft,
+                          end: Alignment.centerRight,
+                        ),
+                        barWidth: 4,
+                        belowBarData: BarAreaData(
+                          show: true,
+                          gradient: LinearGradient(
+                            colors: [
+                              Colors.blueAccent.withAlpha(60),
+                              Colors.greenAccent.withAlpha(20),
+                            ],
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                          ),
+                        ),
+                        dotData: FlDotData(
+                          show: true,
+                          getDotPainter: (spot, _, __, ___) => FlDotCirclePainter(
+                            radius: 4,
+                            color: spot.y >= 0.7
+                                ? Colors.green
+                                : spot.y >= 0.4
+                                ? Colors.orange
+                                : Colors.redAccent,
+                            strokeWidth: 1.5,
+                            strokeColor: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ],
+                    extraLinesData: ExtraLinesData(verticalLines: [
+                      if (todayIndex >= 0)
+                        VerticalLine(
+                          x: todayIndex.toDouble(),
+                          color: Colors.blueAccent.withAlpha(128),
+                          strokeWidth: 1.5,
+                          dashArray: [4, 4],
+                        ),
+                    ]),
+                  ),
+                ),
+              ),
+
+              const SizedBox(height: 16),
+
+              Text(
+                avgProgress > 0.7
+                    ? "🔥 Excellent consistency! Best day: $bestDayName"
+                    : avgProgress > 0.4
+                    ? "💪 Good effort! Keep it up."
+                    : "🚀 Let's get back on track next week!",
+                style: const TextStyle(
+                  fontSize: 13,
+                  color: Colors.black87,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+}

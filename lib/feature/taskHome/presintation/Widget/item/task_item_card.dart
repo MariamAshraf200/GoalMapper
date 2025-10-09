@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import '../../../../../injection_imports.dart';
+import '../../../../../core/extensions/app_strings.dart';
 
 
 
@@ -13,15 +14,11 @@ class TaskItemCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Auto-mark as missed
-    if (task.shouldBeMissed(DateTime.now())) {
+    if (task.shouldBeMissed(DateTime.now()) && !task.isMissed) {
       context.read<TaskBloc>().add(
         UpdateTaskStatusEvent(
           task.id,
           TaskStatus.missed,
-          updatedTime: TimeFormatUtil.formatTime(
-            TimeOfDay.fromDateTime(DateTime.now()),
-          ) ??
-              '',
         ),
       );
     }
@@ -174,9 +171,8 @@ class TaskItemCard extends StatelessWidget {
                           const SizedBox(width: 4),
                           Text(
                             TimeFormatUtil.formatTime(
-                              TimeFormatUtil.parseTime(task.time),
-                            ) ??
-                                '',
+                              TimeFormatUtil.parseFlexibleTime(task.time),
+                            ) ?? '',
                             style: const TextStyle(
                                 fontSize: 13, color: Colors.grey),
                           ),
@@ -283,10 +279,6 @@ class TaskItemCard extends StatelessWidget {
     context.read<TaskBloc>().add(UpdateTaskStatusEvent(
       task.id,
       newStatus,
-      updatedTime: TimeFormatUtil.formatTime(
-        TimeOfDay.fromDateTime(DateTime.now()),
-      ) ??
-          '',
     ));
 
     ScaffoldMessenger.of(context).showSnackBar(
@@ -305,7 +297,7 @@ class TaskItemCard extends StatelessWidget {
       builder: (_) => const AlertDialog(
         title: Text('Task Not Editable'),
         content: Text(
-          'This task is already completed or missed and cannot be changed.',
+          AppStrings.taskNotEditable,
         ),
       ),
     );
@@ -316,7 +308,7 @@ class TaskItemCard extends StatelessWidget {
       context: context,
       builder: (_) => CustomDialog(
         title: 'Update Task',
-        description: 'Do you want to update this task?',
+        description: AppStrings.updateTaskDescription,
         icon: Icons.update,
         operation: 'Update',
         color: Colors.blue,
@@ -337,7 +329,7 @@ class TaskItemCard extends StatelessWidget {
       context: context,
       builder: (_) => CustomDialog(
         title: 'Delete Task',
-        description: 'Are you sure you want to delete this task?',
+        description: AppStrings.deleteTaskDescription,
         icon: Icons.delete_forever,
         operation: 'Delete',
         color: Colors.red,

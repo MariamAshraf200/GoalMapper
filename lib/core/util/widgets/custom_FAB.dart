@@ -11,7 +11,7 @@ class CustomFAB extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SpeedDial(
-      animatedIcon: AnimatedIcons.menu_close,
+      animatedIcon: AnimatedIcons.add_event,
       animatedIconTheme: const IconThemeData(size: 28.0),
       backgroundColor: Colors.deepPurple,
       foregroundColor: Colors.white,

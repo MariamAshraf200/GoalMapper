@@ -18,6 +18,9 @@ class GlobalBloc extends StatelessWidget {
         BlocProvider<TaskBloc>(
           create: (context) => sl<TaskBloc>(),
         ),
+        BlocProvider<HomeBloc>(
+          create: (context) => HomeBloc(taskBloc: context.read<TaskBloc>())..add(HomeStarted()),
+        ),
         BlocProvider<CategoryBloc>(
           create: (context) => sl<CategoryBloc>()..add(LoadCategoriesEvent()),
         ),

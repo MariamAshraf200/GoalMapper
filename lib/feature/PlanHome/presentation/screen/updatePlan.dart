@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../domain/entities/plan_entity.dart';
 import '../widget/plan_form.dart';
-import '../bloc/bloc.dart';
-import '../bloc/event.dart';
+
 
 class UpdatePlanScreen extends StatelessWidget {
   const UpdatePlanScreen({super.key, required this.plan});
@@ -43,15 +41,6 @@ class UpdatePlanScreen extends StatelessWidget {
       body: PlanForm(
         isUpdate: true,
         initialPlan: plan,
-        onSubmit: (updatedPlan) {
-          context.read<PlanBloc>().add(UpdatePlanEvent(updatedPlan));
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Plan updated successfully!')),
-          );
-
-          // ✅ مش محتاج تبعت الـ plan
-          Navigator.of(context).pop();
-        },
       ),
     );
   }

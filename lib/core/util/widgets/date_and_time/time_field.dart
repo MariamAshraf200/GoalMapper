@@ -126,6 +126,9 @@ class TimeField extends StatefulWidget {
   final TimeOfDay? initialTime;
   final bool isRequired;
   final bool canBeNull;
+  final TimeOfDay? startTime;
+  // New callback: notify parent about validation errors (null = no error)
+  final void Function(String?)? onValidationChanged;
 
   const TimeField({
     super.key,
@@ -138,7 +141,8 @@ class TimeField extends StatefulWidget {
     this.validator,
     this.isRequired = false,
     this.canBeNull = false,
-
+    this.startTime,
+    this.onValidationChanged,
   });
 
   @override
@@ -152,6 +156,21 @@ class _TimeFieldState extends State<TimeField> {
             ? _formatTime(widget.initialTime!)
             : '',
       );
+
+  void _validateAndSelectTime(TimeOfDay selectedTime) {
+    if (widget.startTime != null &&
+        selectedTime.hour * 60 + selectedTime.minute <
+            widget.startTime!.hour * 60 + widget.startTime!.minute) {
+      // Don't use SnackBar here. Notify parent about the validation error so it
+      // can show the message inline below the row.
+      widget.onValidationChanged?.call("End time cannot be before start time");
+    } else {
+      // Clear any previous validation error
+      widget.onValidationChanged?.call(null);
+      _controller.text = _formatTime(selectedTime); // Update the text field
+      widget.onTimeSelected(selectedTime);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -184,17 +203,25 @@ class _TimeFieldState extends State<TimeField> {
         const SizedBox(height: 10),
         GestureDetector(
           onTap: () async {
-            TimeOfDay? pickedTime = await showTimePicker(
+            final selectedTime = await showTimePicker(
               context: context,
               initialTime: widget.initialTime ?? TimeOfDay.now(),
             );
-            if (pickedTime != null) {
-              setState(() {
-                _controller.text = _formatTime(pickedTime);
-                widget.onTimeSelected(pickedTime); // Pass the selected time
-              });
+
+            if (selectedTime != null) {
+              // ✅ لو فيه startTime معناها إن ده حقل End Time
+              if (widget.startTime != null) {
+                _validateAndSelectTime(selectedTime);
+              } else {
+                // ✅ ده الـ Start Time، فبنحدثه مباشرة بدون مقارنة
+                // Also clear any validation error on start selection
+                widget.onValidationChanged?.call(null);
+                _controller.text = _formatTime(selectedTime);
+                widget.onTimeSelected(selectedTime);
+              }
             }
           },
+
           child: AbsorbPointer(
             child: TextFormField(
               controller: _controller,
@@ -214,7 +241,7 @@ class _TimeFieldState extends State<TimeField> {
                   ),
                 ),
                 suffixIcon:
-                widget.suffixIcon ?? const Icon(Icons.access_time),
+                    widget.suffixIcon ?? const Icon(Icons.access_time),
               ),
               readOnly: true,
             ),

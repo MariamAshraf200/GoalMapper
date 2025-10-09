@@ -2,27 +2,20 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:uuid/uuid.dart';
-import '../../../../core/constants/app_spaces.dart';
-import '../../../../core/util/widgets/custom_text_field.dart';
-import '../../../../core/util/widgets/date_and_time/date_filed.dart';
-import '../../../../core/util/widgets/loading_elevate_icon_button.dart';
-import '../../../taskHome/presintation/Widget/category_selector.dart';
-import '../../../taskHome/presintation/Widget/priority_selector.dart';
-import '../../../taskHome/domain/entity/task_enum.dart';
-import '../../domain/entities/plan_entity.dart';
+import '../../../../injection_imports.dart';
+import 'package:mapperapp/core/util/date_sort_util.dart';
 
 
 class PlanForm extends StatefulWidget {
   final PlanDetails? initialPlan;
   final bool isUpdate;
-  final void Function(PlanDetails plan) onSubmit;
 
   const PlanForm({
     super.key,
     this.initialPlan,
     required this.isUpdate,
-    required this.onSubmit,
   });
 
   @override
@@ -49,10 +42,9 @@ class _PlanFormState extends State<PlanForm> with AutomaticKeepAliveClientMixin 
     if (widget.isUpdate && widget.initialPlan != null) {
       _planTitleController = TextEditingController(text: widget.initialPlan!.title);
       _planDescriptionController = TextEditingController(text: widget.initialPlan!.description);
-      _planStartDate = DateFormat('dd/MM/yyyy').parse(widget.initialPlan!.startDate);
-      _planEndDate = widget.initialPlan!.endDate != 'N/A'
-          ? DateFormat('dd/MM/yyyy').parse(widget.initialPlan!.endDate)
-          : null;
+      // Use DateSortUtil to flexibly parse different date formats and handle 'N/A'
+      _planStartDate = DateSortUtil.parseFlexibleDate(widget.initialPlan!.startDate);
+      _planEndDate = DateSortUtil.parseFlexibleDate(widget.initialPlan!.endDate);
       _selectedCategory = widget.initialPlan!.category;
       _selectedPriority = TaskPriorityExtension.fromString(widget.initialPlan!.priority);
     } else {
@@ -118,6 +110,13 @@ class _PlanFormState extends State<PlanForm> with AutomaticKeepAliveClientMixin 
                 setState(() {
                   _planStartDate = selectedDate;
                 });
+                if (_planEndDate != null && _planStartDate != null && _planEndDate!.isBefore(_planStartDate!)) {
+                  setState(() {
+                    _planEndDate = null;
+                  });
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                      content: Text('End date cleared because it was before the newly selected start date')));
+                }
               },
               isRequired: true,
               outSideTitle: "Plan Start Date",
@@ -137,9 +136,19 @@ class _PlanFormState extends State<PlanForm> with AutomaticKeepAliveClientMixin 
               labelText: 'dd/mm/yyyy',
               suffixIcon: const Icon(Icons.date_range),
               initialDate: _planEndDate,
+              firstDate: _planStartDate,
+              validator: (value) {
+                if (value == null || value.trim().isEmpty) return null;
+                if (_planStartDate == null) return null;
+                final parsed = DateSortUtil.parseFlexibleDate(value);
+                if (parsed == null) return 'Invalid end date';
+                if (parsed.isBefore(_planStartDate!)) return 'End date cannot be before start date';
+                return null;
+              },
             ),
-            const SizedBox(height: 16.0),
-            CategorySelector(
+            // Use core logic wrapper which handles category loading, add and delete via CategoryBloc
+            CategorySelectorWithLogic(
+              selectedCategory: _selectedCategory,
               onCategorySelected: (selectedCategory) {
                 setState(() {
                   _selectedCategory = selectedCategory;
@@ -147,12 +156,11 @@ class _PlanFormState extends State<PlanForm> with AutomaticKeepAliveClientMixin 
               },
             ),
             const SizedBox(height: 16.0),
-            PrioritySelector(
+            // Use core logic wrapper which maps TaskPriority enum and provides the UI
+            PrioritySelectorWithLogic(
               selectedPriority: _selectedPriority,
-              onPrioritySelected: (priority) {
-                setState(() {
-                  _selectedPriority = priority;
-                });
+              onPrioritySelected: (p) {
+                setState(() => _selectedPriority = p);
               },
             ),
             // Image Picker for Plan Image
@@ -204,20 +212,26 @@ class _PlanFormState extends State<PlanForm> with AutomaticKeepAliveClientMixin 
     final formattedEndDate = _planEndDate != null
         ? DateFormat('dd/MM/yyyy').format(_planEndDate!)
         : 'N/A';
-    PlanDetails plan;
+    // Dispatch form-level events; PlanBloc will build/merge PlanDetails and call usecases
+    final imagePath = _pickedImage?.path;
+
     if (widget.isUpdate && widget.initialPlan != null) {
-      plan = widget.initialPlan!.copyWith(
-        status: 'Not Completed',
+      final updatedPlan = widget.initialPlan!.copyWith(
         title: _planTitleController.text.trim(),
         description: _planDescriptionController.text.trim(),
         startDate: formattedStartDate,
         endDate: formattedEndDate,
         priority: _selectedPriority.toTaskPriorityString(),
         category: _selectedCategory ?? 'General',
-        image: _pickedImage?.path ?? widget.initialPlan!.image,
+        image: imagePath ?? widget.initialPlan!.image,
       );
+
+      context.read<PlanBloc>().add(UpdatePlanEvent(updatedPlan));
+
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Plan updated successfully!')));
     } else {
-      plan = PlanDetails(
+      // Build a new PlanDetails and dispatch AddPlanEvent (mirror update behavior)
+      final newPlan = PlanDetails(
         id: const Uuid().v4(),
         title: _planTitleController.text.trim(),
         description: _planDescriptionController.text.trim(),
@@ -226,10 +240,15 @@ class _PlanFormState extends State<PlanForm> with AutomaticKeepAliveClientMixin 
         priority: _selectedPriority.toTaskPriorityString(),
         category: _selectedCategory ?? 'General',
         status: 'Not Completed',
-        image: _pickedImage?.path,
+        image: imagePath,
       );
+
+      context.read<PlanBloc>().add(AddPlanEvent(newPlan));
+
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Plan added successfully!')));
     }
-    widget.onSubmit(plan);
+
+    // Close the form after dispatch
+    Navigator.of(context).pop();
   }
 }
-

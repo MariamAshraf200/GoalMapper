@@ -151,6 +151,10 @@ class TaskBloc extends Bloc<TaskEvent, taskState.TaskState> {
       Emitter<taskState.TaskState> emit,
       ) async {
     await updateTaskUseCase(event.task);
+    await updateTaskStatusUseCase(
+      event.task.id,
+      TaskStatus.toDo.toTaskStatusString(),
+    );
     _refreshWithFilters();
   }
 
@@ -161,7 +165,6 @@ class TaskBloc extends Bloc<TaskEvent, taskState.TaskState> {
     await updateTaskStatusUseCase(
       event.taskId,
       event.newStatus?.toTaskStatusString() ?? '',
-      event.updatedTime,
     );
     _refreshWithFilters();
   }

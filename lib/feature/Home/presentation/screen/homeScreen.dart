@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../../core/util/widgets/custom_FAB.dart';
 import '../../../../core/util/date_format_util.dart';
+import '../../../../core/util/widgets/custom_FAB.dart';
 import '../../../taskHome/presintation/bloc/taskBloc/bloc.dart';
 import '../../../taskHome/presintation/bloc/taskBloc/event.dart';
 import '../../../taskHome/presintation/bloc/taskBloc/state.dart' as taskState;
 import '../wedgit/home_header.dart';
 import '../wedgit/task_status_card.dart';
+import '../wedgit/weekly_progress.dart';
 import 'home_screen_form.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -20,6 +21,7 @@ class _HomeScreenState extends State<HomeScreen> with RouteAware {
   @override
   void initState() {
     super.initState();
+    // Ensure tasks are loaded
     context.read<TaskBloc>().add(GetAllTasksEvent());
   }
 
@@ -63,14 +65,16 @@ class _HomeScreenState extends State<HomeScreen> with RouteAware {
                     completionPercentage: taskCompletionPercentage,
                   ),
 
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10),
+                    child: const WeeklyProgressWidget(),
+                  ),
+
                   // 🔹 Today’s tasks
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 15.0),
                     child: HomeScreenForm(
                       tasks: tasksForToday
-                          .where((task) =>
-                      task.status.trim().toLowerCase() == "to do")
-                          .toList(),
                     ),
                   ),
                 ],
