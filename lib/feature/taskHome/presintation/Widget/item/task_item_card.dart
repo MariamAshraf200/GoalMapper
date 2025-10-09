@@ -171,9 +171,8 @@ class TaskItemCard extends StatelessWidget {
                           const SizedBox(width: 4),
                           Text(
                             TimeFormatUtil.formatTime(
-                              TimeFormatUtil.parseTime(task.time),
-                            ) ??
-                                '',
+                              TimeFormatUtil.parseFlexibleTime(task.time),
+                            ) ?? '',
                             style: const TextStyle(
                                 fontSize: 13, color: Colors.grey),
                           ),

@@ -67,6 +67,10 @@ export 'feature/taskHome/presintation/screen/add_task_screen.dart';
 
 // Main screen
 export 'feature/Home/presentation/screen/homeScreen.dart';
+// Home feature blocs
+export 'feature/Home/presentation/bloc/home_bloc.dart';
+export 'feature/Home/presentation/bloc/home_event.dart';
+export 'feature/Home/presentation/bloc/home_state.dart';
 
 // Core
 export 'core/hiveServices.dart';
