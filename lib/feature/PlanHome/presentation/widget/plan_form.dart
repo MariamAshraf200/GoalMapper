@@ -5,6 +5,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:uuid/uuid.dart';
 import '../../../../injection_imports.dart';
+import 'package:mapperapp/core/util/date_sort_util.dart';
 
 
 class PlanForm extends StatefulWidget {
@@ -41,10 +42,9 @@ class _PlanFormState extends State<PlanForm> with AutomaticKeepAliveClientMixin 
     if (widget.isUpdate && widget.initialPlan != null) {
       _planTitleController = TextEditingController(text: widget.initialPlan!.title);
       _planDescriptionController = TextEditingController(text: widget.initialPlan!.description);
-      _planStartDate = DateFormat('dd/MM/yyyy').parse(widget.initialPlan!.startDate);
-      _planEndDate = widget.initialPlan!.endDate != 'N/A'
-          ? DateFormat('dd/MM/yyyy').parse(widget.initialPlan!.endDate)
-          : null;
+      // Use DateSortUtil to flexibly parse different date formats and handle 'N/A'
+      _planStartDate = DateSortUtil.parseFlexibleDate(widget.initialPlan!.startDate);
+      _planEndDate = DateSortUtil.parseFlexibleDate(widget.initialPlan!.endDate);
       _selectedCategory = widget.initialPlan!.category;
       _selectedPriority = TaskPriorityExtension.fromString(widget.initialPlan!.priority);
     } else {
@@ -110,6 +110,13 @@ class _PlanFormState extends State<PlanForm> with AutomaticKeepAliveClientMixin 
                 setState(() {
                   _planStartDate = selectedDate;
                 });
+                if (_planEndDate != null && _planStartDate != null && _planEndDate!.isBefore(_planStartDate!)) {
+                  setState(() {
+                    _planEndDate = null;
+                  });
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                      content: Text('End date cleared because it was before the newly selected start date')));
+                }
               },
               isRequired: true,
               outSideTitle: "Plan Start Date",
@@ -129,6 +136,15 @@ class _PlanFormState extends State<PlanForm> with AutomaticKeepAliveClientMixin 
               labelText: 'dd/mm/yyyy',
               suffixIcon: const Icon(Icons.date_range),
               initialDate: _planEndDate,
+              firstDate: _planStartDate,
+              validator: (value) {
+                if (value == null || value.trim().isEmpty) return null;
+                if (_planStartDate == null) return null;
+                final parsed = DateSortUtil.parseFlexibleDate(value);
+                if (parsed == null) return 'Invalid end date';
+                if (parsed.isBefore(_planStartDate!)) return 'End date cannot be before start date';
+                return null;
+              },
             ),
             // Use core logic wrapper which handles category loading, add and delete via CategoryBloc
             CategorySelectorWithLogic(
