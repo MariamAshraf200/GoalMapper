@@ -62,7 +62,6 @@ export 'feature/taskHome/presintation/Widget/item/task_time_column.dart';
 export 'feature/taskHome/presintation/screen/upadte_task_form.dart';
 export 'core/util/widgets/custom_card.dart';
 export 'core/util/widgets/custom_dilog.dart';
-export 'feature/taskHome/presintation/Widget/data_format.dart';
 export 'feature/taskHome/presintation/Widget/item/task_items.dart';
 export 'feature/taskHome/presintation/screen/add_task_screen.dart';
 
@@ -80,6 +79,7 @@ export 'core/constants/app_colors.dart';
 export 'core/constants/app_assets.dart';
 export 'core/constants/app_spaces.dart';
 export 'core/constants/date_and_time_form.dart';
+export 'core/extensions/error_messages.dart';
 
 // Core - utilities/widgets
 export 'core/util/widgets/custom_FAB.dart';
@@ -88,8 +88,11 @@ export 'core/util/widgets/custom_text_field.dart';
 export 'core/util/widgets/date_and_time/date_filed.dart';
 export 'core/util/widgets/date_and_time/time_field.dart';
 export 'core/util/widgets/loading_elevate_icon_button.dart';
-export 'feature/taskHome/presintation/Widget/category_selector.dart';
-export 'feature/taskHome/presintation/Widget/priority_selector.dart';
+export 'core/widgets/category_selector.dart';
+export 'core/widgets/priority_selector.dart';
+export 'core/widgets/data_format.dart';
+export 'core/widgets/category_selector_with_logic.dart';
+export 'core/widgets/priority_selector_with_logic.dart';
 export 'core/util/date_format_util.dart';
 export 'core/util/time_format_util.dart';
 export 'feature/taskHome/data/model/taskModel.dart';

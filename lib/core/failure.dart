@@ -12,5 +12,5 @@ class NetworkFailure extends Failure {
 }
 
 class DatabaseFailure extends Failure {
-  const DatabaseFailure({required String message}) : super(message: message);
+  const DatabaseFailure({required super.message});
 }

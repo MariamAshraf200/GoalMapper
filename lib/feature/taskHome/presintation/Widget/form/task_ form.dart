@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../../../core/util/widgets/date_and_time/time_range_field.dart';
 import '../../../../../injection_imports.dart';
 
 enum TaskFormMode { add, update }
@@ -7,14 +9,12 @@ class TaskForm extends StatefulWidget {
   final TaskFormMode mode;
   final TaskDetails? task;
   final String? planId;
-  final void Function(TaskDetails task) onSubmit;
 
   const TaskForm({
     super.key,
     required this.mode,
     this.task,
     this.planId,
-    required this.onSubmit,
   });
 
   @override
@@ -137,40 +137,28 @@ class _TaskFormState extends State<TaskForm>
     initialDate: _date,
   );
 
-  Widget _buildTimeFields() => Row(
-    children: [
-      Expanded(
-        child: TimeField(
-          labelText: "hh:mm AM/PM",
-          outSideTitle: "Task Start Time",
-          onTimeSelected: (time) => setState(() => _startTime = time),
-          isRequired: true,
-          initialTime: _startTime,
-        ),
-      ),
-      const SizedBox(width: 14),
-      Expanded(
-        child: TimeField(
-          labelText: "hh:mm AM/PM",
-          outSideTitle: "Task End Time",
-          onTimeSelected: (time) => setState(() => _endTime = time),
-          isRequired: false,
-          canBeNull: true,
-          initialTime: _endTime,
-        ),
-      ),
-    ],
+  Widget _buildTimeFields() => TimeRangeField(
+    startTime: _startTime,
+    endTime: _endTime,
+    onStartTimeChanged: (time) => setState(() => _startTime = time),
+    onEndTimeChanged: (time) => setState(() => _endTime = time),
+    canBeNull: true,
   );
 
-  Widget _buildCategorySelector() => CategorySelector(
-    onCategorySelected: (category) =>
-        setState(() => _selectedCategory = category),
+
+  Widget _buildCategorySelector() => BlocBuilder<CategoryBloc, CategoryState>(
+    builder: (context, state) {
+      // Use the core logic widget which handles loading, add and delete through the Bloc
+      return CategorySelectorWithLogic(
+        selectedCategory: _selectedCategory,
+        onCategorySelected: (category) => setState(() => _selectedCategory = category),
+      );
+    },
   );
 
-  Widget _buildPrioritySelector() => PrioritySelector(
+  Widget _buildPrioritySelector() => PrioritySelectorWithLogic(
     selectedPriority: _selectedPriority,
-    onPrioritySelected: (priority) =>
-        setState(() => _selectedPriority = priority),
+    onPrioritySelected: (p) => setState(() => _selectedPriority = p),
   );
 
   Widget _buildNotificationSwitch() => SwitchListTile(
@@ -204,7 +192,14 @@ class _TaskFormState extends State<TaskForm>
       context: context,
     );
 
-    widget.onSubmit(task);
+    if (widget.mode == TaskFormMode.add) {
+      context.read<TaskBloc>().add(AddTaskEvent(task, planId: widget.planId));
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Task added successfully!')));
+    } else {
+      context.read<TaskBloc>().add(UpdateTaskEvent(task));
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Task updated successfully!')));
+    }
+
     Navigator.of(context).pop();
   }
 }

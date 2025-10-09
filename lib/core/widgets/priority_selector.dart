@@ -1,34 +1,34 @@
 import 'package:flutter/material.dart';
 
-import '../../domain/entity/task_enum.dart';
-
+/// A simple, reusable PrioritySelector that lives in `core`.
+///
+/// This widget is UI-only and decoupled from feature-specific enums. Use
+/// a feature-level adapter to map your TaskPriority enum to string labels
+/// if needed.
 class PrioritySelector extends StatelessWidget {
-  final TaskPriority selectedPriority;
-  final void Function(TaskPriority priority) onPrioritySelected;
+  final List<String> priorities;
+  final String selectedPriority;
+  final ValueChanged<String> onPrioritySelected;
 
   const PrioritySelector({
     super.key,
+    required this.priorities,
     required this.selectedPriority,
     required this.onPrioritySelected,
   });
 
   @override
   Widget build(BuildContext context) {
-    // Use the enum values for priorities
-    final List<TaskPriority> priorities = [
-      TaskPriority.low,
-      TaskPriority.medium,
-      TaskPriority.high
-    ];
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-         Text(
+        Text(
           'Priority',
-          style: TextStyle(fontWeight: FontWeight.bold,
-              color: Theme.of(context).colorScheme.primary,
-              fontSize: 16),
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            color: Theme.of(context).colorScheme.primary,
+            fontSize: 16,
+          ),
         ),
         const SizedBox(height: 8),
         Row(
@@ -37,8 +37,8 @@ class PrioritySelector extends StatelessWidget {
             final bool isSelected = priority == selectedPriority;
             return ChoiceChip(
               label: Text(
-                priority.toTaskPriorityString().toLowerCase().capitalize(),
-                style: TextStyle(
+                priority.capitalize(),
+                style: const TextStyle(
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -55,9 +55,10 @@ class PrioritySelector extends StatelessWidget {
   }
 }
 
-// Helper extension to capitalize the first letter of a string
-extension StringExtension on String {
+extension StringCapitalize on String {
   String capitalize() {
-    return "${this[0].toUpperCase()}${this.substring(1)}";
+    if (isEmpty) return this;
+    return '${this[0].toUpperCase()}${substring(1)}';
   }
 }
+

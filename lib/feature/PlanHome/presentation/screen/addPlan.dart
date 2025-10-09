@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
 import '../widget/plan_form.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import '../bloc/bloc.dart';
-import '../bloc/event.dart';
 
 class AddPlanScreen extends StatelessWidget {
   const AddPlanScreen({super.key});
@@ -38,18 +35,8 @@ class AddPlanScreen extends StatelessWidget {
           ],
         ),
       ),
-      body: PlanForm(
+      body: const PlanForm(
         isUpdate: false,
-        onSubmit: (plan) {
-          context.read<PlanBloc>().add(AddPlanEvent(plan));
-
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Plan added successfully!')),
-          );
-
-          // ✅ مش محتاج تبعت true
-          Navigator.of(context).pop();
-        },
       ),
     );
   }

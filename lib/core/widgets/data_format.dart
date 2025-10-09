@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import '../../../../core/constants/app_colors.dart';
-import '../../../../core/customColor.dart';
+import '../constants/app_colors.dart';
+import '../customColor.dart';
 
+/// A reusable horizontal date picker that shows a range of days and
+/// allows selecting one. This is a core, UI-only widget and does not
+/// depend on any feature-specific models or blocs.
 class DataFormat extends StatefulWidget {
-  final String selectedDate;
-  final Function(DateTime) onDateSelected;
+  final String selectedDate; // expected in 'dd/MM/yyyy' format
+  final ValueChanged<DateTime> onDateSelected;
 
   const DataFormat({
     super.key,
@@ -21,16 +24,18 @@ class _DataFormatState extends State<DataFormat> {
   late DateTime currentDate;
   late List<DateTime> weekDays;
   late ScrollController _scrollController;
-  CustomColor color = CustomColor();
+  final CustomColor color = CustomColor();
 
   @override
   void initState() {
     super.initState();
     currentDate = DateTime.now();
+    // Build a simple forward range of 30 days starting from today
     weekDays = List.generate(
       30,
-          (index) => currentDate.add(Duration(days: index - currentDate.weekday + 1)),
+      (index) => DateTime(currentDate.year, currentDate.month, currentDate.day).add(Duration(days: index),),
     );
+
     _scrollController = ScrollController();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -39,7 +44,6 @@ class _DataFormatState extends State<DataFormat> {
   }
 
   @override
-
   void didUpdateWidget(covariant DataFormat oldWidget) {
     super.didUpdateWidget(oldWidget);
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -48,15 +52,14 @@ class _DataFormatState extends State<DataFormat> {
   }
 
   void _centerSelectedDate() {
-    // Check if the ScrollController is attached to a ScrollView
     if (!_scrollController.hasClients) return;
 
-    int selectedIndex = weekDays.indexWhere((date) =>
-    widget.selectedDate == DateFormat('dd/MM/yyyy').format(date));
+    final formattedList = weekDays.map((d) => DateFormat('dd/MM/yyyy').format(d)).toList();
+    final selectedIndex = formattedList.indexOf(widget.selectedDate);
     if (selectedIndex != -1) {
-      double screenWidth = MediaQuery.of(context).size.width;
-      double itemWidth = 56.0;
-      double scrollOffset = (selectedIndex * itemWidth) - (screenWidth / 2) + (itemWidth / 2);
+      final screenWidth = MediaQuery.of(context).size.width;
+      const itemWidth = 100.0; // approximate width of each item
+      final scrollOffset = (selectedIndex * itemWidth) - (screenWidth / 2) + (itemWidth / 2);
 
       _scrollController.animateTo(
         scrollOffset.clamp(
@@ -79,25 +82,23 @@ class _DataFormatState extends State<DataFormat> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.start,
           children: weekDays.map((date) {
-            bool isSelected = widget.selectedDate ==
-                DateFormat('dd/MM/yyyy').format(date);
+            final isSelected = widget.selectedDate == DateFormat('dd/MM/yyyy').format(date);
 
             return Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 3.0), // Add spacing between items
+              padding: const EdgeInsets.symmetric(horizontal: 6.0),
               child: GestureDetector(
-                onTap: () {
-                  widget.onDateSelected(date);
-                },
+                onTap: () => widget.onDateSelected(date),
                 child: Container(
-                  padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 20),
+                  padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
                   decoration: BoxDecoration(
                     color: isSelected ? AppColors.secondaryColor : AppColors.secondBackgroundColor,
-                    borderRadius: BorderRadius.circular(16),
+                    borderRadius: BorderRadius.circular(12),
                   ),
-                  child: Row(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
                     children: [
                       Text(
-                        DateFormat('EEE').format(date), // Weekday
+                        DateFormat('EEE').format(date),
                         style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.bold,
@@ -105,15 +106,13 @@ class _DataFormatState extends State<DataFormat> {
                         ),
                       ),
                       const SizedBox(height: 4),
-                      if (isSelected)
-                        Text(
-                          DateFormat(',d MMM').format(date), // Day and Month
-                          style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.bold,
-                            color: isSelected ? Colors.white : Colors.black ,
-                          ),
+                      Text(
+                        DateFormat('d MMM').format(date),
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: isSelected ? Colors.white : Colors.black,
                         ),
+                      ),
                     ],
                   ),
                 ),
@@ -121,8 +120,8 @@ class _DataFormatState extends State<DataFormat> {
             );
           }).toList(),
         ),
-      ));
-
+      ),
+    );
   }
 
   @override
@@ -131,3 +130,4 @@ class _DataFormatState extends State<DataFormat> {
     super.dispose();
   }
 }
+

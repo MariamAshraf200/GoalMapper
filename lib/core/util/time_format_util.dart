@@ -27,6 +27,28 @@ class TimeFormatUtil {
     throw FormatException('Invalid time format: $timeStr');
   }
 
+  /// Parses a time string in either 'hh:mm a' (AM/PM) or 'HH:mm' (24-hour) formats.
+  /// Returns a TimeOfDay on success, or null if parsing fails.
+  static TimeOfDay? parseFlexibleTime(String raw) {
+    final s = raw.trim();
+    if (s.isEmpty) return null;
+    // Try AM/PM parser
+    try {
+      return parseTime(s);
+    } catch (_) {}
+
+    // Fallback: try HH:mm 24h format
+    final match = RegExp(r'^(\d{1,2}):(\d{2})$').firstMatch(s);
+    if (match != null) {
+      final hour = int.tryParse(match.group(1)!) ?? 0;
+      final minute = int.tryParse(match.group(2)!) ?? 0;
+      if (hour >= 0 && hour <= 23 && minute >= 0 && minute <= 59) {
+        return TimeOfDay(hour: hour, minute: minute);
+      }
+    }
+    return null;
+  }
+
   /// Flexibly formats a time string in either 'hh:mm a' or 'HH:mm' format to a readable string.
   static String? formatFlexibleTime(String raw, [BuildContext? context]) {
     raw = raw.trim();
