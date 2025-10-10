@@ -1,3 +1,5 @@
+import 'package:flutter/foundation.dart';
+
 import '../../domain/entities/plan_entity.dart';
 import '../../domain/entities/plan_enums.dart';
 import '../../domain/entities/taskPlan.dart';
@@ -97,7 +99,7 @@ class PlanRepositoryImpl implements PlanRepository {
       final rawTasks = await dataSource.getAllTasks(planId);
       return rawTasks;
     } catch (e) {
-      print("Error while loading tasks: $e");
+      if (kDebugMode) debugPrint("Error while loading tasks: $e");
       throw Exception("Error loading tasks for plan '$planId': $e");
     }
   }

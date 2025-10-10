@@ -28,7 +28,7 @@ class HiveCategoryLocalDataSource implements CategoryLocalDataSource {
       // Add the category if it doesn't exist
       await categoryBox.add(category);
     } catch (e) {
-      print('Error adding category: $e');
+      if (kDebugMode) debugPrint('Error adding category: $e');
       // Show the error dialog in case of an exception
       rethrow;
     }
@@ -40,11 +40,11 @@ class HiveCategoryLocalDataSource implements CategoryLocalDataSource {
     try {
       final categories = categoryBox.values.toList();
       if (kDebugMode) {
-        print('Fetched categories: $categories');
+        debugPrint('Fetched categories: $categories');
       }
       return categories;
     } catch (e) {
-      print('Error fetching categories: $e');
+      if (kDebugMode) debugPrint('Error fetching categories: $e');
       return [];
     }
   }
@@ -61,7 +61,7 @@ class HiveCategoryLocalDataSource implements CategoryLocalDataSource {
         await categoryBox.delete(key);
       }
     } catch (e) {
-      print('Error deleting category: $e');
+      if (kDebugMode) debugPrint('Error deleting category: $e');
       rethrow;
     }
   }
@@ -77,16 +77,16 @@ class HiveCategoryLocalDataSource implements CategoryLocalDataSource {
       if (key != null) {
         await categoryBox.put(key, updatedCategory);
         if (kDebugMode) {
-          print('Category updated: $updatedCategory');
+          debugPrint('Category updated: $updatedCategory');
         }
       } else {
         if (kDebugMode) {
-          print('Category with ID ${updatedCategory.id} not found for update.');
+          debugPrint('Category with ID ${updatedCategory.id} not found for update.');
         }
       }
     } catch (e) {
       if (kDebugMode) {
-        print('Error updating category: $e');
+        debugPrint('Error updating category: $e');
       }
       rethrow;
     }

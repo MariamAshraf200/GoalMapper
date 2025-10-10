@@ -14,6 +14,8 @@ class TaskStatsCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Card(
       elevation: 3,
       shape: RoundedRectangleBorder(
@@ -43,7 +45,6 @@ class TaskStatsCard extends StatelessWidget {
                   style: const TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
-                    color: Colors.black87,
                   ),
                 ),
               ],
@@ -62,17 +63,19 @@ class TaskStatsCard extends StatelessWidget {
                     backgroundColor: Colors.grey.shade200,
                     valueColor: AlwaysStoppedAnimation(
                       completionPercentage < 0.5
-                          ? Colors.deepPurple
-                          : Colors.purpleAccent,
+                          ? colorScheme.secondary
+                          : colorScheme.primary,
                     ),
                   ),
                 ),
                 Text(
                   "${(completionPercentage * 100).toInt()}%",
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
-                    color: Colors.deepPurple,
+                    color: completionPercentage < 0.5
+                        ? colorScheme.inverseSurface
+                        : colorScheme.primary,
                   ),
                 ),
               ],

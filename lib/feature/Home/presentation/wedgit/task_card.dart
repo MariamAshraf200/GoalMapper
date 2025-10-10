@@ -77,7 +77,6 @@ class TaskCard extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
               margin: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
               decoration: BoxDecoration(
-                color: Colors.white,
                 borderRadius: BorderRadius.circular(24),
                 boxShadow: [
                   BoxShadow(

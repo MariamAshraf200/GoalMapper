@@ -63,7 +63,6 @@ class TaskItemCard extends StatelessWidget {
       margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: Colors.white,
         borderRadius: BorderRadius.circular(18),
         boxShadow: [
           BoxShadow(
@@ -125,7 +124,6 @@ class TaskItemCard extends StatelessWidget {
                   style: const TextStyle(
                     fontSize: 17,
                     fontWeight: FontWeight.bold,
-                    color: Colors.black87,
                   ),
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -137,7 +135,6 @@ class TaskItemCard extends StatelessWidget {
                     task.description,
                     style: const TextStyle(
                       fontSize: 14,
-                      color: Colors.black54,
                     ),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,

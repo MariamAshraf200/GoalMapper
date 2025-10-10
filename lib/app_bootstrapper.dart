@@ -39,7 +39,7 @@ class AppBootstrapper extends StatelessWidget {
               ),
             ),
           ),
-          themeMode: ThemeMode.light,
+          themeMode: ThemeMode.dark,
           locale: const Locale("en"),
           home: const HomeScreen(),
         );

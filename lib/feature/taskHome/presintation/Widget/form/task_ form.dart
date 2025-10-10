@@ -35,7 +35,6 @@ class _TaskFormState extends State<TaskForm>
   TimeOfDay? _endTime;
   String? _selectedCategory;
   TaskPriority _selectedPriority = TaskPriority.medium;
-  bool _allowNotifications = false;
 
   @override
   void initState() {
@@ -96,7 +95,7 @@ class _TaskFormState extends State<TaskForm>
             _buildCategorySelector(),
             const SizedBox(height: 16),
             _buildPrioritySelector(),
-            _buildNotificationSwitch(),
+            const SizedBox(height: 16),
             _buildSubmitButton(),
           ],
         ),
@@ -161,11 +160,6 @@ class _TaskFormState extends State<TaskForm>
     onPrioritySelected: (p) => setState(() => _selectedPriority = p),
   );
 
-  Widget _buildNotificationSwitch() => SwitchListTile(
-    title: const Text('Enable Notifications'),
-    value: _allowNotifications,
-    onChanged: (value) => setState(() => _allowNotifications = value),
-  );
 
   Widget _buildSubmitButton() => LoadingElevatedButton(
     onPressed: _handleSubmit,

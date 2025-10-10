@@ -10,11 +10,13 @@ class CustomFAB extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return SpeedDial(
       animatedIcon: AnimatedIcons.add_event,
       animatedIconTheme: const IconThemeData(size: 28.0),
-      backgroundColor: Colors.deepPurple,
-      foregroundColor: Colors.white,
+      backgroundColor: colorScheme.primary,
+      foregroundColor: colorScheme.onPrimary,
       visible: true,
       curve: Curves.elasticInOut,
       overlayOpacity: 0.5,
@@ -23,21 +25,21 @@ class CustomFAB extends StatelessWidget {
       children: [
 
         SpeedDialChild(
-          child: const Icon(Icons.event_note, color: Colors.white),
-          backgroundColor: Colors.green,
+          child: Icon(Icons.event_note, color: colorScheme.onSecondary),
+          backgroundColor: colorScheme.secondary,
           label: 'Add New Plan',
-          labelStyle: const TextStyle(fontSize: 16.0, color: Colors.white),
-          labelBackgroundColor: Colors.green,
+          labelStyle: TextStyle(fontSize: 16.0, color: colorScheme.onSecondary),
+          labelBackgroundColor: colorScheme.secondary,
           onTap: () => _addNewPlan(),
           shape: const CircleBorder(),
           elevation: 4.0,
         ),
         SpeedDialChild(
-          child: const Icon(Icons.task, color: Colors.white),
-          backgroundColor: Colors.blue,
+          child: Icon(Icons.task, color: colorScheme.onPrimary),
+          backgroundColor: colorScheme.primary,
           label: 'Add New Task',
-          labelStyle: const TextStyle(fontSize: 16.0, color: Colors.white),
-          labelBackgroundColor: Colors.blue,
+          labelStyle: TextStyle(fontSize: 16.0, color: colorScheme.onPrimary),
+          labelBackgroundColor: colorScheme.primary,
           onTap: () => _addNewTask(),
           shape: const CircleBorder(),
           elevation: 4.0,

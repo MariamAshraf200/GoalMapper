@@ -9,6 +9,7 @@ import '../wedgit/home_header.dart';
 import '../wedgit/task_status_card.dart';
 import '../wedgit/weekly_progress.dart';
 import 'home_screen_form.dart';
+import 'package:mapperapp/app_bootstrapper.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -18,16 +19,33 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> with RouteAware {
+  late String _viewDate;
+
   @override
   void initState() {
     super.initState();
-    // Ensure tasks are loaded
+    _viewDate = DateFormatUtil.getCurrentDateFormatted();
     context.read<TaskBloc>().add(GetAllTasksEvent());
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final route = ModalRoute.of(context);
+    if (route is PageRoute) {
+      routeObserver.subscribe(this, route);
+    }
   }
 
   @override
   void didPopNext() {
     context.read<TaskBloc>().add(GetAllTasksEvent());
+  }
+
+  @override
+  void dispose() {
+    routeObserver.unsubscribe(this);
+    super.dispose();
   }
 
   @override
@@ -39,8 +57,7 @@ class _HomeScreenState extends State<HomeScreen> with RouteAware {
             return const Center(child: CircularProgressIndicator());
           } else if (state is taskState.TaskLoaded) {
             final tasks = state.tasks;
-
-            final today = DateFormatUtil.getCurrentDateFormatted();
+            final today = _viewDate;
             final tasksForToday = tasks.where((task) => task.date == today).toList();
 
             final doneTasksCount = tasksForToday
@@ -50,7 +67,7 @@ class _HomeScreenState extends State<HomeScreen> with RouteAware {
             final totalTasksCount = tasksForToday.length;
 
             final taskCompletionPercentage =
-            totalTasksCount > 0 ? doneTasksCount / totalTasksCount : 0.0;
+                totalTasksCount > 0 ? doneTasksCount / totalTasksCount : 0.0;
 
             return SingleChildScrollView(
               child: Column(
@@ -73,9 +90,7 @@ class _HomeScreenState extends State<HomeScreen> with RouteAware {
                   // 🔹 Today’s tasks
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 15.0),
-                    child: HomeScreenForm(
-                      tasks: tasksForToday
-                    ),
+                    child: HomeScreenForm(tasks: tasksForToday),
                   ),
                 ],
               ),
