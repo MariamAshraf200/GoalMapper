@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import '../constants/app_colors.dart';
-import '../customColor.dart';
 
 /// A reusable horizontal date picker that shows a range of days and
 /// allows selecting one. This is a core, UI-only widget and does not
@@ -24,7 +22,6 @@ class _DataFormatState extends State<DataFormat> {
   late DateTime currentDate;
   late List<DateTime> weekDays;
   late ScrollController _scrollController;
-  final CustomColor color = CustomColor();
 
   @override
   void initState() {
@@ -74,6 +71,7 @@ class _DataFormatState extends State<DataFormat> {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: SingleChildScrollView(
@@ -91,7 +89,7 @@ class _DataFormatState extends State<DataFormat> {
                 child: Container(
                   padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
                   decoration: BoxDecoration(
-                    color: isSelected ? AppColors.secondaryColor : AppColors.secondBackgroundColor,
+                    color: isSelected ? colorScheme.primary : colorScheme.surfaceContainerHighest,
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Column(
@@ -102,7 +100,7 @@ class _DataFormatState extends State<DataFormat> {
                         style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.bold,
-                          color: isSelected ? Colors.white : Colors.black,
+                          color: isSelected ? colorScheme.onPrimary : colorScheme.onSurface,
                         ),
                       ),
                       const SizedBox(height: 4),
@@ -110,7 +108,7 @@ class _DataFormatState extends State<DataFormat> {
                         DateFormat('d MMM').format(date),
                         style: TextStyle(
                           fontSize: 12,
-                          color: isSelected ? Colors.white : Colors.black,
+                          color: isSelected ? colorScheme.onPrimary : colorScheme.onSurface,
                         ),
                       ),
                     ],
@@ -130,4 +128,3 @@ class _DataFormatState extends State<DataFormat> {
     super.dispose();
   }
 }
-

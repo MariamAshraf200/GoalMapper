@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'feature/Home/presentation/screen/homeScreen.dart';
 import 'injection_imports.dart';
 import 'global_bloc.dart';
+import 'core/theme/app_theme.dart';
 
 /// Create a global RouteObserver to monitor route changes.
 final RouteObserver<PageRoute> routeObserver = RouteObserver<PageRoute>();
@@ -16,32 +16,38 @@ class AppBootstrapper extends StatelessWidget {
   Widget build(BuildContext context) {
     return GlobalBloc(
       builder: (context, child) {
-        return MaterialApp(
-          title: "Task Tracker",
-          debugShowCheckedModeBanner: false,
-          navigatorKey: navigatorKey,
-          navigatorObservers: [routeObserver],
-          theme: ThemeData(
-            colorScheme: ColorScheme.fromSeed(seedColor: AppColors.defaultColor),
-            primaryColor: AppColors.defaultColor,
-          ),
-          darkTheme: ThemeData.dark().copyWith(
-            colorScheme: ColorScheme.fromSeed(
-              seedColor: AppColors.defaultColor,
-              brightness: Brightness.dark,
-            ),
-            primaryColor: AppColors.defaultColor,
-            appBarTheme: AppBarTheme(
-              systemOverlayStyle: SystemUiOverlayStyle(
-                statusBarColor: Colors.transparent,
-                statusBarIconBrightness: Brightness.light,
-                statusBarBrightness: Brightness.dark,
+        // Listen to the global theme notifier so MaterialApp updates at runtime.
+        return ValueListenableBuilder<ThemeMode>(
+          valueListenable: AppTheme.instance.themeMode,
+          builder: (context, mode, _) {
+            return MaterialApp(
+              title: "Task Tracker",
+              debugShowCheckedModeBanner: false,
+              navigatorKey: navigatorKey,
+              navigatorObservers: [routeObserver],
+              theme: ThemeData(
+                colorScheme: ColorScheme.fromSeed(seedColor: AppColors.defaultColor),
+                primaryColor: AppColors.defaultColor,
               ),
-            ),
-          ),
-          themeMode: ThemeMode.dark,
-          locale: const Locale("en"),
-          home: const HomeScreen(),
+              darkTheme: ThemeData.dark().copyWith(
+                colorScheme: ColorScheme.fromSeed(
+                  seedColor: AppColors.defaultColor,
+                  brightness: Brightness.dark,
+                ),
+                primaryColor: AppColors.defaultColor,
+                appBarTheme: AppBarTheme(
+                  systemOverlayStyle: SystemUiOverlayStyle(
+                    statusBarColor: Colors.transparent,
+                    statusBarIconBrightness: Brightness.light,
+                    statusBarBrightness: Brightness.dark,
+                  ),
+                ),
+              ),
+              themeMode: mode,
+              locale: const Locale("en"),
+              home: const HomeScreen(),
+            );
+          },
         );
       },
     );

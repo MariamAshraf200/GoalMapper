@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../core/theme/app_theme.dart';
 
 class HomeHeader extends StatelessWidget {
   const HomeHeader({super.key});
@@ -52,7 +53,36 @@ class HomeHeader extends StatelessWidget {
 
             // 🎛️ Modern rounded icons
             const SizedBox(width: 12),
-            Icon(Icons.more_vert_sharp, color: colorScheme.onPrimary, size: 22),          ],
+            PopupMenuButton<void>(
+              icon: Icon(Icons.more_vert_sharp, color: colorScheme.onPrimary, size: 22),
+              itemBuilder: (context) => [
+                PopupMenuItem<void>(
+                  // Use StatefulBuilder so the switch visually updates inside the popup
+                  child: StatefulBuilder(
+                    builder: (context, setState) {
+                      final isDark = AppTheme.instance.isDark;
+                      return Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Text('Dark theme'),
+                          Switch(
+                            value: isDark,
+                            onChanged: (value) {
+                              AppTheme.instance.setMode(value ? ThemeMode.dark : ThemeMode.light);
+                              // update visual state inside menu
+                              setState(() {});
+                              // close the popup after toggling
+                              Navigator.of(context).pop();
+                            },
+                          ),
+                        ],
+                      );
+                    },
+                  ),
+                ),
+              ],
+            ),
+          ],
         ),
       ),
     );

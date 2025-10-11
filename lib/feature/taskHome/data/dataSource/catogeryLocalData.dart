@@ -1,6 +1,4 @@
-import 'package:flutter/foundation.dart';
 import 'package:hive/hive.dart';
-
 import '../../../../core/hiveServices.dart';
 import '../model/categoryModel.dart';
 import 'abstract_data_scource.dart';
@@ -28,7 +26,7 @@ class HiveCategoryLocalDataSource implements CategoryLocalDataSource {
       // Add the category if it doesn't exist
       await categoryBox.add(category);
     } catch (e) {
-      if (kDebugMode) debugPrint('Error adding category: $e');
+      // if (kDebugMode) debugPrint('Error adding category: $e');
       // Show the error dialog in case of an exception
       rethrow;
     }
@@ -39,12 +37,12 @@ class HiveCategoryLocalDataSource implements CategoryLocalDataSource {
   Future<List<CategoryModel>> getAllCategories() async {
     try {
       final categories = categoryBox.values.toList();
-      if (kDebugMode) {
-        debugPrint('Fetched categories: $categories');
-      }
+      // if (kDebugMode) {
+      //   debugPrint('Fetched categories: $categories');
+      // }
       return categories;
     } catch (e) {
-      if (kDebugMode) debugPrint('Error fetching categories: $e');
+      // if (kDebugMode) debugPrint('Error fetching categories: $e');
       return [];
     }
   }
@@ -61,7 +59,7 @@ class HiveCategoryLocalDataSource implements CategoryLocalDataSource {
         await categoryBox.delete(key);
       }
     } catch (e) {
-      if (kDebugMode) debugPrint('Error deleting category: $e');
+      // if (kDebugMode) debugPrint('Error deleting category: $e');
       rethrow;
     }
   }
@@ -76,18 +74,18 @@ class HiveCategoryLocalDataSource implements CategoryLocalDataSource {
       );
       if (key != null) {
         await categoryBox.put(key, updatedCategory);
-        if (kDebugMode) {
-          debugPrint('Category updated: $updatedCategory');
-        }
+        // if (kDebugMode) {
+        //   debugPrint('Category updated: $updatedCategory');
+        // }
       } else {
-        if (kDebugMode) {
-          debugPrint('Category with ID ${updatedCategory.id} not found for update.');
-        }
+        // if (kDebugMode) {
+        //   debugPrint('Category with ID {updatedCategory.id} not found for update.');
+        // }
       }
     } catch (e) {
-      if (kDebugMode) {
-        debugPrint('Error updating category: $e');
-      }
+      // if (kDebugMode) {
+      //   debugPrint('Error updating category: $e');
+      // }
       rethrow;
     }
   }

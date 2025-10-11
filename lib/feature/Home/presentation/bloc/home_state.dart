@@ -13,7 +13,7 @@ class HomeLoading extends HomeState {}
 
 class HomeLoaded extends HomeState {
   final List<DateTime> days;
-  final Map<DateTime, double> dailyProgress; // progress per day [0..1]
+  final Map<DateTime, double> dailyProgress;
   final double avgProgress;
   final String bestDayName;
   final int todayIndex;
