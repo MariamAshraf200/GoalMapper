@@ -14,13 +14,16 @@ class PlanDetailsSubtaskCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: task.status == TaskPlanStatus.done
-            ? Colors.green.shade50
-            : Colors.purple.shade50,
+            ? // subtle success background using theme's primary with low opacity
+              colorScheme.primary.withAlpha((0.06 * 255).round())
+            : // subtle secondary background using theme's secondary with low opacity
+              colorScheme.secondary.withAlpha((0.06 * 255).round()),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Row(
@@ -38,7 +41,8 @@ class PlanDetailsSubtaskCard extends StatelessWidget {
                   : Icons.radio_button_unchecked,
               color: task.status == TaskPlanStatus.done
                   ? Colors.green
-                  : Colors.grey,
+                  // replace hard-coded grey with theme muted color
+                  : colorScheme.onSurface.withAlpha((0.6 * 255).round()),
             ),
           ),
           const SizedBox(width: 10),
@@ -74,4 +78,3 @@ class PlanDetailsSubtaskCard extends StatelessWidget {
     );
   }
 }
-

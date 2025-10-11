@@ -22,7 +22,7 @@ class PlanDetailsTitleDescription extends StatelessWidget {
         if (plan.description.isNotEmpty)
           Text(
             plan.description,
-            style: const TextStyle(fontSize: 14, color: Colors.black54),
+            style: const TextStyle(fontSize: 14, ),
           ),
       ],
     );

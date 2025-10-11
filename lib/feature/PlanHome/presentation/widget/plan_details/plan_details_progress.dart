@@ -15,13 +15,13 @@ class PlanDetailsProgress extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final progress = _calculateProgress(tasks);
+    final colorScheme = Theme.of(context).colorScheme;
     return Row(
       children: [
         Expanded(
           child: LinearProgressIndicator(
             value: progress,
-            backgroundColor: Colors.grey.shade300,
-            color: Colors.deepPurple,
+            color: colorScheme.secondary,
             minHeight: 8,
             borderRadius: BorderRadius.circular(6),
           ),
@@ -29,13 +29,12 @@ class PlanDetailsProgress extends StatelessWidget {
         const SizedBox(width: 12),
         Text(
           "${(progress * 100).toInt()}%",
-          style: const TextStyle(
+          style: TextStyle(
             fontWeight: FontWeight.w600,
-            color: Colors.deepPurple,
+            color: colorScheme.secondary,
           ),
         ),
       ],
     );
   }
 }
-

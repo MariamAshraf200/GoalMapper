@@ -15,6 +15,7 @@ class PlanDetailsSubtasks extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Column(
       children: [
         Row(
@@ -26,10 +27,10 @@ class PlanDetailsSubtasks extends StatelessWidget {
             ),
             TextButton.icon(
               onPressed: () => onAddTask(context),
-              icon: const Icon(Icons.add, color: Colors.deepPurple),
-              label: const Text(
+              icon: Icon(Icons.add, color: colorScheme.secondary),
+              label: Text(
                 "Add Subtask",
-                style: TextStyle(color: Colors.deepPurple),
+                style: TextStyle(color: colorScheme.secondary),
               ),
             ),
           ],
@@ -45,7 +46,7 @@ class PlanDetailsSubtasks extends StatelessWidget {
                 return const Center(
                   child: Text(
                     "No subtasks yet.",
-                    style: TextStyle(fontSize: 14, color: Colors.black54),
+                    style: TextStyle(fontSize: 14),
                   ),
                 );
               }
@@ -53,7 +54,7 @@ class PlanDetailsSubtasks extends StatelessWidget {
                 children: tasks.map((task) => subTaskCardBuilder(context, task)).toList(),
               );
             } else if (state is TaskError) {
-              return Center(child: Text("Error: [31m${state.message}[0m"));
+              return Center(child: Text("Error: ￼${state.message}￼"));
             }
             return const SizedBox.shrink();
           },
@@ -62,4 +63,3 @@ class PlanDetailsSubtasks extends StatelessWidget {
     );
   }
 }
-

@@ -47,6 +47,7 @@ class PlanCardCombined extends StatelessWidget {
     final formattedDate = _formatEndDate();
     final formattedTime = _formatTime(context);
     final endDisplay = formattedDate != null ? (formattedTime != null ? '$formattedDate • $formattedTime' : formattedDate) : null;
+    final colorScheme = Theme.of(context).colorScheme;
 
     return Card(
       elevation: 4,
@@ -68,7 +69,7 @@ class PlanCardCombined extends StatelessWidget {
                   child: CircularProgressIndicator(
                     value: progress,
                     backgroundColor: Colors.grey[300],
-                    color: Colors.deepPurple,
+                    color: colorScheme.secondary,
                     strokeWidth: 6,
                   ),
                 ),
@@ -103,7 +104,7 @@ class PlanCardCombined extends StatelessWidget {
                   // Linear Progress for completeness
                   LinearProgressIndicator(
                     value: progress,
-                    color: Colors.deepPurple,
+                    color: colorScheme.secondary,
                     backgroundColor: Colors.grey[300],
                     minHeight: 8,
                   ),
