@@ -8,6 +8,7 @@ class PlanDetailsDates extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Row(
       children: [
         Expanded(
@@ -16,14 +17,13 @@ class PlanDetailsDates extends StatelessWidget {
             children: [
               Row(
                 children: [
-                  Icon(Icons.event, color: Colors.deepPurple.shade400, size: 20),
+                  Icon(Icons.event, color: colorScheme.secondary, size: 20),
                   const SizedBox(width: 6),
                   const Text(
                     "Start Date",
                     style: TextStyle(
                       fontSize: 13,
                       fontWeight: FontWeight.w500,
-                      color: Colors.black54,
                     ),
                   ),
                 ],
@@ -34,7 +34,6 @@ class PlanDetailsDates extends StatelessWidget {
                 style: const TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w700,
-                  color: Colors.black87,
                 ),
               ),
               const Divider(thickness: 1, height: 16, color: Colors.black12),
@@ -55,7 +54,6 @@ class PlanDetailsDates extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 13,
                       fontWeight: FontWeight.w500,
-                      color: Colors.black54,
                     ),
                   ),
                 ],
@@ -66,7 +64,6 @@ class PlanDetailsDates extends StatelessWidget {
                 style: const TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w700,
-                  color: Colors.black87,
                 ),
               ),
               const Divider(thickness: 1, height: 16, color: Colors.black12),
@@ -77,4 +74,3 @@ class PlanDetailsDates extends StatelessWidget {
     );
   }
 }
-

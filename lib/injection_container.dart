@@ -1,5 +1,6 @@
-import 'package:flutter/foundation.dart';
 import 'package:get_it/get_it.dart';
+import 'feature/Home/domain/usecase/compute_weekly_progress_usecase.dart';
+import 'feature/Home/domain/usecase/update_daily_progress_usecase.dart';
 import 'feature/PlanHome/domain/repo_interface/repo_plan_interface.dart';
 import 'feature/PlanHome/domain/usecase/delet_task_plan.dart';
 import 'feature/PlanHome/domain/usecase/getAll_tasks_plan_usecase.dart';
@@ -102,6 +103,10 @@ Future<void> init() async {
     sl.registerLazySingleton(() => DeleteTaskAtPlanUseCase(sl<PlanRepository>()));
     sl.registerLazySingleton(() => UpdateTaskStatusPlanUseCase(sl<PlanRepository>()));
 
+    // Home usecases
+    sl.registerLazySingleton(() => ComputeWeeklyProgressUsecase());
+    sl.registerLazySingleton(() => UpdateDailyProgressUsecase());
+
     ///////////////////////// Blocs / Cubits /////////////////////////////
     /////////////////////////////////////////////////////////////////////
 
@@ -141,11 +146,11 @@ Future<void> init() async {
         updateTaskStatusPlanUseCase: sl<UpdateTaskStatusPlanUseCase>(),
       ));
   } catch (e, stackTrace) {
-    if (kDebugMode) {
-      print("Error during DI initialization: $e");
+    /*if (kDebugMode) {
+      debugPrint("Error during DI initialization: $e");
     }
     if (kDebugMode) {
-      print(stackTrace);
-    }
+      debugPrint(stackTrace.toString());
+    }*/
   }
 }

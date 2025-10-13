@@ -20,6 +20,7 @@ class _PlanItemCardState extends State<PlanItemCard> {
   @override
   Widget build(BuildContext context) {
     final plan = widget.plan;
+    final colorScheme = Theme.of(context).colorScheme;
     return Dismissible(
       key: Key(plan.id),
       direction: DismissDirection.horizontal,
@@ -60,7 +61,7 @@ class _PlanItemCardState extends State<PlanItemCard> {
             builder: (ctx) => AlertDialog(
               title: const Text('Delete Plan'),
               content:
-              const Text('Are you sure you want to delete this plan?'),
+                  const Text('Are you sure you want to delete this plan?'),
               actions: [
                 TextButton(
                     onPressed: () => Navigator.pop(ctx, false),
@@ -119,7 +120,6 @@ class _PlanItemCardState extends State<PlanItemCard> {
                         style: const TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
-                          color: Colors.black87,
                         ),
                       ),
                     ),
@@ -127,7 +127,7 @@ class _PlanItemCardState extends State<PlanItemCard> {
                       padding: const EdgeInsets.symmetric(
                           horizontal: 10, vertical: 4),
                       decoration: BoxDecoration(
-                        color: Colors.deepPurple.shade200,
+                        color: colorScheme.secondary.withAlpha((0.2 * 255).round()),
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Text(
@@ -135,7 +135,6 @@ class _PlanItemCardState extends State<PlanItemCard> {
                         style: const TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.w600,
-                          color: Colors.black87,
                         ),
                       ),
                     ),
@@ -149,7 +148,6 @@ class _PlanItemCardState extends State<PlanItemCard> {
                     plan.description,
                     style: const TextStyle(
                       fontSize: 14,
-                      color: Colors.black54,
                     ),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
@@ -160,14 +158,13 @@ class _PlanItemCardState extends State<PlanItemCard> {
                 // 🔹 Bottom row (date + status)
                 Row(
                   children: [
-                    const Icon(Icons.calendar_today,
-                        size: 16, color: Colors.deepPurple),
+                    Icon(Icons.calendar_today,
+                        size: 16, color: colorScheme.secondary),
                     const SizedBox(width: 6),
                     Text(
                       plan.endDate,
                       style: const TextStyle(
                         fontSize: 12,
-                        color: Colors.black54,
                       ),
                     ),
                     const Spacer(),
@@ -185,8 +182,7 @@ class _PlanItemCardState extends State<PlanItemCard> {
                           plan.completed ? 'Completed' : 'Not Completed',
                           style: TextStyle(
                             fontSize: 12,
-                            color:
-                            plan.completed ? Colors.green : Colors.orange,
+                            color: plan.completed ? Colors.green : Colors.orange,
                             fontWeight: FontWeight.w600,
                           ),
                         ),

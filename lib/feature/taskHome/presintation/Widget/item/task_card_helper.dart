@@ -21,16 +21,17 @@ extension TaskDetailsX on TaskDetails {
 }
 
 extension TaskPriorityColor on String {
-  Color toPriorityColor() {
-    switch (this) {
-      case 'High':
-        return Colors.red;
-      case 'Medium':
-        return Colors.orange;
-      case 'Low':
-        return Colors.green;
+  Color toPriorityColor(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    switch (toLowerCase()) {
+      case 'high':
+        return colorScheme.error;
+      case 'medium':
+        return colorScheme.primary;
+      case 'low':
+        return colorScheme.secondary;
       default:
-        return AppColors.defaultBackgroundColor;
+        return colorScheme.onSurface.withOpacity(0.06);
     }
   }
 }

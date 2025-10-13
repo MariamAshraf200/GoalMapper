@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 
 class CustomDialog extends StatelessWidget {
@@ -11,7 +10,7 @@ class CustomDialog extends StatelessWidget {
   final VoidCallback onCanceled;
 
   const CustomDialog({
-    Key? key,
+    super.key,
     required this.title,
     required this.description,
     required this.operation,
@@ -19,7 +18,7 @@ class CustomDialog extends StatelessWidget {
     required this.color,
     required this.onConfirmed,
     required this.onCanceled,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -42,7 +41,7 @@ class CustomDialog extends StatelessWidget {
                   curve: Curves.easeInOut,
                   padding: const EdgeInsets.all(8.0),
                   decoration: BoxDecoration(
-                    color: color.withOpacity(0.2),
+                    color: color.withAlpha((0.2 * 255).round()),
                     shape: BoxShape.circle,
                   ),
                   child: Icon(

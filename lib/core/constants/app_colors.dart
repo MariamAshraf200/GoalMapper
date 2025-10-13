@@ -9,5 +9,6 @@ class AppColors {
   static Color basicColor = Colors.white;
   static Color primaryColor = Colors.black;
   // static Color ? additionalColor = Colors.grey[200];
-  static Color secondaryColor = Colors.deepPurple;
+  // Make secondary color follow the defaultColor so the theme is consistent.
+  static Color secondaryColor = defaultColor;
 }

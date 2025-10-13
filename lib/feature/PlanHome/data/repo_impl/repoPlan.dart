@@ -97,12 +97,13 @@ class PlanRepositoryImpl implements PlanRepository {
       final rawTasks = await dataSource.getAllTasks(planId);
       return rawTasks;
     } catch (e) {
-      print("Error while loading tasks: $e");
+      // if (kDebugMode) debugPrint("Error while loading tasks: $e");
       throw Exception("Error loading tasks for plan '$planId': $e");
     }
   }
 
   // 🔹 Add a task to a plan
+  @override
   Future<void> addTask(String planId, TaskPlan task) async {
     try {
       if (dataSource is HivePlanLocalDataSource) {
@@ -114,6 +115,7 @@ class PlanRepositoryImpl implements PlanRepository {
   }
 
   // 🔹 Delete a task by value
+  @override
   Future<void> deleteTask(String planId, String task) async {
     try {
       await dataSource.deleteTask(planId, task);
@@ -123,6 +125,7 @@ class PlanRepositoryImpl implements PlanRepository {
   }
 
   // 🔹 Delete a task by index
+  @override
   Future<void> deleteTaskAt(String planId, int index) async {
     try {
       if (dataSource is HivePlanLocalDataSource) {

@@ -18,7 +18,6 @@ class PlanDetailsHeader extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           _circleButton(icon: Icons.arrow_back_ios_new, onTap: onBack),
-          _circleButton(icon: Icons.more_horiz, onTap: onMore),
         ],
       ),
     );
@@ -31,7 +30,7 @@ class PlanDetailsHeader extends StatelessWidget {
         border: Border.all(color: Colors.grey.shade400, width: 1.5),
       ),
       child: IconButton(
-        icon: Icon(icon, size: 20, color: Colors.black87),
+        icon: Icon(icon, size: 20),
         onPressed: onTap,
       ),
     );

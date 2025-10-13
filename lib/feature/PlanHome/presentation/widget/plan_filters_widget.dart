@@ -18,6 +18,7 @@ class PlanFiltersWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Row(
       children: [
         Expanded(
@@ -28,7 +29,7 @@ class PlanFiltersWidget extends StatelessWidget {
                 categories.addAll(state.categories.map((c) => c.categoryName));
               }
               return _FilterDropdown<String>(
-                icon: const Icon(Icons.folder, color: Colors.deepPurple),
+                icon: Icon(Icons.folder, color: colorScheme.secondary),
                 value: selectedCategory,
                 hint: "Select Category",
                 items: [
@@ -86,7 +87,6 @@ class _FilterDropdown<T> extends StatelessWidget {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(12),
         boxShadow: [BoxShadow(color: Colors.grey.withAlpha(20), blurRadius: 5)],
-        color: Colors.white,
       ),
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       child: Row(

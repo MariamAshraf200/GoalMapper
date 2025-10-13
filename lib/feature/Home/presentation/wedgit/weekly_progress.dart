@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:fl_chart/fl_chart.dart';
 import '../bloc/home_bloc.dart';
 import '../bloc/home_state.dart';
+import 'package:mapperapp/core/extensions/app_strings.dart';
 
 class WeeklyProgressWidget extends StatelessWidget {
   const WeeklyProgressWidget({super.key});
@@ -19,12 +20,15 @@ class WeeklyProgressWidget extends StatelessWidget {
         final bestDayName = state.bestDayName;
         final todayIndex = state.todayIndex;
 
+        final colorScheme = Theme.of(context).colorScheme;
+
         return Container(
           padding: const EdgeInsets.all(16),
           margin: const EdgeInsets.only(top: 10, bottom: 8),
           decoration: BoxDecoration(
             gradient: LinearGradient(
-              colors: [Colors.white, Colors.blue.shade50],
+              // Use the app's ColorScheme for schema-driven colors
+              colors: [colorScheme.surface, colorScheme.primary.withAlpha(15)],
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
             ),
@@ -40,8 +44,8 @@ class WeeklyProgressWidget extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
-                "📊 Weekly Progress Analysis",
+              Text(
+                AppStrings.weeklyProgressTitle,
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
@@ -76,7 +80,7 @@ class WeeklyProgressWidget extends StatelessWidget {
                           getTitlesWidget: (value, meta) => Text(
                             "${(value * 100).toInt()}%",
                             style:
-                            const TextStyle(fontSize: 10, color: Colors.grey),
+                            TextStyle(fontSize: 10, color: colorScheme.onSurface.withAlpha(153)),
                           ),
                           interval: 0.25,
                         ),
@@ -102,8 +106,8 @@ class WeeklyProgressWidget extends StatelessWidget {
                                       ? FontWeight.bold
                                       : FontWeight.normal,
                                   color: isToday
-                                      ? Colors.blueAccent
-                                      : Colors.black87,
+                                      ? colorScheme.primary
+                                      : colorScheme.onSurface.withAlpha(217),
                                 ),
                               ),
                             );
@@ -122,8 +126,8 @@ class WeeklyProgressWidget extends StatelessWidget {
                           return FlSpot(i.toDouble(), progress);
                         }),
                         isCurved: true,
-                        gradient: const LinearGradient(
-                          colors: [Colors.greenAccent, Colors.blueAccent],
+                        gradient: LinearGradient(
+                          colors: [colorScheme.secondary, colorScheme.primary],
                           begin: Alignment.centerLeft,
                           end: Alignment.centerRight,
                         ),
@@ -132,8 +136,8 @@ class WeeklyProgressWidget extends StatelessWidget {
                           show: true,
                           gradient: LinearGradient(
                             colors: [
-                              Colors.blueAccent.withAlpha(60),
-                              Colors.greenAccent.withAlpha(20),
+                              colorScheme.primary.withAlpha(60),
+                              colorScheme.secondary.withAlpha(20),
                             ],
                             begin: Alignment.topCenter,
                             end: Alignment.bottomCenter,
@@ -143,13 +147,14 @@ class WeeklyProgressWidget extends StatelessWidget {
                           show: true,
                           getDotPainter: (spot, _, __, ___) => FlDotCirclePainter(
                             radius: 4,
+                            // Map progress ranges to the app color scheme
                             color: spot.y >= 0.7
-                                ? Colors.green
+                                ? colorScheme.secondary
                                 : spot.y >= 0.4
-                                ? Colors.orange
-                                : Colors.redAccent,
+                                ? colorScheme.primary
+                                : colorScheme.error,
                             strokeWidth: 1.5,
-                            strokeColor: Colors.white,
+                            strokeColor: colorScheme.surface,
                           ),
                         ),
                       ),
@@ -158,7 +163,7 @@ class WeeklyProgressWidget extends StatelessWidget {
                       if (todayIndex >= 0)
                         VerticalLine(
                           x: todayIndex.toDouble(),
-                          color: Colors.blueAccent.withAlpha(128),
+                          color: colorScheme.primary.withAlpha(128),
                           strokeWidth: 1.5,
                           dashArray: [4, 4],
                         ),
@@ -171,13 +176,13 @@ class WeeklyProgressWidget extends StatelessWidget {
 
               Text(
                 avgProgress > 0.7
-                    ? "🔥 Excellent consistency! Best day: $bestDayName"
+                    ? AppStrings.weeklyBestDayMessage(bestDayName)
                     : avgProgress > 0.4
-                    ? "💪 Good effort! Keep it up."
-                    : "🚀 Let's get back on track next week!",
-                style: const TextStyle(
+                    ? AppStrings.weeklyGoodEffortMessage
+                    : AppStrings.weeklyBackOnTrackMessage,
+                style: TextStyle(
                   fontSize: 13,
-                  color: Colors.black87,
+                  color: colorScheme.onSurface.withAlpha(230),
                   fontWeight: FontWeight.w500,
                 ),
               ),

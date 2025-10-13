@@ -1,20 +1,23 @@
 import 'package:flutter/material.dart';
+import '../../../../core/theme/app_theme.dart';
 
 class HomeHeader extends StatelessWidget {
   const HomeHeader({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: [Color(0xFF8E2DE2), Color(0xFF4A00E0)], // smooth modern purple
+          colors: [colorScheme.inversePrimary, colorScheme.secondary],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
-        borderRadius: BorderRadius.only(
+        borderRadius: const BorderRadius.only(
           bottomLeft: Radius.circular(28),
           bottomRight: Radius.circular(28),
         ),
@@ -49,27 +52,39 @@ class HomeHeader extends StatelessWidget {
             ),
 
             // 🎛️ Modern rounded icons
-            Row(
-              children: [
-                _buildIcon(Icons.notifications_outlined),
-                const SizedBox(width: 12),
-                _buildIcon(Icons.menu_rounded),
+            const SizedBox(width: 12),
+            PopupMenuButton<void>(
+              icon: Icon(Icons.more_vert_sharp, color: colorScheme.onPrimary, size: 22),
+              itemBuilder: (context) => [
+                PopupMenuItem<void>(
+                  // Use StatefulBuilder so the switch visually updates inside the popup
+                  child: StatefulBuilder(
+                    builder: (context, setState) {
+                      final isDark = AppTheme.instance.isDark;
+                      return Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Text('Dark theme'),
+                          Switch(
+                            value: isDark,
+                            onChanged: (value) {
+                              AppTheme.instance.setMode(value ? ThemeMode.dark : ThemeMode.light);
+                              // update visual state inside menu
+                              setState(() {});
+                              // close the popup after toggling
+                              Navigator.of(context).pop();
+                            },
+                          ),
+                        ],
+                      );
+                    },
+                  ),
+                ),
               ],
             ),
           ],
         ),
       ),
-    );
-  }
-
-  static Widget _buildIcon(IconData icon) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.15),
-        shape: BoxShape.circle,
-      ),
-      padding: const EdgeInsets.all(10),
-      child: Icon(icon, color: Colors.white, size: 22),
     );
   }
 }

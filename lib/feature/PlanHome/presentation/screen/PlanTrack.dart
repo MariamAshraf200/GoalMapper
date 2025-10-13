@@ -107,7 +107,7 @@ class _PlanHeader extends StatelessWidget {
         border: Border.all(color: Colors.grey.shade400, width: 1.5),
       ),
       child: IconButton(
-        icon: Icon(icon, size: 22, color: Colors.black87),
+        icon: Icon(icon, size: 22,),
         onPressed: onPressed,
       ),
     );
