@@ -76,7 +76,7 @@ export 'feature/Home/presentation/bloc/home_state.dart';
 export 'core/hiveServices.dart';
 export 'core/failure.dart';
 export 'core/customColor.dart';
-export 'core/context_extensions.dart';
+export 'core/extensions/context_extensions.dart';
 
 // Core - constants
 export 'core/constants/app_colors.dart';

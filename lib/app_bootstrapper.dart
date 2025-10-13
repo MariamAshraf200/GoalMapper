@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:mapperapp/feature/auth/presentation/screen/auth_gate.dart';
+import 'core/theme/theme_mode_cubit.dart';
+import 'core/i18n/language_cubit.dart';
 import 'injection_imports.dart';
 import 'global_bloc.dart';
-import 'core/theme/app_theme.dart';
 
 /// Create a global RouteObserver to monitor route changes.
 final RouteObserver<PageRoute> routeObserver = RouteObserver<PageRoute>();
@@ -14,40 +18,45 @@ class AppBootstrapper extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // ThemeModeCubit and LanguageCubit are provided at the top-level (main.dart)
+    final themeMode = context.watch<ThemeModeCubit>().state;
+    final locale = context.watch<LanguageCubit>().state;
+
     return GlobalBloc(
       builder: (context, child) {
-        // Listen to the global theme notifier so MaterialApp updates at runtime.
-        return ValueListenableBuilder<ThemeMode>(
-          valueListenable: AppTheme.instance.themeMode,
-          builder: (context, mode, _) {
-            return MaterialApp(
-              title: "Task Tracker",
-              debugShowCheckedModeBanner: false,
-              navigatorKey: navigatorKey,
-              navigatorObservers: [routeObserver],
-              theme: ThemeData(
-                colorScheme: ColorScheme.fromSeed(seedColor: AppColors.defaultColor),
-                primaryColor: AppColors.defaultColor,
+        return MaterialApp(
+          title: "Task Tracker",
+          debugShowCheckedModeBanner: false,
+          navigatorKey: navigatorKey,
+          navigatorObservers: [routeObserver],
+          theme: ThemeData(
+            colorScheme: ColorScheme.fromSeed(seedColor: AppColors.defaultColor),
+            primaryColor: AppColors.defaultColor,
+          ),
+          darkTheme: ThemeData.dark().copyWith(
+            colorScheme: ColorScheme.fromSeed(
+              seedColor: AppColors.defaultColor,
+              brightness: Brightness.dark,
+            ),
+            primaryColor: AppColors.defaultColor,
+            appBarTheme: AppBarTheme(
+              systemOverlayStyle: SystemUiOverlayStyle(
+                statusBarColor: Colors.transparent,
+                statusBarIconBrightness: Brightness.light,
+                statusBarBrightness: Brightness.dark,
               ),
-              darkTheme: ThemeData.dark().copyWith(
-                colorScheme: ColorScheme.fromSeed(
-                  seedColor: AppColors.defaultColor,
-                  brightness: Brightness.dark,
-                ),
-                primaryColor: AppColors.defaultColor,
-                appBarTheme: AppBarTheme(
-                  systemOverlayStyle: SystemUiOverlayStyle(
-                    statusBarColor: Colors.transparent,
-                    statusBarIconBrightness: Brightness.light,
-                    statusBarBrightness: Brightness.dark,
-                  ),
-                ),
-              ),
-              themeMode: mode,
-              locale: const Locale("en"),
-              home: const HomeScreen(),
-            );
-          },
+            ),
+          ),
+          themeMode: themeMode,
+          locale: locale,
+          supportedLocales: const [Locale('en'), Locale('ar')],
+          localizationsDelegates: const [
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          ],
+          // locale is driven by LanguageCubit (provided at app root)
+          home: const AuthGate(),
         );
       },
     );

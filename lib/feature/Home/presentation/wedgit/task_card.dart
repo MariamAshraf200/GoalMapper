@@ -21,6 +21,7 @@ class TaskCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     Color titleColor;
     Color descColor;
     Color timeColor;
@@ -29,31 +30,31 @@ class TaskCard extends StatelessWidget {
 
     switch (status.trim().toLowerCase()) {
       case "done":
-        borderColor = Colors.green.shade300;
-        titleColor = Colors.green;
-        descColor = Colors.green;
-        timeColor = Colors.green;
+        borderColor = colorScheme.primaryContainer;
+        titleColor = colorScheme.primary;
+        descColor = colorScheme.primary;
+        timeColor = colorScheme.primary;
         decoration = TextDecoration.lineThrough;
         break;
       case "pending":
-        borderColor = Colors.orange.shade300;
-        titleColor = Colors.orange;
-        descColor = Colors.orange;
-        timeColor = Colors.orange;
+        borderColor = colorScheme.secondaryContainer;
+        titleColor = colorScheme.secondary;
+        descColor = colorScheme.secondary;
+        timeColor = colorScheme.secondary;
         decoration = TextDecoration.none;
         break;
       case "missed":
-        borderColor = Colors.red.shade300;
-        titleColor = Colors.red;
-        descColor = Colors.red;
-        timeColor = Colors.red;
+        borderColor = colorScheme.errorContainer;
+        titleColor = colorScheme.error;
+        descColor = colorScheme.error;
+        timeColor = colorScheme.error;
         decoration = TextDecoration.none;
         break;
       default:
-        borderColor = Colors.grey.withAlpha(30);
-        titleColor = Colors.black;
-        descColor = Colors.black;
-        timeColor = Colors.grey;
+        borderColor = colorScheme.outline.withAlpha(50);
+        titleColor = colorScheme.onSurface;
+        descColor = colorScheme.onSurface;
+        timeColor = colorScheme.outline;
         decoration = TextDecoration.none;
     }
 
@@ -80,14 +81,14 @@ class TaskCard extends StatelessWidget {
                 borderRadius: BorderRadius.circular(24),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withAlpha( 10),
+                    color: colorScheme.shadow.withAlpha(20),
                     blurRadius: 16,
                     offset: const Offset(0, 6),
                   ),
                 ],
                 border: Border.all(
                   color: borderColor,
-                  width: 1.2,
+                  width: 10,
                 ),
               ),
               child: Column(
@@ -113,10 +114,10 @@ class TaskCard extends StatelessWidget {
                         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                         decoration: BoxDecoration(
                           color: priority == "High"
-                              ? Colors.red.withAlpha(30)
+                              ? colorScheme.errorContainer
                               : priority == "Medium"
-                              ? Colors.orange.withAlpha(30)
-                              : Colors.green.withAlpha(30),
+                              ? colorScheme.secondaryContainer
+                              : colorScheme.primaryContainer,
                           borderRadius: BorderRadius.circular(14),
                         ),
                         child: Text(
@@ -125,10 +126,10 @@ class TaskCard extends StatelessWidget {
                             fontSize: 13,
                             fontWeight: FontWeight.bold,
                             color: priority == "High"
-                                ? Colors.red
+                                ? colorScheme.error
                                 : priority == "Medium"
-                                ? Colors.orange
-                                : Colors.green,
+                                ? colorScheme.secondary
+                                : colorScheme.primary,
                           ),
                         ),
                       ),

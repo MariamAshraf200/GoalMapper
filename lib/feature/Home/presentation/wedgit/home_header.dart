@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
-import '../../../../core/theme/app_theme.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../../core/theme/theme_mode_cubit.dart';
+import '../../../../core/i18n/language_cubit.dart';
+import '../../../auth/presentation/bloc/auth_bloc.dart';
+import '../../../auth/presentation/bloc/auth_event.dart';
 
 class HomeHeader extends StatelessWidget {
   const HomeHeader({super.key});
@@ -7,6 +11,7 @@ class HomeHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+    final isArabic = context.watch<LanguageCubit>().state.languageCode == 'ar';
 
     return Container(
       width: double.infinity,
@@ -26,65 +31,126 @@ class HomeHeader extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            // 👋 Subtle greeting
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: const [
-                Text(
-                  "Hello 👋",
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.white70,
-                    letterSpacing: 0.3,
-                  ),
-                ),
-                SizedBox(height: 2),
-                Text(
-                  "Welcome back",
-                  style: TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.white,
-                    letterSpacing: 0.4,
-                  ),
-                ),
-              ],
+            // 👋 Subtle greeting + avatar (uses AuthBloc)
+            BlocBuilder<AuthBloc, AuthState>(
+              builder: (context, state) {
+                String displayName = 'Guest';
+                String? photoUrl;
+                if (state is AuthSignedIn) {
+                  displayName = state.user.name.isNotEmpty ? state.user.name : displayName;
+                  photoUrl = state.user.photoUrl;
+                }
+                return Row(
+                  children: [
+                    CircleAvatar(
+                      radius: 22,
+                      backgroundColor: Colors.white24,
+                      backgroundImage: (photoUrl != null && photoUrl.isNotEmpty) ? NetworkImage(photoUrl) : null,
+                      child: (photoUrl == null || photoUrl.isEmpty)
+                          ? Text(
+                              displayName.isNotEmpty ? displayName[0].toUpperCase() : '?',
+                              style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
+                            )
+                          : null,
+                    ),
+                    const SizedBox(width: 12),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Localized greeting (reactive)
+                        Text(
+                          '${isArabic ? 'مرحبا' : 'Hello'} ${displayName.split(' ').first}',
+                          style: const TextStyle(
+                            fontSize: 14,
+                            color: Colors.white70,
+                            letterSpacing: 0.3,
+                          ),
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          displayName,
+                          style: const TextStyle(
+                            fontSize: 22,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.white,
+                            letterSpacing: 0.4,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                );
+              },
             ),
 
             // 🎛️ Modern rounded icons
-            const SizedBox(width: 12),
-            PopupMenuButton<void>(
-              icon: Icon(Icons.more_vert_sharp, color: colorScheme.onPrimary, size: 22),
-              itemBuilder: (context) => [
-                PopupMenuItem<void>(
-                  // Use StatefulBuilder so the switch visually updates inside the popup
-                  child: StatefulBuilder(
-                    builder: (context, setState) {
-                      final isDark = AppTheme.instance.isDark;
-                      return Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          const Text('Dark theme'),
-                          Switch(
-                            value: isDark,
-                            onChanged: (value) {
-                              AppTheme.instance.setMode(value ? ThemeMode.dark : ThemeMode.light);
-                              // update visual state inside menu
-                              setState(() {});
-                              // close the popup after toggling
-                              Navigator.of(context).pop();
-                            },
-                          ),
-                        ],
-                      );
-                    },
-                  ),
-                ),
+            Row(
+              children: [
+                _buildPopupMenu(context, colorScheme),
               ],
             ),
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildPopupMenu(BuildContext context, ColorScheme colorScheme) {
+    return PopupMenuButton<String>(
+      icon: Icon(Icons.more_vert_sharp, color: colorScheme.onPrimary, size: 22),
+      onSelected: (value) async {
+        if (value == 'logout') {
+          context.read<AuthBloc>().add(SignOutEvent());
+        } else if (value == 'toggle_theme') {
+          // Toggle theme directly and persist via ThemeModeCubit
+          final themeMode = context.read<ThemeModeCubit>().state;
+          final newMode = themeMode == ThemeMode.dark ? ThemeMode.light : ThemeMode.dark;
+          await context.read<ThemeModeCubit>().setThemeMode(newMode);
+        } else if (value == 'toggle_lang') {
+          // Toggle language between English and Arabic
+          await context.read<LanguageCubit>().toggle();
+        }
+      },
+      itemBuilder: (context) {
+        final isDark = context.read<ThemeModeCubit>().state == ThemeMode.dark;
+        final isArabic = context.read<LanguageCubit>().state.languageCode == 'ar';
+        return [
+          PopupMenuItem<String>(
+            value: 'toggle_lang',
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Icon(Icons.language, color: colorScheme.inverseSurface),
+                const SizedBox(width: 8),
+                Text(isArabic ? 'العربية' : 'English'),
+              ],
+            ),
+          ),
+          PopupMenuItem<String>(
+            value: 'toggle_theme',
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Icon(isDark ? Icons.dark_mode : Icons.light_mode, color: colorScheme.inverseSurface),
+                const SizedBox(width: 8),
+                Text(isArabic ? 'تبديل المظهر' : 'Toggle theme'),
+              ],
+            ),
+          ),
+
+          PopupMenuItem<String>(
+            value: 'logout',
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                const Icon(Icons.logout),
+                const SizedBox(width: 8),
+                Text(isArabic ? 'تسجيل الخروج' : 'Log out'),
+              ],
+            ),
+          ),
+        ];
+      },
     );
   }
 }
