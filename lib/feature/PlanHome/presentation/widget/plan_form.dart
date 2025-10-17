@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:uuid/uuid.dart';
 import '../../../../injection_imports.dart';
 import 'package:mapperapp/core/util/date_sort_util.dart';
+import 'package:mapperapp/l10n/app_localizations.dart';
 
 
 class PlanForm extends StatefulWidget {
@@ -77,6 +78,7 @@ class _PlanFormState extends State<PlanForm> with AutomaticKeepAliveClientMixin 
   @override
   Widget build(BuildContext context) {
     super.build(context);
+    final l10n = AppLocalizations.of(context)!;
     return Padding(
       padding: AppSpaces.calculatePaddingFromScreenWidth(context),
       child: Form(
@@ -114,8 +116,8 @@ class _PlanFormState extends State<PlanForm> with AutomaticKeepAliveClientMixin 
                   setState(() {
                     _planEndDate = null;
                   });
-                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                      content: Text('End date cleared because it was before the newly selected start date')));
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                      content: Text(l10n.endDateCleared)));
                 }
               },
               isRequired: true,
@@ -175,14 +177,14 @@ class _PlanFormState extends State<PlanForm> with AutomaticKeepAliveClientMixin 
                   ),
                   ElevatedButton(
                     onPressed: _pickImage,
-                    child: const Text('Change Plan Image'),
+                    child: Text(l10n.changePlanImage),
                   ),
                 ],
               )
             else if (_pickedImage == null)
               ElevatedButton(
                 onPressed: _pickImage,
-                child: const Text('Pick Plan Image'),
+                child: Text(l10n.pickPlanImage),
               )
             else
               Image.file(
@@ -208,6 +210,8 @@ class _PlanFormState extends State<PlanForm> with AutomaticKeepAliveClientMixin 
     if (!_formKey.currentState!.validate()) {
       return;
     }
+    // Provide localized strings inside this method; `l10n` used by snackbars below
+    final l10n = AppLocalizations.of(context)!;
     final formattedStartDate = DateFormat('dd/MM/yyyy').format(_planStartDate!);
     final formattedEndDate = _planEndDate != null
         ? DateFormat('dd/MM/yyyy').format(_planEndDate!)
@@ -228,9 +232,8 @@ class _PlanFormState extends State<PlanForm> with AutomaticKeepAliveClientMixin 
 
       context.read<PlanBloc>().add(UpdatePlanEvent(updatedPlan));
 
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Plan updated successfully!')));
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.planUpdated)));
     } else {
-      // Build a new PlanDetails and dispatch AddPlanEvent (mirror update behavior)
       final newPlan = PlanDetails(
         id: const Uuid().v4(),
         title: _planTitleController.text.trim(),
@@ -245,10 +248,9 @@ class _PlanFormState extends State<PlanForm> with AutomaticKeepAliveClientMixin 
 
       context.read<PlanBloc>().add(AddPlanEvent(newPlan));
 
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Plan added successfully!')));
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.planAdded)));
     }
 
-    // Close the form after dispatch
     Navigator.of(context).pop();
   }
 }

@@ -1,3 +1,6 @@
+import 'package:flutter/widgets.dart';
+import 'package:mapperapp/l10n/app_localizations.dart';
+
 enum PlanStatus {
   all,
   completed,
@@ -25,6 +28,22 @@ extension PlanStatusExtension on PlanStatus {
         return 'Completed';
       case PlanStatus.notCompleted:
         return 'Not Completed';
+    }
+  }
+
+  /// Returns a localized label for this PlanStatus using [AppLocalizations].
+  /// Falls back to `toPlanStatusString()` if localization is not available.
+  String localized(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    if (l10n == null) return toPlanStatusString();
+
+    switch (this) {
+      case PlanStatus.all:
+        return l10n.allStatuses;
+      case PlanStatus.completed:
+        return l10n.planCompleted;
+      case PlanStatus.notCompleted:
+        return l10n.planNotCompleted;
     }
   }
 }

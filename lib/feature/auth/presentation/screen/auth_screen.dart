@@ -5,6 +5,7 @@ import 'package:mapperapp/feature/Home/presentation/screen/homeScreen.dart';
 import 'package:mapperapp/core/widgets/skeletons.dart';
 import '../bloc/auth_bloc.dart';
 import '../bloc/auth_event.dart';
+import 'package:mapperapp/l10n/app_localizations.dart';
 
 class AuthScreen extends StatelessWidget {
   const AuthScreen({super.key});
@@ -33,6 +34,7 @@ class _SignInView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final color = Theme.of(context).colorScheme;
+    final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
       backgroundColor: color.surface,
@@ -46,7 +48,7 @@ class _SignInView extends StatelessWidget {
               Icon(Icons.lock_outline, size: 90, color: color.primary),
               const SizedBox(height: 24),
               Text(
-                'Welcome Back!',
+                l10n.welcomeBack,
                 style: Theme.of(context)
                     .textTheme
                     .headlineMedium
@@ -54,7 +56,7 @@ class _SignInView extends StatelessWidget {
               ),
               const SizedBox(height: 8),
               Text(
-                'Sign in securely with your Google account to continue.',
+                l10n.signInSecurely,
                 textAlign: TextAlign.center,
                 style: Theme.of(context)
                     .textTheme
@@ -81,9 +83,9 @@ class _SignInView extends StatelessWidget {
                   color: color.onPrimary,
                   size: 22,
                 ),
-                label: const Text(
-                  'Continue with Google',
-                  style: TextStyle(
+                label: Text(
+                  l10n.continueWithGoogle,
+                  style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
                   ),
@@ -109,6 +111,7 @@ class _ErrorView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final color = Theme.of(context).colorScheme;
+    final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
       backgroundColor: color.surface,
@@ -119,7 +122,7 @@ class _ErrorView extends StatelessWidget {
             Icon(Icons.error_outline, color: color.error, size: 70),
             const SizedBox(height: 16),
             Text(
-              'Something went wrong',
+              l10n.somethingWentWrong,
               style: Theme.of(context)
                   .textTheme
                   .headlineSmall
@@ -138,7 +141,7 @@ class _ErrorView extends StatelessWidget {
             ElevatedButton(
               onPressed: () =>
                   context.read<AuthBloc>().add(SignOutEvent()),
-              child: const Text('Try Again'),
+              child: Text(l10n.tryAgain),
             ),
           ],
         ),

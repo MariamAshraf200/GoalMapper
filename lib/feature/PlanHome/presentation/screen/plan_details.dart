@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:uuid/uuid.dart';
 import '../../../../../injection_imports.dart';
 import '../../../../core/util/custom_builders/navigate_to_screen.dart';
+import 'package:mapperapp/l10n/app_localizations.dart';
 
 class PlanDetailsScreen extends StatefulWidget {
   final PlanDetails plan;
@@ -27,23 +28,24 @@ class _PlanDetailsScreenState extends State<PlanDetailsScreen> {
       context: context,
       builder: (context) {
         final colorScheme = Theme.of(context).colorScheme;
+        final l10n = AppLocalizations.of(context)!;
         return AlertDialog(
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-          title: const Text(
-            "Add Subtask",
-            style: TextStyle(fontWeight: FontWeight.bold),
+          title: Text(
+            l10n.addSubtask,
+            style: const TextStyle(fontWeight: FontWeight.bold),
           ),
           content: TextField(
             controller: controller,
-            decoration: const InputDecoration(
-              hintText: "Enter task title...",
-              border: OutlineInputBorder(),
+            decoration: InputDecoration(
+              hintText: l10n.enterTaskTitle,
+              border: const OutlineInputBorder(),
             ),
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text("Cancel"),
+              child: Text(l10n.cancel),
             ),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
@@ -66,7 +68,7 @@ class _PlanDetailsScreenState extends State<PlanDetailsScreen> {
                   Navigator.pop(context);
                 }
               },
-              child: const Text("Save"),
+              child: Text(l10n.save),
             ),
           ],
         );
@@ -76,6 +78,8 @@ class _PlanDetailsScreenState extends State<PlanDetailsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return Scaffold(
       body: SafeArea(
         child: Column(
@@ -128,11 +132,11 @@ class _PlanDetailsScreenState extends State<PlanDetailsScreen> {
                       );
                     } else if (state is TaskError) {
                       return Center(
-                        child: Text("Error: ${state.message}",
+                        child: Text('${l10n.errorPrefix}${state.message}',
                             style: const TextStyle(color: Colors.red)),
                       );
                     }
-                    return const Center(child: Text("No data available."));
+                    return Center(child: Text(l10n.noDataAvailable));
                   },
                 ),
               ),

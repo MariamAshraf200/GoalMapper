@@ -1,0 +1,90 @@
+{
+  "@@locale": "ar",
+  "@_LANGUAGES": {},
+  "english": "الإنجليزية",
+  "arabic": "العربية",
+
+
+  "@_TASK": {},
+  "close": "إغلاق",
+  "createNewTask": "إنشاء مهمة جديدة",
+  "updateTask": "تحديث المهمة",
+  "selectPriority": "اختر الأولوية",
+  "selectStatus": "اختر الحالة",
+  "allPriorities": "كل الأولويات",
+  "allStatuses": "كل الحالات",
+  "priorityHigh": "عالية",
+  "@priorityHigh": { "description": "Label for high priority" },
+  "priorityMedium": "متوسطة",
+  "@priorityMedium": { "description": "Label for medium priority" },
+  "priorityLow": "منخفضة",
+  "@priorityLow": { "description": "Label for low priority" },
+  "noTasksMatchFilters": "لا توجد مهام مطابقة للفلاتر.",
+
+  "taskTitle": "عنوان المهمة",
+  "addTaskTitle": "أضف عنوان المهمة",
+  "updateTaskTitle": "تحديث عنوان المهمة",
+  "taskTitleRequired": "مطلوب عنوان المهمة",
+
+  "description": "الوصف",
+  "addTaskDescription": "أضف وصف المهمة",
+  "updateTaskDescription": "تحديث وصف المهمة",
+
+  "taskDate": "تاريخ المهمة",
+  "datePlaceholder": "dd/mm/yyyy",
+
+  "addTaskButton": "إضافة مهمة",
+  "updateTaskButton": "تحديث المهمة",
+
+  "taskAdded": "تمت إضافة المهمة بنجاح!",
+  "taskUpdated": "تم تحديث المهمة بنجاح!",
+
+  "deleteTaskDescription": "هل أنت متأكد أنك تريد حذف هذه المهمة؟",
+  "@deleteTaskDescription": {"description": "Placeholder for deleting task description"},
+
+  "taskNotEditable": "هذه المهمة مكتملة أو فائتة ولا يمكن تعديلها.",
+  "@taskNotEditable": {"description": "Message shown when a task can't be edited (completed or missed)"},
+
+  "deleteTask": "حذف المهمة",
+  "@deleteTask": {"description": "Title for delete task dialog"},
+
+  "updateOperation": "تحديث",
+  "@updateOperation": {"description": "Label for update operation button"},
+
+  "deleteOperation": "حذف",
+  "@deleteOperation": {"description": "Label for delete operation button"},
+
+  "taskMarkedPrefix": "تم تمييز المهمة كـ",
+  "@taskMarkedPrefix": {"description": "Prefix for task status change snackbar"},
+
+  "statusDone": "مكتملة",
+  "@statusDone": {"description": "Label for done status"},
+
+  "statusPending": "قيد الانتظار",
+  "@statusPending": {"description": "Label for pending status"},
+
+  "statusMissed": "فاتت",
+  "@statusMissed": {"description": "Label for missed status"},
+
+  "statusToDo": "قيد العمل",
+  "@statusToDo": {"description": "Label for to-do status"},
+
+  "myPlans": "خططي",
+  "@myPlans": {"description": "Header title for plans screen"},
+
+  "selectCategory": "اختر الفئة",
+  "@selectCategory": {"description": "Hint text for selecting a category"},
+
+  "allCategories": "كل الفئات",
+  "@allCategories": {"description": "Label for the 'All Categories' dropdown item"},
+
+  "noPlansMatchFilters": "لا توجد خطط مطابقة للفلاتر.",
+  "@noPlansMatchFilters": {"description": "Message shown when no plans match filters"},
+
+  "planCompleted": "مكتملة",
+  "@planCompleted": {"description": "Label for plan status 'Completed'"},
+
+  "planNotCompleted": "غير مكتملة",
+  "@planNotCompleted": {"description": "Label for plan status 'Not Completed'"}
+
+}

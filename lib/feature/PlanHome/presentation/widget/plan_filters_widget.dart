@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:mapperapp/l10n/app_localizations.dart';
+
 import '../../../../../injection_imports.dart';
 
 class PlanFiltersWidget extends StatelessWidget {
@@ -19,6 +21,7 @@ class PlanFiltersWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+    final l10n = AppLocalizations.of(context)!;
     return Row(
       children: [
         Expanded(
@@ -31,9 +34,9 @@ class PlanFiltersWidget extends StatelessWidget {
               return _FilterDropdown<String>(
                 icon: Icon(Icons.folder, color: colorScheme.secondary),
                 value: selectedCategory,
-                hint: "Select Category",
+                hint: l10n.selectCategory,
                 items: [
-                  const DropdownMenuItem<String>(value: null, child: Text("All Categories")),
+                  DropdownMenuItem<String>(value: null, child: Text(l10n.allCategories)),
                   ...categories.where((c) => c != "All").map(
                     (c) => DropdownMenuItem<String>(value: c, child: Text(c)),
                   ),
@@ -48,13 +51,13 @@ class PlanFiltersWidget extends StatelessWidget {
           child: _FilterDropdown<PlanStatus>(
             icon: const Icon(Icons.check_circle, color: Colors.green),
             value: selectedStatus,
-            hint: "Select Status",
+            hint: l10n.selectStatus,
             items: [
-              const DropdownMenuItem<PlanStatus>(value: null, child: Text("All Statuses")),
+              DropdownMenuItem<PlanStatus>(value: null, child: Text(l10n.allStatuses)),
               ...PlanStatus.values.where((status) => status != PlanStatus.all).map(
                 (status) => DropdownMenuItem<PlanStatus>(
                   value: status,
-                  child: Text(status.toPlanStatusString()),
+                  child: Text(status.localized(context)),
                 ),
               ),
             ],

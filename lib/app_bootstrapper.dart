@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:mapperapp/feature/auth/presentation/screen/auth_gate.dart';
 import 'core/theme/theme_mode_cubit.dart';
 import 'core/i18n/language_cubit.dart';
 import 'injection_imports.dart';
 import 'global_bloc.dart';
+import 'l10n/app_localizations.dart';
 
 /// Create a global RouteObserver to monitor route changes.
 final RouteObserver<PageRoute> routeObserver = RouteObserver<PageRoute>();
@@ -50,11 +50,7 @@ class AppBootstrapper extends StatelessWidget {
           themeMode: themeMode,
           locale: locale,
           supportedLocales: const [Locale('en'), Locale('ar')],
-          localizationsDelegates: const [
-            GlobalMaterialLocalizations.delegate,
-            GlobalWidgetsLocalizations.delegate,
-            GlobalCupertinoLocalizations.delegate,
-          ],
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
           // locale is driven by LanguageCubit (provided at app root)
           home: const AuthGate(),
         );

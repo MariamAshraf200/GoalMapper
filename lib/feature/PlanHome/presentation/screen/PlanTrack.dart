@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:mapperapp/l10n/app_localizations.dart';
+
 import '../../../../../injection_imports.dart';
 import '../../../../core/util/custom_builders/navigate_to_screen.dart';
 import 'addPlan.dart';
@@ -25,7 +27,7 @@ class _PlanTrackerScreenState extends State<PlanTrackerScreen> {
 
   void _onCategoryChanged(String? category) {
     setState(() => selectedCategory = category);
-    if (category == null || category == "All") {
+    if (category == null) {
       context.read<PlanBloc>().add(GetAllPlansEvent());
     } else {
       context.read<PlanBloc>().add(GetPlansByCategoryEvent(category));
@@ -82,7 +84,7 @@ class _PlanTrackerScreenState extends State<PlanTrackerScreen> {
             const SizedBox(height: 16),
 
             // 🔹 Plan list
-            _PlanListSection(onItemTap: _openDetails),
+            _PlanListSection(key: const Key('plan_list_section'), onItemTap: _openDetails),
           ],
         ),
       ),
@@ -115,15 +117,16 @@ class _PlanHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           _circleIconButton(icon: Icons.arrow_back_ios_new, onPressed: onBack),
-          const Text(
-            "My Plans",
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          Text(
+            l10n.myPlans,
+            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
           _circleIconButton(icon: Icons.add, onPressed: onAdd),
         ],
@@ -136,10 +139,11 @@ class _PlanHeader extends StatelessWidget {
 class _PlanListSection extends StatelessWidget {
   final ValueChanged<PlanDetails> onItemTap;
 
-  const _PlanListSection({Key? key, required this.onItemTap}) : super(key: key);
+  const _PlanListSection({super.key, required this.onItemTap});
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Expanded(
       child: BlocBuilder<PlanBloc, PlanState>(
         builder: (context, state) {
@@ -148,10 +152,10 @@ class _PlanListSection extends StatelessWidget {
           } else if (state is PlanLoaded || state is PlanAndTasksLoaded) {
             final plans = state is PlanLoaded ? state.plans : (state as PlanAndTasksLoaded).plans;
             if (plans.isEmpty) {
-              return const Center(
+              return Center(
                 child: Text(
-                  "No plans match the filters.",
-                  style: TextStyle(fontSize: 16),
+                  l10n.noPlansMatchFilters,
+                  style: const TextStyle(fontSize: 16),
                 ),
               );
             }

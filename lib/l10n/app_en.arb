@@ -1,0 +1,208 @@
+{
+  "@@locale": "en",
+  "@_LANGAUGES": {},
+  "english": "English",
+  "arabic": "Arabic",
+
+
+  "@_TASK": {},
+  "close": "Close",
+  "@close": {
+    "description": "Tooltip text for closing the screen"
+  },
+
+  "createNewTask": "Create New Task",
+  "@createNewTask": {
+    "description": "Title for the Add Task screen"
+  },
+
+  "updateTask": "Update Task",
+  "@updateTask": {
+    "description": "Title for the Update Task screen"
+  },
+
+  "selectPriority": "Select Priority",
+  "@selectPriority": {
+    "description": "Hint text for selecting task priority"
+  },
+
+  "selectStatus": "Select Status",
+  "@selectStatus": {
+    "description": "Hint text for selecting task status"
+  },
+
+  "allPriorities": "All Priorities",
+  "@allPriorities": {
+    "description": "Dropdown option to show all priorities"
+  },
+
+  "allStatuses": "All Statuses",
+  "@allStatuses": {
+    "description": "Dropdown option to show all statuses"
+  },
+
+  "priorityHigh": "High",
+  "@priorityHigh": { "description": "Label for high priority" },
+
+  "priorityMedium": "Medium",
+  "@priorityMedium": { "description": "Label for medium priority" },
+
+  "priorityLow": "Low",
+  "@priorityLow": { "description": "Label for low priority" },
+
+  "noTasksMatchFilters": "No tasks match the filters.",
+  "@noTasksMatchFilters": {
+    "description": "Message displayed when no filtered tasks are found"
+  },
+
+  "taskTitle": "Task Title",
+  "@taskTitle": {"description": "Label for the task title field"},
+
+  "addTaskTitle": "Add your task title",
+  "@addTaskTitle": {"description": "Placeholder for adding task title"},
+
+  "updateTaskTitle": "Update your task title",
+  "@updateTaskTitle": {"description": "Placeholder for updating task title"},
+
+  "taskTitleRequired": "Task title is required",
+  "@taskTitleRequired": {"description": "Validation message when title is empty"},
+
+  "description": "Description",
+  "@description": {"description": "Label for description field"},
+
+  "addTaskDescription": "Add your task description",
+  "@addTaskDescription": {"description": "Placeholder for adding description"},
+
+  "updateTaskDescription": "Update your task description",
+  "@updateTaskDescription": {"description": "Placeholder for updating description"},
+
+  "taskDate": "Task Date",
+  "@taskDate": {"description": "Label for task date field"},
+
+  "datePlaceholder": "dd/mm/yyyy",
+  "@datePlaceholder": {"description": "Date format placeholder"},
+
+  "addTaskButton": "Add Task",
+  "@addTaskButton": {"description": "Label for add task button"},
+
+  "updateTaskButton": "Update Task",
+  "@updateTaskButton": {"description": "Label for update task button"},
+
+  "taskAdded": "Task added successfully!",
+  "@taskAdded": {"description": "Snackbar message when task added"},
+
+  "taskUpdated": "Task updated successfully!",
+  "@taskUpdated": {"description": "Snackbar message when task updated"},
+
+  "deleteTaskDescription": "Are you sure you want to delete this task?",
+  "@deleteTaskDescription": {"description": "Placeholder for deleting task description"},
+
+  "taskNotEditable": "This task is already completed or missed and cannot be changed.",
+  "@taskNotEditable": {"description": "Message shown when a task can't be edited (completed or missed)"},
+
+  "deleteTask": "Delete Task",
+  "@deleteTask": {"description": "Title for delete task dialog"},
+
+  "updateOperation": "Update",
+  "@updateOperation": {"description": "Label for update operation button"},
+
+  "deleteOperation": "Delete",
+  "@deleteOperation": {"description": "Label for delete operation button"},
+
+  "taskMarkedPrefix": "Task marked as",
+  "@taskMarkedPrefix": {"description": "Prefix for task status change snackbar"},
+
+  "statusDone": "Done",
+  "@statusDone": {"description": "Label for done status"},
+
+  "statusPending": "Pending",
+  "@statusPending": {"description": "Label for pending status"},
+
+  "statusMissed": "Missed",
+  "@statusMissed": { "description": "Label for missed status" },
+
+  "statusToDo": "To Do",
+  "@statusToDo": { "description": "Label for to-do status" },
+
+  "myPlans": "My Plans",
+  "@myPlans": { "description": "Header title for plans screen" },
+
+  "selectCategory": "Select Category",
+  "@selectCategory": { "description": "Hint text for selecting a category" },
+
+  "allCategories": "All Categories",
+  "@allCategories": { "description": "Label for the 'All Categories' dropdown item" },
+
+  "noPlansMatchFilters": "No plans match the filters.",
+  "@noPlansMatchFilters": { "description": "Message shown when no plans match filters" },
+
+  "planCompleted": "Completed",
+  "@planCompleted": { "description": "Label for plan status 'Completed'" },
+
+  "planNotCompleted": "Not Completed",
+  "@planNotCompleted": { "description": "Label for plan status 'Not Completed'" },
+
+  "subtasks": "Subtasks",
+  "@subtasks": { "description": "Label for subtasks section" },
+
+  "noSubtasksYet": "No subtasks yet.",
+  "@noSubtasksYet": { "description": "Message shown when there are no subtasks yet" },
+
+  "planStartDate": "Start Date",
+  "@planStartDate": { "description": "Label for plan start date field" },
+
+  "planEndDate": "End Date",
+  "@planEndDate": { "description": "Label for plan end date field" },
+
+  "invalidEndDate": "Invalid end date",
+  "@invalidEndDate": { "description": "Validation text for invalid end date" },
+
+  "endDateBeforeStart": "End date cannot be before start date",
+  "@endDateBeforeStart": { "description": "Validation text when end date is before start date" },
+
+  "addPlan": "Add Plan",
+  "@addPlan": { "description": "Label for adding a plan" },
+
+  "updatePlan": "Update Plan",
+  "@updatePlan": { "description": "Label for updating a plan" },
+
+  "planTitle": "Plan Title",
+  "@planTitle": { "description": "Label for plan title" },
+
+  "addPlanTitle": "Add your plan title",
+  "@addPlanTitle": { "description": "Placeholder for adding plan title" },
+
+  "updatePlanTitle": "Update your plan title",
+  "@updatePlanTitle": { "description": "Placeholder for updating plan title" },
+
+  "planTitleRequired": "Plan title is required",
+  "@planTitleRequired": { "description": "Validation message when plan title is empty" },
+
+  "addPlanDescription": "Add your plan description",
+  "@addPlanDescription": { "description": "Placeholder for adding plan description" },
+
+  "updatePlanDescription": "Update your plan description",
+  "@updatePlanDescription": { "description": "Placeholder for updating plan description" },
+
+  "category": "Category",
+  "@category": { "description": "Label for category header" },
+
+  "categoryName": "Category name",
+  "@categoryName": { "description": "Input hint for category name" },
+
+  "welcomeBack": "Welcome Back!",
+  "@welcomeBack": { "description": "Welcome title on the auth screen" },
+
+  "signInSecurely": "Sign in securely with your Google account to continue.",
+  "@signInSecurely": { "description": "Subtitle on the auth screen" },
+
+  "continueWithGoogle": "Continue with Google",
+  "@continueWithGoogle": { "description": "Label for continue with Google button" },
+
+  "somethingWentWrong": "Something went wrong",
+  "@somethingWentWrong": { "description": "Generic error headline" },
+
+  "noTasksFound": "No tasks found.",
+  "@noTasksFound": { "description": "Message shown when no tasks found" }
+
+}

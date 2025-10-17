@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mapperapp/l10n/app_localizations.dart';
 import '../../domain/entities/plan_entity.dart';
 import '../widget/plan_form.dart';
 
@@ -9,13 +10,15 @@ class UpdatePlanScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
         title: Row(
           children: [
             IconButton(
-              tooltip: "Close",
+              tooltip: l10n.close,
               icon: Icon(
                 Icons.close,
                 color: Colors.red[400],
@@ -27,7 +30,7 @@ class UpdatePlanScreen extends StatelessWidget {
             ),
             const Spacer(),
             Text(
-              'Update Your Plan',
+              l10n.updateTask,
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,

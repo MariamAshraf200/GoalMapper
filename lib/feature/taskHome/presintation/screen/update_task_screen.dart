@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../l10n/l10n_extension.dart';
 import '../../domain/entity/taskEntity.dart';
 import '../Widget/form/upadte_task_form.dart';
 
@@ -15,7 +16,7 @@ class UpdateTaskScreen extends StatelessWidget {
         title: Row(
           children: [
             IconButton(
-              tooltip: "Close",
+              tooltip: context.l10n.close,
               icon: Icon(
                 Icons.close,
                 color: Colors.red[400],
@@ -27,7 +28,7 @@ class UpdateTaskScreen extends StatelessWidget {
             ),
             const Spacer(),
             Text(
-              'Update Task',
+              context.l10n.updateTask,
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,

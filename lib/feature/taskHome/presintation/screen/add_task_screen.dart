@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import '../../../../l10n/l10n_extension.dart';
 import '../Widget/form/add_task_form.dart';
 
 class AddTaskScreen extends StatelessWidget {
   final String? planId;
 
-  const AddTaskScreen({super.key, this.planId}); // planId is optional
+  const AddTaskScreen({super.key, this.planId});
 
   @override
   Widget build(BuildContext context) {
@@ -14,7 +15,7 @@ class AddTaskScreen extends StatelessWidget {
         title: Row(
           children: [
             IconButton(
-              tooltip: "Close",
+              tooltip: context.l10n.close,
               icon: Icon(
                 Icons.close,
                 color: Colors.red[400],
@@ -24,20 +25,20 @@ class AddTaskScreen extends StatelessWidget {
                 Navigator.of(context).pop();
               },
             ),
-            const Spacer(), // Push the text to the center
+            const Spacer(),
             Text(
-              'Create New Task',
+              context.l10n.createNewTask,
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
                 color: Theme.of(context).colorScheme.primary,
               ),
             ),
-            const Spacer(), // Balances the spacing on the right
+            const Spacer(),
           ],
         ),
       ),
-      body: AddTaskForm(planId: planId), // Pass planId to AddTaskForm
+      body: AddTaskForm(planId: planId),
     );
   }
 }

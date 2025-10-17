@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import '../../../../../injection_imports.dart';
 import '../../../../../core/extensions/app_strings.dart';
+import '../../../../../l10n/l10n_extension.dart';
 
 
 
@@ -57,7 +58,8 @@ class TaskItemCard extends StatelessWidget {
 
   // ---------------- Main Content ----------------
   Widget _buildContent(BuildContext context) {
-    final Color priorityColor = TaskPriorityColorExtension(task.priority).toPriorityColor();
+    // Use the helper extension to obtain a localized color
+    final Color priorityColor = task.priority.toPriorityColor(context);
 
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
@@ -89,7 +91,7 @@ class TaskItemCard extends StatelessWidget {
               Container(
                 width: 2,
                 height: 55,
-                color: priorityColor.withAlpha( 100),
+                color: priorityColor.withAlpha(100),
                 margin: const EdgeInsets.only(top: 4),
               ),
             ],
@@ -108,9 +110,8 @@ class TaskItemCard extends StatelessWidget {
                     Wrap(
                       spacing: 8,
                       children: [
-                        _buildPriorityChip(priorityColor),
-                        if (task.category.isNotEmpty)
-                          _buildCategoryChip(task.category),
+                        _buildPriorityChip(context, priorityColor),
+                        if (task.category.isNotEmpty) _buildCategoryChip(task.category),
                       ],
                     ),
                     _buildStatusIcon(context),
@@ -149,13 +150,11 @@ class TaskItemCard extends StatelessWidget {
                     if (task.date.isNotEmpty)
                       Row(
                         children: [
-                          const Icon(Icons.calendar_today,
-                              size: 14, color: Colors.grey),
+                          const Icon(Icons.calendar_today, size: 14, color: Colors.grey),
                           const SizedBox(width: 4),
                           Text(
                             DateFormatUtil.formatFullDate(task.date),
-                            style: const TextStyle(
-                                fontSize: 13, color: Colors.grey),
+                            style: const TextStyle(fontSize: 13, color: Colors.grey),
                           ),
                         ],
                       ),
@@ -163,15 +162,13 @@ class TaskItemCard extends StatelessWidget {
                       const SizedBox(width: 14),
                       Row(
                         children: [
-                          const Icon(Icons.access_time,
-                              size: 14, color: Colors.grey),
+                          const Icon(Icons.access_time, size: 14, color: Colors.grey),
                           const SizedBox(width: 4),
                           Text(
                             TimeFormatUtil.formatTime(
                               TimeFormatUtil.parseFlexibleTime(task.time),
                             ) ?? '',
-                            style: const TextStyle(
-                                fontSize: 13, color: Colors.grey),
+                            style: const TextStyle(fontSize: 13, color: Colors.grey),
                           ),
                         ],
                       ),
@@ -187,14 +184,14 @@ class TaskItemCard extends StatelessWidget {
   }
 
   // ---------------- Chips ----------------
-  Widget _buildPriorityChip(Color color) => Container(
+  Widget _buildPriorityChip(BuildContext context, Color color) => Container(
     padding: const EdgeInsets.symmetric(vertical: 3, horizontal: 10),
     decoration: BoxDecoration(
-      color: color.withAlpha( 30),
+      color: color.withAlpha(30),
       borderRadius: BorderRadius.circular(20),
     ),
     child: Text(
-      task.priority,
+      task.priority.toPriorityLabel(context),
       style: TextStyle(
         color: color,
         fontSize: 12,
@@ -224,8 +221,7 @@ class TaskItemCard extends StatelessWidget {
     return GestureDetector(
       child: AnimatedSwitcher(
         duration: const Duration(milliseconds: 300),
-        transitionBuilder: (child, anim) =>
-            ScaleTransition(scale: anim, child: child),
+        transitionBuilder: (child, anim) => ScaleTransition(scale: anim, child: child),
         child: _statusIcon(),
       ),
       onTap: () => _toggleStatus(context),
@@ -278,24 +274,36 @@ class TaskItemCard extends StatelessWidget {
       newStatus,
     ));
 
+    final l10n = context.l10n;
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('Task marked as ${newStatus.toTaskStatusString()}'),
+        content: Text('${l10n.taskMarkedPrefix} ${_statusLabel(newStatus, context)}'),
         duration: const Duration(seconds: 1),
-        backgroundColor:
-        newStatus == TaskStatus.done ? Colors.green : Colors.orange,
+        backgroundColor: newStatus == TaskStatus.done ? Colors.green : Colors.orange,
       ),
     );
+  }
+
+  String _statusLabel(TaskStatus status, BuildContext context) {
+    final l10n = context.l10n;
+    switch (status) {
+      case TaskStatus.done:
+        return l10n.statusDone;
+      case TaskStatus.pending:
+        return l10n.statusPending;
+      case TaskStatus.missed:
+        return l10n.statusMissed;
+      case TaskStatus.toDo:
+        return l10n.statusToDo;
+      }
   }
 
   void _showErrorDialog(BuildContext context) {
     showDialog(
       context: context,
-      builder: (_) => const AlertDialog(
-        title: Text('Task Not Editable'),
-        content: Text(
-          AppStrings.taskNotEditable,
-        ),
+      builder: (_) => AlertDialog(
+        title: Text(context.l10n.taskNotEditable),
+        content: Text(AppStrings.taskNotEditable),
       ),
     );
   }
@@ -304,10 +312,10 @@ class TaskItemCard extends StatelessWidget {
     showDialog(
       context: context,
       builder: (_) => CustomDialog(
-        title: 'Update Task',
-        description: AppStrings.updateTaskDescription,
+        title: context.l10n.updateTask,
+        description: context.l10n.updateTaskDescription,
         icon: Icons.update,
-        operation: 'Update',
+        operation: context.l10n.updateOperation,
         color: Colors.blue,
         onConfirmed: () {
           Navigator.of(context).pop();
@@ -325,10 +333,10 @@ class TaskItemCard extends StatelessWidget {
     showDialog(
       context: context,
       builder: (_) => CustomDialog(
-        title: 'Delete Task',
-        description: AppStrings.deleteTaskDescription,
+        title: context.l10n.deleteTask,
+        description: context.l10n.deleteTaskDescription,
         icon: Icons.delete_forever,
-        operation: 'Delete',
+        operation: context.l10n.deleteOperation,
         color: Colors.red,
         onConfirmed: () {
           context.read<TaskBloc>().add(DeleteTaskEvent(task.id));
@@ -337,20 +345,5 @@ class TaskItemCard extends StatelessWidget {
         onCanceled: () => Navigator.of(context).pop(),
       ),
     );
-  }
-}
-
-extension TaskPriorityColorExtension on String {
-  Color toPriorityColor() {
-    switch (toLowerCase()) {
-      case 'high':
-        return Colors.redAccent;
-      case 'medium':
-        return Colors.orangeAccent;
-      case 'low':
-        return Colors.green;
-      default:
-        return Colors.blueGrey; // fallback
-    }
   }
 }

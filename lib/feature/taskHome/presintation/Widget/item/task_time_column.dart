@@ -21,21 +21,17 @@ class TaskTimeColumn extends StatelessWidget {
 
     return Column(
       children: [
-        // Top Time Display (Start Time)
         Text(
           formattedStartTime,
           style: const TextStyle(fontSize: 12),
         ),
-
-        // Vertical Divider
         Container(
           width: 1.5,
-          height: 100, // Fixed height for the line
+          height: 100,
           margin: const EdgeInsets.symmetric(vertical: 4),
           color: Colors.grey,
         ),
 
-        // Bottom Time Display (End Time)
         Text(
           formattedEndTime,
           style: const TextStyle(fontSize: 12),
@@ -44,10 +40,8 @@ class TaskTimeColumn extends StatelessWidget {
     );
   }
 
-  // Parse and format the time from the task's string
   String _parseAndFormatTaskTime(String? time) {
     if (time == null || time.trim().isEmpty) {
-      // Return an empty space if time is null or empty
       return ' ';
     }
     try {

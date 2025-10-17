@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mapperapp/feature/taskHome/domain/entity/taskEntity.dart';
 import '../wedgit/task_card.dart';
+import 'package:mapperapp/l10n/app_localizations.dart';
 
 class TaskList extends StatelessWidget {
 
@@ -9,8 +10,9 @@ class TaskList extends StatelessWidget {
   const TaskList({super.key, required this.tasks});
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     if (tasks.isEmpty) {
-      return const Center(child: Text("No tasks found."));
+      return Center(child: Text(l10n.noTasksFound));
     }
 
     return SingleChildScrollView(

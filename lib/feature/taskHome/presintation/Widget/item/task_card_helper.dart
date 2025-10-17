@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../../../../../injection_imports.dart';
+import '../../../../../../l10n/l10n_extension.dart';
 
 
 extension TaskDetailsX on TaskDetails {
@@ -31,7 +32,24 @@ extension TaskPriorityColor on String {
       case 'low':
         return colorScheme.secondary;
       default:
-        return colorScheme.onSurface.withOpacity(0.06);
+        return colorScheme.onSurface.withAlpha( 120);
+    }
+  }
+}
+
+/// Returns a localized label for priority string values (high/medium/low).
+extension TaskPriorityLabel on String {
+  String toPriorityLabel(BuildContext context) {
+    final l10n = context.l10n;
+    switch (toLowerCase()) {
+      case 'high':
+        return l10n.priorityHigh;
+      case 'medium':
+        return l10n.priorityMedium;
+      case 'low':
+        return l10n.priorityLow;
+      default:
+        return this;
     }
   }
 }

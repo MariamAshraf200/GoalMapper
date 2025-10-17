@@ -1,3 +1,6 @@
+import 'package:flutter/widgets.dart';
+import 'package:mapperapp/l10n/app_localizations.dart';
+
 enum TaskFilterType { date, priority, status }
 enum TaskPriority { low, medium, high }
 enum TaskStatus { toDo, pending, done, missed }
@@ -52,6 +55,22 @@ extension TaskPriorityExtension on TaskPriority {
         return 'HIGH';
     }
   }
+
+  /// Returns a localized label for this priority using [AppLocalizations].
+  /// Falls back to `toTaskPriorityString()` if localization is not available.
+  String localized(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    if (l10n == null) return toTaskPriorityString();
+
+    switch (this) {
+      case TaskPriority.low:
+        return l10n.priorityLow;
+      case TaskPriority.medium:
+        return l10n.priorityMedium;
+      case TaskPriority.high:
+        return l10n.priorityHigh;
+    }
+  }
 }
 
 extension TaskStatusExtension on TaskStatus {
@@ -80,6 +99,24 @@ extension TaskStatusExtension on TaskStatus {
         return 'DONE';
       case TaskStatus.missed:
         return 'MISSED';
+    }
+  }
+
+  /// Returns a localized label for this status using [AppLocalizations].
+  /// Falls back to `toTaskStatusString()` if localization is not available.
+  String localized(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    if (l10n == null) return toTaskStatusString();
+
+    switch (this) {
+      case TaskStatus.toDo:
+        return l10n.statusToDo;
+      case TaskStatus.pending:
+        return l10n.statusPending;
+      case TaskStatus.done:
+        return l10n.statusDone;
+      case TaskStatus.missed:
+        return l10n.statusMissed;
     }
   }
 }

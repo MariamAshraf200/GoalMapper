@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:mapperapp/l10n/app_localizations.dart';
 import 'package:mapperapp/feature/PlanHome/presentation/widget/plan_items_card.dart';
 import '../bloc/bloc.dart';
 import '../bloc/state.dart';
@@ -35,6 +36,7 @@ class _PlanItemsState extends State<PlanItems> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return BlocBuilder<PlanBloc, PlanState>(
       builder: (context, state) {
         if (state is PlanLoading) {
@@ -42,7 +44,7 @@ class _PlanItemsState extends State<PlanItems> {
         } else if (state is PlanLoaded) {
           final plans = state.plans;
           return plans.isEmpty
-              ? const Center(child: Text('No plans available.'))
+              ? Center(child: Text(l10n.noPlansAvailable))
               : ListView.builder(
             padding: const EdgeInsets.all(16.0),
             controller: _scrollController,
@@ -58,7 +60,7 @@ class _PlanItemsState extends State<PlanItems> {
         } else if (state is PlanError) {
           return Center(child: Text(state.message));
         }
-        return const Center(child: Text('Unexpected state.'));
+        return Center(child: Text(l10n.unexpectedState));
       },
     );
   }

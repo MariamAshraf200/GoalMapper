@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:mapperapp/l10n/app_localizations.dart';
 import '../../../../core/util/custom_builders/navigate_to_screen.dart';
 import '../../domain/entities/plan_entity.dart';
 import '../bloc/bloc.dart';
@@ -21,6 +22,7 @@ class _PlanItemCardState extends State<PlanItemCard> {
   Widget build(BuildContext context) {
     final plan = widget.plan;
     final colorScheme = Theme.of(context).colorScheme;
+    final l10n = AppLocalizations.of(context)!;
     return Dismissible(
       key: Key(plan.id),
       direction: DismissDirection.horizontal,
@@ -28,12 +30,12 @@ class _PlanItemCardState extends State<PlanItemCard> {
         alignment: Alignment.centerLeft,
         padding: const EdgeInsets.symmetric(horizontal: 24),
         color: Colors.red,
-        child: const Row(
+        child: Row(
           children: [
             Icon(Icons.delete, color: Colors.white),
-            SizedBox(width: 8),
-            Text('Delete',
-                style: TextStyle(
+            const SizedBox(width: 8),
+            Text(l10n.deleteOperation,
+                style: const TextStyle(
                     color: Colors.white, fontWeight: FontWeight.bold)),
           ],
         ),
@@ -42,13 +44,13 @@ class _PlanItemCardState extends State<PlanItemCard> {
         alignment: Alignment.centerRight,
         padding: const EdgeInsets.symmetric(horizontal: 24),
         color: Colors.blue,
-        child: const Row(
+        child: Row(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
             Icon(Icons.edit, color: Colors.white),
-            SizedBox(width: 8),
-            Text('Edit',
-                style: TextStyle(
+            const SizedBox(width: 8),
+            Text(l10n.updateOperation,
+                style: const TextStyle(
                     color: Colors.white, fontWeight: FontWeight.bold)),
           ],
         ),
@@ -59,17 +61,16 @@ class _PlanItemCardState extends State<PlanItemCard> {
           final shouldDelete = await showDialog<bool>(
             context: context,
             builder: (ctx) => AlertDialog(
-              title: const Text('Delete Plan'),
-              content:
-                  const Text('Are you sure you want to delete this plan?'),
+              title: Text(l10n.deletePlan),
+              content: Text(l10n.deletePlanDescription),
               actions: [
                 TextButton(
                     onPressed: () => Navigator.pop(ctx, false),
-                    child: const Text('Cancel')),
+                    child: Text(l10n.cancel)),
                 TextButton(
                   onPressed: () => Navigator.pop(ctx, true),
-                  child: const Text('Delete',
-                      style: TextStyle(color: Colors.red)),
+                  child: Text(l10n.deleteOperation,
+                      style: const TextStyle(color: Colors.red)),
                 ),
               ],
             ),
@@ -179,7 +180,7 @@ class _PlanItemCardState extends State<PlanItemCard> {
                         ),
                         const SizedBox(width: 4),
                         Text(
-                          plan.completed ? 'Completed' : 'Not Completed',
+                          plan.completed ? l10n.planCompleted : l10n.planNotCompleted,
                           style: TextStyle(
                             fontSize: 12,
                             color: plan.completed ? Colors.green : Colors.orange,

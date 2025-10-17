@@ -2,6 +2,7 @@ import '../../../../../injection_imports.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../bloc/taskBloc/state.dart' as taskState;
+import '../../../../l10n/l10n_extension.dart';
 
 class TaskTrack extends StatefulWidget {
   const TaskTrack({super.key});
@@ -218,11 +219,11 @@ class TaskFilters extends StatelessWidget {
           child: _FilterDropdown<String>(
             icon: const Icon(Icons.filter_list, color: Colors.blue),
             value: selectedPriority,
-            hint: "Select Priority",
+            hint: context.l10n.selectPriority,
             items: [
               ...TaskPriority.values.map((p) =>
                   DropdownMenuItem(value: p.toTaskPriorityString(), child: Text(p.toTaskPriorityString()))),
-              const DropdownMenuItem(value: null, child: Text("All Priorities")),
+              DropdownMenuItem(value: null, child: Text(context.l10n.allPriorities)),
             ],
             onChanged: onPriorityChanged,
           ),
@@ -232,11 +233,11 @@ class TaskFilters extends StatelessWidget {
           child: _FilterDropdown<String>(
             icon: const Icon(Icons.task_alt, color: Colors.green),
             value: selectedStatus,
-            hint: "Select Status",
+            hint: context.l10n.selectStatus,
             items: [
               ...TaskStatus.values.map((s) =>
                   DropdownMenuItem(value: s.toTaskStatusString(), child: Text(s.toTaskStatusString()))),
-              const DropdownMenuItem(value: null, child: Text("All Statuses")),
+              DropdownMenuItem(value: null, child: Text(context.l10n.allStatuses)),
             ],
             onChanged: onStatusChanged,
           ),
@@ -302,7 +303,7 @@ class TaskListSection extends StatelessWidget {
             return const Center(child: CircularProgressIndicator());
           } else if (state is taskState.TaskLoaded) {
             if (state.tasks.isEmpty) {
-              return const Center(child: Text("No tasks match the filters.", style: TextStyle(fontSize: 18)));
+              return Center(child: Text(context.l10n.noTasksMatchFilters, style: const TextStyle(fontSize: 18)));
             }
             return TaskItems(tasks: state.tasks);
           } else if (state is taskState.TaskError) {

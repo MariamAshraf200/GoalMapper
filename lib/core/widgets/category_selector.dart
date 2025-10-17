@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mapperapp/l10n/app_localizations.dart';
 
 /// A lightweight, reusable CategorySelector widget that lives in `core`.
 ///
@@ -73,10 +74,11 @@ class _CategorySelectorState extends State<CategorySelector> {
   }
 
   Widget _buildHeader(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Row(
       children: [
         Text(
-          'Category',
+          l10n.category,
           style: TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.bold,
@@ -87,7 +89,7 @@ class _CategorySelectorState extends State<CategorySelector> {
         TextButton.icon(
           onPressed: widget.onAddCategory,
           icon: const Icon(Icons.add, size: 18),
-          label: const Text('Add New', style: TextStyle(fontSize: 14)),
+          label: Text(l10n.addNew, style: const TextStyle(fontSize: 14)),
         ),
       ],
     );
@@ -98,4 +100,3 @@ class _CategorySelectorState extends State<CategorySelector> {
     widget.onCategorySelected?.call(categoryName);
   }
 }
-
