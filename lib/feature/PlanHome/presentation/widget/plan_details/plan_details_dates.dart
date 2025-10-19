@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:mapperapp/l10n/app_localizations.dart';
 
 import '../../../domain/entities/plan_entity.dart';
 
 class PlanDetailsDates extends StatelessWidget {
   final PlanDetails plan;
-  const PlanDetailsDates({Key? key, required this.plan}) : super(key: key);
+  const PlanDetailsDates({super.key, required this.plan});
 
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+    final l10n = AppLocalizations.of(context)!;
     return Row(
       children: [
         Expanded(
@@ -19,9 +21,9 @@ class PlanDetailsDates extends StatelessWidget {
                 children: [
                   Icon(Icons.event, color: colorScheme.secondary, size: 20),
                   const SizedBox(width: 6),
-                  const Text(
-                    "Start Date",
-                    style: TextStyle(
+                  Text(
+                    l10n.planStartDate,
+                    style: const TextStyle(
                       fontSize: 13,
                       fontWeight: FontWeight.w500,
                     ),
@@ -49,16 +51,18 @@ class PlanDetailsDates extends StatelessWidget {
                 children: [
                   Icon(Icons.flag, color: Colors.redAccent.shade400, size: 20),
                   const SizedBox(width: 6),
-                  const Text(
-                    "End Date",
-                    style: TextStyle(
+                  Text(
+                    l10n.planEndDate,
+                    style: const TextStyle(
                       fontSize: 13,
                       fontWeight: FontWeight.w500,
                     ),
                   ),
                 ],
               ),
+
               const SizedBox(height: 4),
+
               Text(
                 plan.endDate,
                 style: const TextStyle(

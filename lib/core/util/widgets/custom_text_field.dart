@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../functions/string_manipulations_and_search.dart';
+import 'package:mapperapp/l10n/app_localizations.dart';
 
 class CustomTextField extends StatefulWidget {
   const CustomTextField({
@@ -101,7 +102,11 @@ class _CustomTextFieldState extends State<CustomTextField> {
 
   String? _validateInput(String? value) {
     if (!widget.canBeNull && (value == null || value.trim().isEmpty)) {
-      return 'Enter the ${widget.labelText}';
+      final l10n = AppLocalizations.of(context)!;
+      final fieldName = (widget.outSideTitle != null && widget.outSideTitle!.trim().isNotEmpty)
+          ? widget.outSideTitle!.trim()
+          : (widget.labelText ?? '');
+      return l10n.enterField(fieldName);
     }
 
     if (widget.validator == null) {

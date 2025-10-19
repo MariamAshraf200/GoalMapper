@@ -98,7 +98,7 @@ class _HomeScreenState extends State<HomeScreen> with RouteAware {
           } else if (state is taskState.TaskError) {
             return Center(child: Text(state.message));
           }
-          return const Center(child: Text("No tasks found for today."));
+          return SizedBox.shrink();
         },
       ),
       floatingActionButton: CustomFAB(context: context),

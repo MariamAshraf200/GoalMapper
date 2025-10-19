@@ -15,7 +15,7 @@ class PlanDetails extends Equatable {
   final String category;
   final String status;
   final String? updatedTime;
-  final String? image;
+  final List<String>? images;
   final bool completed;
   final List<TaskPlan> tasks;
   final double? progress;
@@ -30,7 +30,7 @@ class PlanDetails extends Equatable {
     required this.category,
     required this.status,
     this.updatedTime,
-    this.image,
+    this.images,
     this.completed = false,
     this.tasks = const [],
     this.progress,
@@ -46,7 +46,7 @@ class PlanDetails extends Equatable {
     String? category,
     Object? status = _noValue,
     Object? updatedTime = _noValue,
-    Object? image = _noValue,
+    Object? images = _noValue,
     bool? completed,
     List<TaskPlan>? tasks,
     double? progress,
@@ -61,7 +61,7 @@ class PlanDetails extends Equatable {
       category: category ?? this.category,
       status: status != _noValue ? status as String : this.status,
       updatedTime: updatedTime != _noValue ? updatedTime as String? : this.updatedTime,
-      image: image != _noValue ? image as String? : this.image,
+      images: images != _noValue ? images as List<String>? : this.images,
       completed: completed ?? this.completed,
       tasks: tasks ?? this.tasks,
       progress: progress ?? this.progress,
@@ -79,7 +79,7 @@ class PlanDetails extends Equatable {
       category: category,
       status: status,
       updatedTime: updatedTime,
-      image: image,
+      images: images,
       completed: completed,
       tasks: tasks,
     );
@@ -98,7 +98,7 @@ class PlanDetails extends Equatable {
     category,
     status,
     updatedTime,
-    image,
+    images,
     completed,
     tasks,
     progress,

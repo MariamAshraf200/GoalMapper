@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mapperapp/l10n/app_localizations.dart';
 import '../widget/plan_form.dart';
 
 class AddPlanScreen extends StatelessWidget {
@@ -6,13 +7,15 @@ class AddPlanScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
         title: Row(
           children: [
             IconButton(
-              tooltip: "Close",
+              tooltip: l10n.close,
               icon: Icon(
                 Icons.close,
                 color: Colors.red[400],
@@ -24,7 +27,7 @@ class AddPlanScreen extends StatelessWidget {
             ),
             const Spacer(),
             Text(
-              'Create New Plan',
+              l10n.createNewTask,
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,

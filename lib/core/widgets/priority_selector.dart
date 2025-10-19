@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import '../../l10n/l10n_extension.dart';
 
 /// A simple, reusable PrioritySelector that lives in `core`.
 ///
-/// This widget is UI-only and decoupled from feature-specific enums. Use
-/// a feature-level adapter to map your TaskPriority enum to string labels
-/// if needed.
+/// This widget is UI-only and accepts already-localized string labels.
+/// A feature-level adapter (like `PrioritySelectorWithLogic`) should map
+/// domain enums to localized labels and convert selections back to enums.
 class PrioritySelector extends StatelessWidget {
   final List<String> priorities;
   final String selectedPriority;
@@ -23,7 +24,7 @@ class PrioritySelector extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Priority',
+          context.l10n.selectPriority,
           style: TextStyle(
             fontWeight: FontWeight.bold,
             color: Theme.of(context).colorScheme.primary,
@@ -33,11 +34,11 @@ class PrioritySelector extends StatelessWidget {
         const SizedBox(height: 8),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: priorities.map((priority) {
-            final bool isSelected = priority == selectedPriority;
+          children: priorities.map((label) {
+            final bool isSelected = label == selectedPriority;
             return ChoiceChip(
               label: Text(
-                priority.capitalize(),
+                label,
                 style: const TextStyle(
                   fontWeight: FontWeight.bold,
                 ),
@@ -45,7 +46,7 @@ class PrioritySelector extends StatelessWidget {
               selected: isSelected,
               selectedColor: Theme.of(context).colorScheme.primary,
               onSelected: (selected) {
-                if (selected) onPrioritySelected(priority);
+                if (selected) onPrioritySelected(label);
               },
             );
           }).toList(),
@@ -54,11 +55,3 @@ class PrioritySelector extends StatelessWidget {
     );
   }
 }
-
-extension StringCapitalize on String {
-  String capitalize() {
-    if (isEmpty) return this;
-    return '${this[0].toUpperCase()}${substring(1)}';
-  }
-}
-

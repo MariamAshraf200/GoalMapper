@@ -3,11 +3,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:uuid/uuid.dart';
 import '../../../../../injection_imports.dart';
 import '../../../../core/util/custom_builders/navigate_to_screen.dart';
+import 'package:mapperapp/l10n/app_localizations.dart';
+import '../widget/plan_details/plan_image_section.dart';
 
 class PlanDetailsScreen extends StatefulWidget {
-  final PlanDetails plan;
+  final String id;
 
-  const PlanDetailsScreen({super.key, required this.plan});
+  const PlanDetailsScreen({super.key, required this.id});
 
   @override
   State<PlanDetailsScreen> createState() => _PlanDetailsScreenState();
@@ -17,8 +19,8 @@ class _PlanDetailsScreenState extends State<PlanDetailsScreen> {
   @override
   void initState() {
     super.initState();
-    // ✅ خليك في البلوك، هات التاسكات للخطة دي
-    context.read<PlanBloc>().add(GetAllTasksPlanEvent(widget.plan.id));
+    // Trigger loading of tasks and ensure plans are available in the bloc
+    context.read<PlanBloc>().add(GetAllTasksPlanEvent(widget.id));
   }
 
   void _showAddTaskDialog(BuildContext context) {
@@ -27,48 +29,34 @@ class _PlanDetailsScreenState extends State<PlanDetailsScreen> {
       context: context,
       builder: (context) {
         final colorScheme = Theme.of(context).colorScheme;
-        return AlertDialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-          title: const Text(
-            "Add Subtask",
-            style: TextStyle(fontWeight: FontWeight.bold),
-          ),
+        final l10n = AppLocalizations.of(context)!;
+        return CustomDialog(
+          title: l10n.addSubtask,
+          description: '', // unused because we provide content
+          operation: l10n.save,
+          icon: Icons.add,
+          color: colorScheme.primary,
           content: TextField(
             controller: controller,
-            decoration: const InputDecoration(
-              hintText: "Enter task title...",
-              border: OutlineInputBorder(),
+            decoration: InputDecoration(
+              hintText: l10n.enterTaskTitle,
+              border: const OutlineInputBorder(),
             ),
           ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text("Cancel"),
-            ),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: colorScheme.primary,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
-              ),
-              onPressed: () {
-                if (controller.text.isNotEmpty) {
-                  final newTask = TaskPlan(
-                    id: const Uuid().v4(),
-                    text: controller.text.trim(),
-                    status: TaskPlanStatus.toDo,
+          onCanceled: () => Navigator.pop(context),
+          onConfirmed: () {
+            if (controller.text.isNotEmpty) {
+              final newTask = TaskPlan(
+                id: const Uuid().v4(),
+                text: controller.text.trim(),
+                status: TaskPlanStatus.toDo,
+              );
+              context.read<PlanBloc>().add(
+                    AddTaskToPlanEvent(planId: widget.id, task: newTask),
                   );
-                  // ✅ البلوك هيتكفل بالتحديث
-                  context.read<PlanBloc>().add(
-                    AddTaskToPlanEvent(planId: widget.plan.id, task: newTask),
-                  );
-                  Navigator.pop(context);
-                }
-              },
-              child: const Text("Save"),
-            ),
-          ],
+              Navigator.pop(context);
+            }
+          },
         );
       },
     );
@@ -76,6 +64,8 @@ class _PlanDetailsScreenState extends State<PlanDetailsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return Scaffold(
       body: SafeArea(
         child: Column(
@@ -94,10 +84,11 @@ class _PlanDetailsScreenState extends State<PlanDetailsScreen> {
                     if (state is TasksLoading) {
                       return const Center(child: CircularProgressIndicator());
                     } else if (state is PlanAndTasksLoaded) {
-                      final currentPlan = state.plans.firstWhere(
-                            (p) => p.id == widget.plan.id,
-                        orElse: () => widget.plan, // fallback
-                      );
+                      final matching = state.plans.where((p) => p.id == widget.id).toList();
+                      if (matching.isEmpty) {
+                        return Center(child: Text(l10n.noDataAvailable));
+                      }
+                      final currentPlan = matching.first;
                       final tasks = state.tasks;
 
                       return Column(
@@ -114,6 +105,10 @@ class _PlanDetailsScreenState extends State<PlanDetailsScreen> {
                           PlanDetailsDates(plan: currentPlan),
                           const SizedBox(height: 24),
 
+                          // Plan image section (extracted widget)
+                          PlanImageSection(plan: currentPlan),
+                          const SizedBox(height: 24),
+
                           // ✅ Subtasks
                           PlanDetailsSubtasks(
                             plan: currentPlan,
@@ -128,27 +123,44 @@ class _PlanDetailsScreenState extends State<PlanDetailsScreen> {
                       );
                     } else if (state is TaskError) {
                       return Center(
-                        child: Text("Error: ${state.message}",
+                        child: Text('${l10n.errorPrefix}${state.message}',
                             style: const TextStyle(color: Colors.red)),
                       );
                     }
-                    return const Center(child: Text("No data available."));
+                    return Center(child: Text(l10n.noDataAvailable));
                   },
                 ),
               ),
             ),
             PlanDetailsBottomButton(
               onEdit: () async {
-                final updatedPlan =
-                await navigateToScreenWithSlideTransition(
+                // Safely obtain the current plan from the bloc state before navigating
+                final state = context.read<PlanBloc>().state;
+                PlanDetails? currentPlan;
+                if (state is PlanAndTasksLoaded) {
+                  final matching = state.plans.where((p) => p.id == widget.id).toList();
+                  if (matching.isNotEmpty) currentPlan = matching.first;
+                } else if (state is PlanLoaded) {
+                  try {
+                    currentPlan = state.plans.firstWhere((p) => p.id == widget.id);
+                  } catch (_) {
+                    currentPlan = null;
+                  }
+                }
+
+                if (currentPlan == null) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text(l10n.failedToLoadPlans)),
+                  );
+                  return;
+                }
+
+                final updatedPlan = await navigateToScreenWithSlideTransition(
                   context,
-                  UpdatePlanScreen(plan: widget.plan),
+                  UpdatePlanScreen(plan: currentPlan),
                 );
 
-                if (updatedPlan != null &&
-                    updatedPlan is PlanDetails &&
-                    mounted) {
-                  // ✅ البلوك فقط اللي يحدث
+                if (updatedPlan != null && updatedPlan is PlanDetails && mounted) {
                   context.read<PlanBloc>().add(UpdatePlanEvent(updatedPlan));
                 }
               },

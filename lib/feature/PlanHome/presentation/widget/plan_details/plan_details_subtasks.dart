@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:mapperapp/l10n/app_localizations.dart';
 
 import '../../../domain/entities/plan_entity.dart';
 import '../../../domain/entities/taskPlan.dart';
@@ -11,25 +12,26 @@ class PlanDetailsSubtasks extends StatelessWidget {
   final PlanDetails plan;
   final void Function(BuildContext) onAddTask;
   final Widget Function(BuildContext, TaskPlan) subTaskCardBuilder;
-  const PlanDetailsSubtasks({Key? key, required this.plan, required this.onAddTask, required this.subTaskCardBuilder}) : super(key: key);
+  const PlanDetailsSubtasks({super.key, required this.plan, required this.onAddTask, required this.subTaskCardBuilder});
 
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+    final l10n = AppLocalizations.of(context)!;
     return Column(
       children: [
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const Text(
-              "Subtasks",
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            Text(
+              l10n.subtasks,
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             TextButton.icon(
               onPressed: () => onAddTask(context),
               icon: Icon(Icons.add, color: colorScheme.secondary),
               label: Text(
-                "Add Subtask",
+                l10n.addSubtask,
                 style: TextStyle(color: colorScheme.secondary),
               ),
             ),
@@ -43,10 +45,10 @@ class PlanDetailsSubtasks extends StatelessWidget {
             } else if (state is PlanAndTasksLoaded) {
               final tasks = state.tasks;
               if (tasks.isEmpty) {
-                return const Center(
+                return Center(
                   child: Text(
-                    "No subtasks yet.",
-                    style: TextStyle(fontSize: 14),
+                    l10n.noSubtasksYet,
+                    style: const TextStyle(fontSize: 14),
                   ),
                 );
               }
@@ -54,7 +56,7 @@ class PlanDetailsSubtasks extends StatelessWidget {
                 children: tasks.map((task) => subTaskCardBuilder(context, task)).toList(),
               );
             } else if (state is TaskError) {
-              return Center(child: Text("Error: ￼${state.message}￼"));
+              return Center(child: Text('${l10n.errorPrefix}${state.message}'));
             }
             return const SizedBox.shrink();
           },

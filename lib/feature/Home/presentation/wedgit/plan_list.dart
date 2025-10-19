@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:mapperapp/l10n/l10n_extension.dart';
 import '../../../PlanHome/presentation/bloc/bloc.dart';
 import '../../../PlanHome/presentation/bloc/state.dart';
 import '../../../PlanHome/domain/entities/taskPlan.dart';
@@ -20,10 +21,10 @@ class PlanList extends StatelessWidget {
           final plans = state is PlanLoaded ? state.plans : (state as PlanAndTasksLoaded).plans;
 
           if (plans.isEmpty) {
-            return const Center(
+            return Center(
               child: Text(
-                "No plans available.",
-                style: TextStyle(fontSize: 16),
+                context.l10n.noPlansAvailable,
+                style: const TextStyle(fontSize: 16),
               ),
             );
           }
@@ -41,6 +42,7 @@ class PlanList extends StatelessWidget {
                 final tasks = plan.tasks.cast<TaskPlan>();
 
                 return PlanCardCombined(
+                  id: plan.id,
                   title: plan.title,
                   tasks: tasks,
                   endDateRaw: plan.endDate,
@@ -50,17 +52,17 @@ class PlanList extends StatelessWidget {
             ),
           );
         } else if (state is PlanError) {
-          return const Center(
+          return Center(
             child: Text(
-              "Failed to load plans. Please try again later.",
-              style: TextStyle(fontSize: 16),
+              context.l10n.failedToLoadPlans,
+              style: const TextStyle(fontSize: 16),
             ),
           );
         } else {
-          return const Center(
+          return Center(
             child: Text(
-              "Something went wrong.",
-              style: TextStyle(fontSize: 16),
+              context.l10n.somethingWentWrong,
+              style: const TextStyle(fontSize: 16),
             ),
           );
         }

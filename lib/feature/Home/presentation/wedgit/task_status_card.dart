@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mapperapp/l10n/l10n_extension.dart';
 
 class TaskStatsCard extends StatelessWidget {
   final int doneTasks;
@@ -15,6 +16,7 @@ class TaskStatsCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+    final l10n = context.l10n;
 
     return Card(
       elevation: 3,
@@ -32,7 +34,7 @@ class TaskStatsCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  "Today's Progress",
+                  l10n.todaysProgress,
                   style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
@@ -41,7 +43,7 @@ class TaskStatsCard extends StatelessWidget {
                 ),
                 const SizedBox(height: 10),
                 Text(
-                  "$doneTasks / $totalTasks tasks",
+                  "$doneTasks / $totalTasks ${l10n.tasks}",
                   style: const TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,

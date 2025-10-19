@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mapperapp/l10n/l10n_extension.dart';
 
 class CustomDialog extends StatelessWidget {
   final String title;
@@ -8,6 +9,7 @@ class CustomDialog extends StatelessWidget {
   final Color color;
   final VoidCallback onConfirmed;
   final VoidCallback onCanceled;
+  final Widget? content; // optional custom content (e.g., TextField)
 
   const CustomDialog({
     super.key,
@@ -18,6 +20,7 @@ class CustomDialog extends StatelessWidget {
     required this.color,
     required this.onConfirmed,
     required this.onCanceled,
+    this.content,
   });
 
   @override
@@ -66,17 +69,22 @@ class CustomDialog extends StatelessWidget {
             ),
             const SizedBox(height: 10),
 
-            // Description with optimized readability
-            Text(
-              description,
-              style: TextStyle(
-                fontSize: 16.0,
-                height: 1.6,
-                color: Colors.grey.shade700,
+            // Either show the provided content widget or the description text
+            if (content != null) ...[
+              content!,
+              const SizedBox(height: 24),
+            ] else ...[
+              Text(
+                description,
+                style: TextStyle(
+                  fontSize: 16.0,
+                  height: 1.6,
+                  color: Colors.grey.shade700,
+                ),
+                textAlign: TextAlign.center,
               ),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 24),
+              const SizedBox(height: 24),
+            ],
 
             // Action buttons with elevated and balanced designs
             Row(
@@ -94,9 +102,9 @@ class CustomDialog extends StatelessWidget {
                       ),
                       elevation: 1,
                     ),
-                    child: const Text(
-                      'Cancel',
-                      style: TextStyle(fontWeight: FontWeight.w600),
+                    child: Text(
+                      context.l10n.cancel,
+                      style: const TextStyle(fontWeight: FontWeight.w600),
                     ),
                   ),
                 ),

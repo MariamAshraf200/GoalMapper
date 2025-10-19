@@ -13,7 +13,7 @@ class LoadingElevatedButton extends StatefulWidget {
     this.showLoading = false,
     this.isActive = true,
     this.verticalPadding = 16,
-    this.borderRadius = 8.0, // Default border radius
+    this.borderRadius = 8.0,
   });
 
   final Future<void> Function()? onPressed;
@@ -26,7 +26,7 @@ class LoadingElevatedButton extends StatefulWidget {
   final bool showLoading;
   final bool isActive;
   final double verticalPadding;
-  final double borderRadius; // New parameter for border radius
+  final double borderRadius;
 
   @override
   State<LoadingElevatedButton> createState() => _LoadingElevatedButtonState();
@@ -100,6 +100,9 @@ class _CustomElevatedIconButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final effectiveBackground = backgroundColor ?? colorScheme.primary;
+    final effectiveForeground = foregroundColor;
     return Tooltip(
       message: tooltip ?? "",
       child: Container(
@@ -108,14 +111,18 @@ class _CustomElevatedIconButton extends StatelessWidget {
         child: ElevatedButton.icon(
           onPressed: isLoading ? null : onPressed,
           style: ElevatedButton.styleFrom(
-            foregroundColor: foregroundColor,
-            backgroundColor: backgroundColor ?? Theme.of(context).primaryColor,
-            padding: const EdgeInsets.symmetric(vertical: 16.0),
+            foregroundColor: effectiveForeground,
+            backgroundColor: effectiveBackground,
+            padding: EdgeInsets.symmetric(vertical: verticalPadding),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(borderRadius), // Apply borderRadius
             ),
           ),
-          icon: icon,
+          // Ensure the icon uses the effective foreground color when possible
+          icon: IconTheme.merge(
+            data: IconThemeData(color: effectiveForeground),
+            child: icon,
+          ),
           label: Stack(
             alignment: Alignment.center,
             children: [
@@ -132,7 +139,8 @@ class _CustomElevatedIconButton extends StatelessWidget {
                   height: 20,
                   width: 20,
                   child: CircularProgressIndicator(
-                    color: isLoading ? Colors.grey : foregroundColor,
+                    // Show progress indicator using the effective foreground color
+                    color: effectiveForeground,
                   ),
                 )
             ],

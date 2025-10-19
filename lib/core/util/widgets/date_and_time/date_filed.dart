@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mapperapp/l10n/app_localizations.dart';
 import '../../../../core/constants/date_and_time_form.dart';
 
 class DateFiled extends StatefulWidget {
@@ -34,12 +35,31 @@ class DateFiled extends StatefulWidget {
 }
 
 class _DateFiledState extends State<DateFiled> {
-  late final TextEditingController _controller = widget.controller ??
-      TextEditingController(
-        text: widget.initialDate != null
-            ? formatedDate(widget.initialDate!)
-            : '',
+  late final TextEditingController _controller;
+  late final bool _ownsController;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Initialize controller here because we need `context` for localized formatting
+    if (widget.controller != null) {
+      _controller = widget.controller!;
+      _ownsController = false;
+    } else {
+      _controller = TextEditingController(
+        text: widget.initialDate != null ? formatedDate(context, widget.initialDate!) : '',
       );
+      _ownsController = true;
+    }
+  }
+
+  @override
+  void dispose() {
+    if (_ownsController) {
+      _controller.dispose();
+    }
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -82,7 +102,7 @@ class _DateFiledState extends State<DateFiled> {
             );
             if (pickedDate != null) {
               setState(() {
-                _controller.text = formatedDate(pickedDate);
+                _controller.text = formatedDate(context, pickedDate);
                 widget.onDateSelected(pickedDate);
               });
             }
@@ -118,7 +138,9 @@ class _DateFiledState extends State<DateFiled> {
 
   String? _validateInput(String? value) {
     if (!widget.canBeNull && (value == null || value.trim().isEmpty)) {
-      return 'Enter the ${widget.labelText}';
+      final l10n = AppLocalizations.of(context)!;
+      final fieldName = (widget.outSideTitle.trim().isNotEmpty) ? widget.outSideTitle : widget.labelText;
+      return l10n.enterField(fieldName);
     }
 
     if (widget.validator == null) {

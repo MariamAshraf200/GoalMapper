@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mapperapp/core/util/widgets/loading_elevate_icon_button.dart';
+import 'package:mapperapp/l10n/app_localizations.dart';
 
 class PlanDetailsBottomButton extends StatelessWidget {
   final VoidCallback onEdit;
@@ -7,6 +8,7 @@ class PlanDetailsBottomButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Padding(
       padding: const EdgeInsets.all(20),
       child: SizedBox(
@@ -15,7 +17,7 @@ class PlanDetailsBottomButton extends StatelessWidget {
           onPressed: () async {
             onEdit();
           },
-          buttonText: 'Edit Plan',
+          buttonText: l10n.updatePlan,
           icon: const Icon(Icons.edit),
           showLoading: true,
           // match previous styling

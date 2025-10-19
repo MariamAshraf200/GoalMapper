@@ -26,7 +26,7 @@ class PlanModelAdapter extends TypeAdapter<PlanModel> {
       priority: fields[6] as String,
       updatedTime: fields[7] as String?,
       status: fields[8] as String,
-      image: fields[9] as String?,
+      images: (fields[9] as List?)?.cast<String>(),
       completed: fields[10] as bool,
       tasks: (fields[11] as List).cast<TaskPlan>(),
     );
@@ -55,7 +55,7 @@ class PlanModelAdapter extends TypeAdapter<PlanModel> {
       ..writeByte(8)
       ..write(obj.status)
       ..writeByte(9)
-      ..write(obj.image)
+      ..write(obj.images)
       ..writeByte(10)
       ..write(obj.completed)
       ..writeByte(11)
@@ -72,3 +72,4 @@ class PlanModelAdapter extends TypeAdapter<PlanModel> {
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
 }
+

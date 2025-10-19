@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:mapperapp/l10n/l10n_extension.dart';
 
 // class TimeField extends StatefulWidget {
 //   final TextEditingController? controller;
@@ -96,7 +97,7 @@ import 'package:intl/intl.dart';
 //                   }
 //                 },
 //               ),
-//             ),
+//             },
 //             readOnly: true,
 //           ),
 //         ),
@@ -163,7 +164,7 @@ class _TimeFieldState extends State<TimeField> {
             widget.startTime!.hour * 60 + widget.startTime!.minute) {
       // Don't use SnackBar here. Notify parent about the validation error so it
       // can show the message inline below the row.
-      widget.onValidationChanged?.call("End time cannot be before start time");
+      widget.onValidationChanged?.call(context.l10n.endBeforeStart);
     } else {
       // Clear any previous validation error
       widget.onValidationChanged?.call(null);
@@ -260,12 +261,13 @@ class _TimeFieldState extends State<TimeField> {
       time.hour,
       time.minute,
     );
-    return DateFormat('hh:mm a').format(dateTime);
+    final locale = Localizations.localeOf(context).toString();
+    return DateFormat.jm(locale).format(dateTime);
   }
 
   String? _validateInput(String? value) {
     if (!widget.canBeNull && (value == null || value.trim().isEmpty)) {
-      return 'Enter the ${widget.labelText}';
+      return context.l10n.enterTime;
     }
 
     if (widget.validator == null) {
