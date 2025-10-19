@@ -179,6 +179,12 @@ abstract class AppLocalizations {
   /// **'Task Title'**
   String get taskTitle;
 
+  /// Label for the images section
+  ///
+  /// In en, this message translates to:
+  /// **'Images'**
+  String get images;
+
   /// Placeholder for adding task title
   ///
   /// In en, this message translates to:
@@ -623,6 +629,12 @@ abstract class AppLocalizations {
   /// **'No subtasks yet.'**
   String get noSubtasksYet;
 
+  /// Constructed helper for validation error messages: "Enter the {field}"
+  ///
+  /// In en, this message translates to:
+  /// **'Enter the {field}'**
+  String enterField(String field);
+
   /// Label for plan start date field
   ///
   /// In en, this message translates to:
@@ -676,6 +688,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Today's Progress'**
   String get todaysProgress;
+
+  /// Label for the localized word "Today"
+  ///
+  /// In en, this message translates to:
+  /// **'Today'**
+  String get today;
+
+  /// Label for the localized word "Yesterday"
+  ///
+  /// In en, this message translates to:
+  /// **'Yesterday'**
+  String get yesterday;
+
+  /// Label for the localized word "Tomorrow"
+  ///
+  /// In en, this message translates to:
+  /// **'Tomorrow'**
+  String get tomorrow;
 
   /// No description provided for @tasks.
   ///

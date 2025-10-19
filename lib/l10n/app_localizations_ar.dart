@@ -164,6 +164,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get changePlanImage => 'تغيير صورة الخطة';
 
   @override
+  String get images => 'الصور';
+
+  @override
   String get pickPlanImage => 'اختر صورة الخطة';
 
   @override
@@ -315,4 +318,17 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get dateFormat => 'dd/MM/yyyy';
+
+  // Localized short words for relative dates
+  @override
+  String get today => 'اليوم';
+
+  @override
+  String get yesterday => 'أمس';
+
+  @override
+  String get tomorrow => 'غدًا';
+
+  @override
+  String enterField(String field) => 'أدخل $field';
 }

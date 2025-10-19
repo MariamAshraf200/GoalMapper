@@ -27,13 +27,23 @@ class CategorySelectorWithLogic extends StatelessWidget {
         final l10n = AppLocalizations.of(context)!;
         List<String> names = [l10n.general];
         if (state is CategoryLoaded) {
-          names = state.categories.map((c) => c.categoryName == 'General' ? l10n.general : c.categoryName).toList();
+          names = state.categories
+              .map((c) => c.categoryName.toLowerCase() == 'general' ? l10n.general : c.categoryName)
+              .toList();
         }
+
+        // Convert incoming canonical selectedCategory into its displayed label
+        final displaySelected = (selectedCategory?.toLowerCase() == 'general')
+            ? l10n.general
+            : selectedCategory;
 
         return CategorySelector(
           categories: names,
-          selectedCategory: selectedCategory,
-          onCategorySelected: onCategorySelected,
+          selectedCategory: displaySelected,
+          onCategorySelected: (displayName) {
+            final canonical = (displayName == l10n.general) ? 'general' : displayName;
+            onCategorySelected?.call(canonical);
+          },
           onAddCategory: () async {
             final controller = TextEditingController();
             final result = await showDialog<String>(
@@ -57,7 +67,16 @@ class CategorySelectorWithLogic extends StatelessWidget {
           },
           onDeleteCategory: (name) {
             if (state is CategoryLoaded) {
-              final model = state.categories.firstWhere((c) => c.categoryName == name, orElse: () => CategoryModel(id: '', categoryName: ''));
+              // `name` is the displayed label (localized). Map it back to the canonical stored key.
+              final model = state.categories.firstWhere(
+                (c) {
+                  final canonical = c.categoryName.toLowerCase();
+                  // If the stored key is 'general', the displayed name will be localized (e.g. l10n.general)
+                  if (canonical == 'general' && name == l10n.general) return true;
+                  return c.categoryName == name;
+                },
+                orElse: () => CategoryModel(id: '', categoryName: ''),
+              );
               if (model.id.isNotEmpty) {
                 context.read<CategoryBloc>().add(DeleteCategoryEvent(id: model.id));
               }

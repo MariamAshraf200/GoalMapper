@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:image_picker/image_picker.dart';
@@ -7,6 +6,7 @@ import 'package:uuid/uuid.dart';
 import '../../../../injection_imports.dart';
 import 'package:mapperapp/core/util/date_sort_util.dart';
 import 'package:mapperapp/l10n/app_localizations.dart';
+import 'plan_form_image_section.dart';
 
 
 class PlanForm extends StatefulWidget {
@@ -35,7 +35,8 @@ class _PlanFormState extends State<PlanForm> with AutomaticKeepAliveClientMixin 
   DateTime? _planEndDate;
   String? _selectedCategory;
   late TaskPriority _selectedPriority;
-  XFile? _pickedImage;
+  final List<XFile> _pickedImages = [];
+  final List<String> _initialImages = [];
 
   @override
   void initState() {
@@ -47,6 +48,7 @@ class _PlanFormState extends State<PlanForm> with AutomaticKeepAliveClientMixin 
       _planEndDate = DateSortUtil.parseFlexibleDate(widget.initialPlan!.endDate);
       _selectedCategory = widget.initialPlan!.category;
       _selectedPriority = TaskPriorityExtension.fromString(widget.initialPlan!.priority);
+      _initialImages.addAll(widget.initialPlan!.images ?? []);
     } else {
       _planTitleController = TextEditingController();
       _planDescriptionController = TextEditingController();
@@ -66,11 +68,15 @@ class _PlanFormState extends State<PlanForm> with AutomaticKeepAliveClientMixin 
 
   Future<void> _pickImage() async {
     final picker = ImagePicker();
-    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
-    if (pickedFile != null) {
-      setState(() {
-        _pickedImage = pickedFile;
-      });
+    try {
+      final multi = await picker.pickMultiImage();
+      if (multi.isNotEmpty) {
+        setState(() {
+          _pickedImages.addAll(multi);
+        });
+      }
+    } catch (_) {
+      // ignore errors
     }
   }
 
@@ -121,7 +127,7 @@ class _PlanFormState extends State<PlanForm> with AutomaticKeepAliveClientMixin 
               },
               isRequired: true,
               outSideTitle: l10n.planStartDate,
-              labelText: l10n.dateFormat,
+              labelText: l10n.datePlaceholder,
               suffixIcon: const Icon(Icons.date_range),
               initialDate: _planStartDate,
             ),
@@ -134,7 +140,7 @@ class _PlanFormState extends State<PlanForm> with AutomaticKeepAliveClientMixin 
               },
               isRequired: false,
               outSideTitle: l10n.planEndDate,
-              labelText: l10n.dateFormat,
+              labelText: l10n.datePlaceholder,
               suffixIcon: const Icon(Icons.date_range),
               initialDate: _planEndDate,
               firstDate: _planStartDate,
@@ -162,33 +168,14 @@ class _PlanFormState extends State<PlanForm> with AutomaticKeepAliveClientMixin 
                 setState(() => _selectedPriority = p);
               },
             ),
-            if (widget.isUpdate && _pickedImage == null && widget.initialPlan?.image != null)
-              Column(
-                children: [
-                  Image.file(
-                    File(widget.initialPlan!.image!),
-                    height: 150,
-                    width: 150,
-                    fit: BoxFit.cover,
-                  ),
-                  ElevatedButton(
-                    onPressed: _pickImage,
-                    child: Text(l10n.changePlanImage),
-                  ),
-                ],
-              )
-            else if (_pickedImage == null)
-              ElevatedButton(
-                onPressed: _pickImage,
-                child: Text(l10n.pickPlanImage),
-              )
-            else
-              Image.file(
-                File(_pickedImage!.path),
-                height: 150,
-                width: 150,
-                fit: BoxFit.cover,
-              ),
+            // Images picker / preview area
+            PlanFormImageSection(
+              initialImages: _initialImages,
+              pickedImages: _pickedImages,
+              onPickImage: _pickImage,
+              onRemoveInitialImage: (i) => setState(() => _initialImages.removeAt(i)),
+              onRemovePickedImage: (i) => setState(() => _pickedImages.removeAt(i)),
+            ),
             // Save/Update Button
             LoadingElevatedButton(
               onPressed: _handleSubmit,
@@ -214,7 +201,11 @@ class _PlanFormState extends State<PlanForm> with AutomaticKeepAliveClientMixin 
     final formattedEndDate = _planEndDate != null
         ? DateFormat(datePattern).format(_planEndDate!)
         : l10n.noTime;
-    final imagePath = _pickedImage?.path;
+
+    final combined = [
+      ..._initialImages,
+      ..._pickedImages.map((e) => e.path),
+    ];
 
     if (widget.isUpdate && widget.initialPlan != null) {
       final updatedPlan = widget.initialPlan!.copyWith(
@@ -224,7 +215,7 @@ class _PlanFormState extends State<PlanForm> with AutomaticKeepAliveClientMixin 
         endDate: formattedEndDate,
         priority: _selectedPriority.toTaskPriorityString(),
         category: _selectedCategory ?? l10n.general,
-        image: imagePath ?? widget.initialPlan!.image,
+        images: combined.isNotEmpty ? combined : null,
       );
 
       context.read<PlanBloc>().add(UpdatePlanEvent(updatedPlan));
@@ -240,7 +231,7 @@ class _PlanFormState extends State<PlanForm> with AutomaticKeepAliveClientMixin 
         priority: _selectedPriority.toTaskPriorityString(),
         category: _selectedCategory ?? l10n.general,
         status: 'Not Completed',
-        image: imagePath,
+        images: combined.isNotEmpty ? combined : null,
       );
 
       context.read<PlanBloc>().add(AddPlanEvent(newPlan));

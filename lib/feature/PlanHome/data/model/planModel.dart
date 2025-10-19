@@ -34,7 +34,7 @@ class PlanModel {
   final String status; // New field to track the status of the plan
 
   @HiveField(9)
-  final String? image; // New field to store image URL or path
+  final List<String>? images; // Replace single image with a list of image URLs/paths
 
   @HiveField(10)
   final bool completed; // New field to track if the plan is completed
@@ -53,7 +53,7 @@ class PlanModel {
     required this.priority,
     this.updatedTime, // Optional for backward compatibility
     required this.status, // New status field
-    this.image, // Optional image field
+    this.images, // Optional images list
     this.completed = false, // Defaults to false for backward compatibility
     this.tasks = const [], // Initialize with an empty list for backward compatibility
   });
@@ -70,7 +70,7 @@ class PlanModel {
       category: category,
       status: status,
       updatedTime: updatedTime,
-      image: image,
+      images: images,
       completed: completed,
       tasks: tasks,
     );
@@ -88,7 +88,7 @@ class PlanModel {
       priority: entity.priority,
       updatedTime: entity.updatedTime,
       status: entity.status,
-      image: entity.image,
+      images: entity.images,
       completed: entity.completed,
       tasks: entity.tasks,
     );
@@ -105,7 +105,7 @@ class PlanModel {
     String? priority,
     String? updatedTime,
     String? status, // Added status to the copyWith method
-    String? image, // Optional image
+    List<String>? images, // Optional images list
     bool? completed, // Added completed to the copyWith method
     List<TaskPlan>? tasks, // Changed from List<TaskModel>? to List<TaskPlan>?
   }) {
@@ -119,7 +119,7 @@ class PlanModel {
       priority: priority ?? this.priority,
       updatedTime: updatedTime ?? this.updatedTime, // Copying updatedTime
       status: status ?? this.status, // Copying status
-      image: image ?? this.image, // Copying image
+      images: images ?? this.images, // Copying images list
       completed: completed ?? this.completed, // Copying completed
       tasks: tasks ?? this.tasks, // Copying tasks
     );
@@ -127,6 +127,7 @@ class PlanModel {
 
   @override
   String toString() {
-    return 'PlanModel(id: $id, title: $title, description: $description, startDate: $startDate, endDate: $endDate, category: $category, priority: $priority, updatedTime: $updatedTime, status: $status, image: $image, completed: $completed, tasks: $tasks)';
+    return 'PlanModel(id: $id, title: $title, description: $description, startDate: $startDate, endDate: $endDate, category: $category, priority: $priority, updatedTime: $updatedTime, status: $status, images: $images, completed: $completed, tasks: $tasks)';
   }
 }
+

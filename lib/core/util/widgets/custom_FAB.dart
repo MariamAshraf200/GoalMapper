@@ -23,7 +23,7 @@ class _CustomFABState extends State<CustomFAB>
     final isArabic = Directionality.of(context) == TextDirection.rtl;
 
     return Stack(
-      alignment: Alignment.bottomLeft,
+      alignment: isArabic ? Alignment.bottomLeft : Alignment.bottomRight,
       children: [
         AnimatedSwitcher(
           duration: const Duration(milliseconds: 300),
@@ -31,37 +31,41 @@ class _CustomFABState extends State<CustomFAB>
           switchOutCurve: Curves.easeInCubic,
           child: isOpen
               ? Padding(
-            padding: const EdgeInsets.only(bottom: 80, right: 16, left: 16),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                _buildActionButton(
-                  icon: Icons.task,
-                  label: l10n.addTaskButton,
-                  background: colorScheme.primary,
-                  textColor: colorScheme.onPrimary,
-                  isArabic: isArabic,
-                  onTap: _addNewTask,
-                ),
-                const SizedBox(height: 10),
-                _buildActionButton(
-                  icon: Icons.event_note,
-                  label: l10n.addPlan,
-                  background: colorScheme.secondary,
-                  textColor: colorScheme.onSecondary,
-                  isArabic: isArabic,
-                  onTap: _addNewPlan,
-                ),
-              ],
-            ),
-          )
+                  padding: isArabic
+                      ? const EdgeInsets.only(bottom: 80, left: 16)
+                      : const EdgeInsets.only(bottom: 80, right: 16),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      _buildActionButton(
+                        icon: Icons.task,
+                        label: l10n.addTaskButton,
+                        background: colorScheme.primary,
+                        textColor: colorScheme.onPrimary,
+                        isArabic: isArabic,
+                        onTap: _addNewTask,
+                      ),
+                      const SizedBox(height: 10),
+                      _buildActionButton(
+                        icon: Icons.event_note,
+                        label: l10n.addPlan,
+                        background: colorScheme.secondary,
+                        textColor: colorScheme.onSecondary,
+                        isArabic: isArabic,
+                        onTap: _addNewPlan,
+                      ),
+                    ],
+                  ),
+                )
               : const SizedBox.shrink(),
         ),
 
-        // 🔵 الزر الأساسي (FAB)
+        // FAB
         Padding(
-          padding: const EdgeInsets.all(16.0),
+          padding: isArabic
+              ? const EdgeInsets.only(left: 16.0, bottom: 16.0)
+              : const EdgeInsets.only(right: 16.0, bottom: 16.0),
           child: FloatingActionButton(
             backgroundColor: colorScheme.primary,
             elevation: 8,
@@ -69,7 +73,7 @@ class _CustomFABState extends State<CustomFAB>
             shape: const CircleBorder(),
             child: AnimatedRotation(
               duration: const Duration(milliseconds: 250),
-              turns: isOpen ? 0.125 : 0.0, // يتحول من + إلى ×
+              turns: isOpen ? 0.125 : 0.0, // + to ×
               child: const Icon(Icons.add, size: 30, color: Colors.white),
             ),
           ),

@@ -42,7 +42,7 @@ class CategoryBloc extends Bloc<CategoryEvent, CategoryState> {
       if (categories.isEmpty) {
         final defaultCategory = CategoryModel(
           id: '1',
-          categoryName: 'General',
+          categoryName: 'general',
         );
         await addCategoryUseCase(defaultCategory);
         emit(CategoryLoaded([defaultCategory]));

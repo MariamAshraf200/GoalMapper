@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:mapperapp/l10n/l10n_extension.dart';
 import '../../../taskHome/domain/entity/task_enum.dart';
+import '../../../taskHome/presintation/screen/taskTrack.dart';
 
 class TaskCard extends StatelessWidget {
   final String title;
@@ -64,16 +65,22 @@ class TaskCard extends StatelessWidget {
         Focus(
           onKeyEvent: (node, event) {
             if (event is KeyDownEvent && event.logicalKey == LogicalKeyboardKey.enter) {
-              if (onEnter != null) {
-                onEnter!();
-              }
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => TaskTrack()),
+              );
               return KeyEventResult.handled;
             }
             return KeyEventResult.ignored;
           },
           child: InkWell(
             borderRadius: BorderRadius.circular(24),
-            onTap: onEnter,
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => TaskTrack()),
+              );
+            },
             child: Container(
               width: 220,
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),

@@ -164,12 +164,22 @@ class TaskItemCard extends StatelessWidget {
                           const Icon(Icons.access_time, size: 14, color: Colors.grey),
                           const SizedBox(width: 4),
                           Text(
-                            TimeFormatUtil.formatTime(
-                              TimeFormatUtil.parseFlexibleTime(task.time),
-                            ) ?? '',
+                            task.time,
                             style: const TextStyle(fontSize: 13, color: Colors.grey),
                           ),
                         ],
+                      ),
+                    ],
+                    if (task.endTime.isNotEmpty) ...[
+                      const SizedBox(width: 8),
+                      Text(
+                        '-',
+                        style: const TextStyle(fontSize: 13, color: Colors.grey),
+                      ),
+                      const SizedBox(width: 4),
+                      Text(
+                        task.endTime,
+                        style: const TextStyle(fontSize: 13, color: Colors.grey),
                       ),
                     ],
                   ],
@@ -206,7 +216,8 @@ class TaskItemCard extends StatelessWidget {
       borderRadius: BorderRadius.circular(20),
     ),
     child: Text(
-      category == 'General' ? context.l10n.general : category,
+      // Treat 'general' as the canonical key (case-insensitive) and show localized label
+      category.toLowerCase() == 'general' ? context.l10n.general : category,
       style: const TextStyle(
         color: Colors.black87,
         fontSize: 12,

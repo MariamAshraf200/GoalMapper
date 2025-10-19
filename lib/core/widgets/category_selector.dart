@@ -1,11 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:mapperapp/l10n/app_localizations.dart';
-
-/// A lightweight, reusable CategorySelector widget that lives in `core`.
-///
-/// This version is UI-only and intentionally decoupled from any specific
-/// application data models or Bloc implementation. It accepts a list of
-/// category names and exposes callbacks for selection, addition and deletion.
 class CategorySelector extends StatefulWidget {
   final List<String> categories;
   final String? selectedCategory;

@@ -40,7 +40,8 @@ class TaskDetails extends Equatable {
       time: '',
       endTime: '',
       priority: TaskPriority.medium.toTaskPriorityString(),
-      category: 'General',
+      // store canonical key for the default category so UI can localize display
+      category: 'general',
       status: TaskStatus.toDo.toTaskStatusString(),
       updatedTime: null,
       planId: null,
@@ -73,7 +74,7 @@ class TaskDetails extends Equatable {
       time: formattedStart,
       endTime: formattedEnd,
       priority: priority.toTaskPriorityString(),
-      category: category ?? 'General',
+      category: category ?? 'general',
       status: existingTask?.status ?? TaskStatus.toDo.toTaskStatusString(),
       planId: planId,
     );

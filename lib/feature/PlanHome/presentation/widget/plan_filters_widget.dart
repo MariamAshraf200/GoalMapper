@@ -27,20 +27,22 @@ class PlanFiltersWidget extends StatelessWidget {
         Expanded(
           child: BlocBuilder<CategoryBloc, CategoryState>(
             builder: (context, state) {
-              List<String> categories = ["All"];
+              // Build items using canonical stored keys for `value` and localized labels for display.
+              final items = <DropdownMenuItem<String>>[];
+              items.add(DropdownMenuItem<String>(value: null, child: Text(l10n.allCategories)));
               if (state is CategoryLoaded) {
-                categories.addAll(state.categories.map((c) => c.categoryName));
+                for (final c in state.categories) {
+                  final canonical = c.categoryName.toLowerCase();
+                  final display = canonical == 'general' ? l10n.general : c.categoryName;
+                  items.add(DropdownMenuItem<String>(value: canonical == 'general' ? 'general' : c.categoryName, child: Text(display)));
+                }
               }
+
               return _FilterDropdown<String>(
                 icon: Icon(Icons.folder, color: colorScheme.secondary),
                 value: selectedCategory,
                 hint: l10n.selectCategory,
-                items: [
-                  DropdownMenuItem<String>(value: null, child: Text(l10n.allCategories)),
-                  ...categories.where((c) => c != "All").map(
-                    (c) => DropdownMenuItem<String>(value: c, child: Text(c)),
-                  ),
-                ],
+                items: items,
                 onChanged: onCategoryChanged,
               );
             },

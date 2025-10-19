@@ -180,6 +180,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get changePlanImage => 'Change Plan Image';
 
   @override
+  String get images => 'Images';
+
+  @override
   String get pickPlanImage => 'Pick Plan Image';
 
   @override
@@ -318,5 +321,18 @@ class AppLocalizationsEn extends AppLocalizations {
   String get enterTime => 'Enter the time';
 
   @override
+  String enterField(String field) => 'Enter the $field';
+
+  @override
   String get dateFormat => 'dd/MM/yyyy';
+
+  // Localized short words for relative dates
+  @override
+  String get today => 'Today';
+
+  @override
+  String get yesterday => 'Yesterday';
+
+  @override
+  String get tomorrow => 'Tomorrow';
 }

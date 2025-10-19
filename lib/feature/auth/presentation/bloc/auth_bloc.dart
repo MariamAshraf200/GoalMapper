@@ -33,15 +33,34 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       try {
         final user = await getCurrentUser();
         if (user != null) {
-          debugPrint('AuthBloc: emitting AuthSignedIn for user ${user.name}');
+          debugPrint('AuthBloc: emitting AuthSignedIn for user  ${user.name}');
           emit(AuthSignedIn(user));
         } else {
-          debugPrint('AuthBloc: emitting AuthSignedOut');
+          debugPrint('AuthBloc: emitting AuthSignedOut (user is null, navigating to AuthScreen)');
           emit(AuthSignedOut());
+          final navigator = navigatorKey.currentState;
+          if (navigator != null) {
+            navigator.pushAndRemoveUntil(
+              MaterialPageRoute(builder: (context) => const AuthScreen()),
+              (route) => false,
+            );
+          }
         }
       } catch (e) {
-        debugPrint('AuthBloc: emitting AuthError $e');
-        emit(AuthError(e.toString()));
+        if (e.toString().contains('Null check operator used on a null value')) {
+          debugPrint('AuthBloc: emitting AuthSignedOut (caught null check error in CheckSignInEvent)');
+          emit(AuthSignedOut());
+          final navigator = navigatorKey.currentState;
+          if (navigator != null) {
+            navigator.pushAndRemoveUntil(
+              MaterialPageRoute(builder: (context) => const AuthScreen()),
+              (route) => false,
+            );
+          }
+        } else {
+          debugPrint('AuthBloc: emitting AuthError $e');
+          emit(AuthError(e.toString()));
+        }
       }
     });
     on<SignInEvent>((event, emit) async {

@@ -56,15 +56,36 @@ class _TaskFormState extends State<TaskForm>
       _date = DateFormatUtil.parseDate(task.date);
     } catch (_) {}
 
-    try {
-      _startTime = TimeFormatUtil.parseTime(task.time);
-    } catch (_) {}
-
-    try {
-      if (task.endTime.isNotEmpty) {
-        _endTime = TimeFormatUtil.parseTime(task.endTime);
+    // Robust time parsing for update
+    _startTime = null;
+    _endTime = null;
+    if (task.time.isNotEmpty) {
+      try {
+        _startTime = TimeFormatUtil.parseTime(task.time);
+      } catch (_) {
+        // Try parsing as 24-hour format if 12-hour fails
+        try {
+          final parsed = TimeOfDay(
+            hour: int.parse(task.time.split(':')[0]),
+            minute: int.parse(task.time.split(':')[1].split(' ')[0]),
+          );
+          _startTime = parsed;
+        } catch (_) {}
       }
-    } catch (_) {}
+    }
+    if (task.endTime.isNotEmpty) {
+      try {
+        _endTime = TimeFormatUtil.parseTime(task.endTime);
+      } catch (_) {
+        try {
+          final parsed = TimeOfDay(
+            hour: int.parse(task.endTime.split(':')[0]),
+            minute: int.parse(task.endTime.split(':')[1].split(' ')[0]),
+          );
+          _endTime = parsed;
+        } catch (_) {}
+      }
+    }
 
     _selectedCategory = task.category;
     _selectedPriority = TaskPriorityExtension.fromString(task.priority);
@@ -174,12 +195,30 @@ class _TaskFormState extends State<TaskForm>
   Future<void> _handleSubmit() async {
     if (!_formKey.currentState!.validate()) return;
 
+    // Use existing time if not changed in update mode
+    TimeOfDay? startTime = _startTime;
+    TimeOfDay? endTime = _endTime;
+    if (widget.mode == TaskFormMode.update && widget.task != null) {
+      if (startTime == null) {
+        try {
+          startTime = TimeFormatUtil.parseTime(widget.task!.time);
+        } catch (_) {}
+      }
+      if (endTime == null) {
+        try {
+          if (widget.task!.endTime.isNotEmpty) {
+            endTime = TimeFormatUtil.parseTime(widget.task!.endTime);
+          }
+        } catch (_) {}
+      }
+    }
+
     final task = TaskDetails.fromFormData(
       title: _titleController.text,
       description: _descriptionController.text,
       date: _date,
-      startTime: _startTime,
-      endTime: _endTime,
+      startTime: startTime,
+      endTime: endTime,
       priority: _selectedPriority,
       category: _selectedCategory,
       planId: widget.planId,
