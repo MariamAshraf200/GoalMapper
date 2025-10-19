@@ -2,7 +2,8 @@ import '../../../../../injection_imports.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../bloc/taskBloc/state.dart' as taskState;
-import '../../../../l10n/l10n_extension.dart';
+import 'package:mapperapp/l10n/l10n_extension.dart';
+import '../Widget/header/task_header.dart';
 
 class TaskTrack extends StatefulWidget {
   const TaskTrack({super.key});
@@ -30,23 +31,22 @@ class _TaskTrackState extends State<TaskTrack> {
 
   void _triggerFilterEvent() {
     context.read<TaskBloc>().add(
-      FilterTasksEvent(
-        date: selectedDate,
-        priority: selectedPriority != null
-            ? TaskPriorityExtension.fromString(selectedPriority)
-            : null,
-        status: selectedStatus != null
-            ? TaskStatusExtension.fromString(selectedStatus)
-            : null,
-      ),
-    );
+          FilterTasksEvent(
+            date: selectedDate,
+            priority: selectedPriority != null
+                ? TaskPriorityExtension.fromString(selectedPriority)
+                : null,
+            status: selectedStatus != null
+                ? TaskStatusExtension.fromString(selectedStatus)
+                : null,
+          ),
+        );
   }
 
   void _updateDate(String newDate) {
     setState(() => selectedDate = newDate);
     _triggerFilterEvent();
   }
-
 
   void _updatePriority(String? priority) {
     setState(() => selectedPriority = priority);
@@ -92,86 +92,6 @@ class _TaskTrackState extends State<TaskTrack> {
     );
   }
 }
-class TaskHeader extends StatelessWidget {
-  final String selectedDate;
-  final ValueChanged<String> onDatePicked;
-
-  const TaskHeader({
-    super.key,
-    required this.selectedDate,
-    required this.onDatePicked,
-  });
-
-  void _showDatePicker(BuildContext context) async {
-    final initialDate = DateFormatUtil.parseDate(selectedDate);
-    final DateTime? pickedDate = await showDatePicker(
-      context: context,
-      initialDate: initialDate,
-      firstDate: DateTime(2000),
-      lastDate: DateTime(2100),
-    );
-    if (pickedDate != null) {
-      onDatePicked(DateFormatUtil.formatDate(pickedDate));
-    }
-  }
-
-  Widget _circleIconButton({
-    required IconData icon,
-    required VoidCallback onPressed,
-  }) {
-    return Container(
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        border: Border.all(color: Colors.grey.shade400, width: 1.5),
-      ),
-      child: IconButton(
-        icon: Icon(icon, size: 22),
-        onPressed: onPressed,
-      ),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          // Back button with circle border
-          _circleIconButton(
-            icon: Icons.arrow_back_ios_new,
-            onPressed: () => Navigator.of(context).pop(),
-          ),
-
-          // Centered full date
-          GestureDetector(
-            onTap: () => _showDatePicker(context),
-            child: Text(
-              DateFormatUtil.formatFullDate(selectedDate), // e.g. April 20, 2024
-              style: const TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-
-          // Add button with circle border
-          _circleIconButton(
-            icon: Icons.add,
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (_) => const AddTaskScreen()),
-              );
-            },
-          ),
-        ],
-      ),
-    );
-  }
-}
-
 
 class TaskDateSelector extends StatelessWidget {
   final String selectedDate;
@@ -195,7 +115,6 @@ class TaskDateSelector extends StatelessWidget {
     );
   }
 }
-
 
 class TaskFilters extends StatelessWidget {
   final String? selectedPriority;
@@ -221,9 +140,11 @@ class TaskFilters extends StatelessWidget {
             value: selectedPriority,
             hint: context.l10n.selectPriority,
             items: [
-              ...TaskPriority.values.map((p) =>
-                  DropdownMenuItem(value: p.toTaskPriorityString(), child: Text(p.toTaskPriorityString()))),
-              DropdownMenuItem(value: null, child: Text(context.l10n.allPriorities)),
+              ...TaskPriority.values.map((p) => DropdownMenuItem(
+                  value: p.toTaskPriorityString(),
+                  child: Text(p.toPriorityLabel(context)))),
+              DropdownMenuItem(
+                  value: null, child: Text(context.l10n.allPriorities)),
             ],
             onChanged: onPriorityChanged,
           ),
@@ -235,9 +156,11 @@ class TaskFilters extends StatelessWidget {
             value: selectedStatus,
             hint: context.l10n.selectStatus,
             items: [
-              ...TaskStatus.values.map((s) =>
-                  DropdownMenuItem(value: s.toTaskStatusString(), child: Text(s.toTaskStatusString()))),
-              DropdownMenuItem(value: null, child: Text(context.l10n.allStatuses)),
+              ...TaskStatus.values.map((s) => DropdownMenuItem(
+                  value: s.toTaskStatusString(),
+                  child: Text(s.localized(context)))),
+              DropdownMenuItem(
+                  value: null, child: Text(context.l10n.allStatuses)),
             ],
             onChanged: onStatusChanged,
           ),
@@ -277,7 +200,8 @@ class _FilterDropdown<T> extends StatelessWidget {
           Expanded(
             child: DropdownButton<T>(
               value: value,
-              hint: Text(hint, style: const TextStyle(fontSize: 14, color: Colors.grey)),
+              hint: Text(hint,
+                  style: const TextStyle(fontSize: 14, color: Colors.grey)),
               isExpanded: true,
               underline: const SizedBox(),
               items: items,
@@ -289,7 +213,6 @@ class _FilterDropdown<T> extends StatelessWidget {
     );
   }
 }
-
 
 class TaskListSection extends StatelessWidget {
   const TaskListSection({super.key});
@@ -303,11 +226,15 @@ class TaskListSection extends StatelessWidget {
             return const Center(child: CircularProgressIndicator());
           } else if (state is taskState.TaskLoaded) {
             if (state.tasks.isEmpty) {
-              return Center(child: Text(context.l10n.noTasksMatchFilters, style: const TextStyle(fontSize: 18)));
+              return Center(
+                  child: Text(context.l10n.noTasksMatchFilters,
+                      style: const TextStyle(fontSize: 18)));
             }
             return TaskItems(tasks: state.tasks);
           } else if (state is taskState.TaskError) {
-            return Center(child: Text(state.message, style: const TextStyle(fontSize: 18)));
+            return Center(
+                child:
+                    Text(state.message, style: const TextStyle(fontSize: 18)));
           }
           return const SizedBox();
         },

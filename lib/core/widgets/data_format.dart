@@ -72,6 +72,7 @@ class _DataFormatState extends State<DataFormat> {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+    final locale = Localizations.localeOf(context).toString();
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: SingleChildScrollView(
@@ -96,7 +97,7 @@ class _DataFormatState extends State<DataFormat> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Text(
-                        DateFormat('EEE').format(date),
+                        DateFormat('EEE', locale).format(date),
                         style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.bold,
@@ -105,7 +106,7 @@ class _DataFormatState extends State<DataFormat> {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        DateFormat('d MMM').format(date),
+                        DateFormat('d MMM', locale).format(date),
                         style: TextStyle(
                           fontSize: 12,
                           color: isSelected ? colorScheme.onPrimary : colorScheme.onSurface,

@@ -47,7 +47,7 @@ class _PlanTrackerScreenState extends State<PlanTrackerScreen> {
   void _openDetails(PlanDetails plan) {
     navigateToScreenWithSlideTransition(
       context,
-      PlanDetailsScreen(plan: plan),
+      PlanDetailsScreen( id: plan.id,),
     );
   }
 

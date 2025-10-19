@@ -60,7 +60,9 @@ class PlanDetailsDates extends StatelessWidget {
                   ),
                 ],
               ),
+
               const SizedBox(height: 4),
+
               Text(
                 plan.endDate,
                 style: const TextStyle(

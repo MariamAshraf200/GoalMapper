@@ -21,10 +21,10 @@ class DateFormatUtil {
     return DateFormat('dd/MM/yyyy').parse(dateStr);
   }
 
-  /// Formats a given [dateStr] ('dd/MM/yyyy') into 'MMMM d, yyyy' (e.g. April 20, 2024).
-  static String formatFullDate(String dateStr) {
+  /// Formats a given [dateStr] ('dd/MM/yyyy') into 'MMMM d, yyyy' (e.g. April 20, 2024), localized.
+  static String formatFullDate(String dateStr, {String? locale}) {
     final date = parseDate(dateStr);
-    return DateFormat("MMMM d, yyyy").format(date);
+    return DateFormat("MMMM d, yyyy", locale).format(date);
   }
 
   /// Tries to parse a raw date string in multiple formats and returns a DateTime or null.
@@ -48,10 +48,10 @@ class DateFormatUtil {
     return null;
   }
 
-  /// Formats a raw date string (flexible input) into 'MMMM d, yyyy'. If parsing fails returns the raw string.
-  static String formatFullDateFromRaw(String raw) {
+  /// Formats a raw date string (flexible input) into 'MMMM d, yyyy', localized. If parsing fails returns the raw string.
+  static String formatFullDateFromRaw(String raw, {String? locale}) {
     final dt = tryParseFlexible(raw);
     if (dt == null) return raw;
-    return DateFormat("MMMM d, yyyy").format(dt);
+    return DateFormat("MMMM d, yyyy", locale).format(dt);
   }
 }

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import '../../../../../injection_imports.dart';
-import '../../../../../core/extensions/app_strings.dart';
 import '../../../../../l10n/l10n_extension.dart';
 
 
@@ -58,8 +57,8 @@ class TaskItemCard extends StatelessWidget {
 
   // ---------------- Main Content ----------------
   Widget _buildContent(BuildContext context) {
-    // Use the helper extension to obtain a localized color
-    final Color priorityColor = task.priority.toPriorityColor(context);
+    final TaskPriority priorityEnum = TaskPriorityExtension.fromString(task.priority);
+    final Color priorityColor = priorityEnum.toPriorityColor(context);
 
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
@@ -110,8 +109,8 @@ class TaskItemCard extends StatelessWidget {
                     Wrap(
                       spacing: 8,
                       children: [
-                        _buildPriorityChip(context, priorityColor),
-                        if (task.category.isNotEmpty) _buildCategoryChip(task.category),
+                        _buildPriorityChip(context, priorityColor, priorityEnum),
+                        if (task.category.isNotEmpty) _buildCategoryChip(context, task.category),
                       ],
                     ),
                     _buildStatusIcon(context),
@@ -153,7 +152,7 @@ class TaskItemCard extends StatelessWidget {
                           const Icon(Icons.calendar_today, size: 14, color: Colors.grey),
                           const SizedBox(width: 4),
                           Text(
-                            DateFormatUtil.formatFullDate(task.date),
+                            DateFormatUtil.formatFullDate(task.date, locale: Localizations.localeOf(context).toString()),
                             style: const TextStyle(fontSize: 13, color: Colors.grey),
                           ),
                         ],
@@ -184,14 +183,14 @@ class TaskItemCard extends StatelessWidget {
   }
 
   // ---------------- Chips ----------------
-  Widget _buildPriorityChip(BuildContext context, Color color) => Container(
+  Widget _buildPriorityChip(BuildContext context, Color color, TaskPriority priorityEnum) => Container(
     padding: const EdgeInsets.symmetric(vertical: 3, horizontal: 10),
     decoration: BoxDecoration(
       color: color.withAlpha(30),
       borderRadius: BorderRadius.circular(20),
     ),
     child: Text(
-      task.priority.toPriorityLabel(context),
+      priorityEnum.toPriorityLabel(context),
       style: TextStyle(
         color: color,
         fontSize: 12,
@@ -200,14 +199,14 @@ class TaskItemCard extends StatelessWidget {
     ),
   );
 
-  Widget _buildCategoryChip(String category) => Container(
+  Widget _buildCategoryChip(BuildContext context, String category) => Container(
     padding: const EdgeInsets.symmetric(vertical: 3, horizontal: 10),
     decoration: BoxDecoration(
       color: Colors.grey.shade200,
       borderRadius: BorderRadius.circular(20),
     ),
     child: Text(
-      category,
+      category == 'General' ? context.l10n.general : category,
       style: const TextStyle(
         color: Colors.black87,
         fontSize: 12,
@@ -303,7 +302,7 @@ class TaskItemCard extends StatelessWidget {
       context: context,
       builder: (_) => AlertDialog(
         title: Text(context.l10n.taskNotEditable),
-        content: Text(AppStrings.taskNotEditable),
+        content: Text(context.l10n.taskNotEditable),
       ),
     );
   }

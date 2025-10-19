@@ -108,10 +108,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get statusDone => 'Done';
 
   @override
-  String get statusPending => 'Pending';
+  String get statusMissed => 'Missed';
 
   @override
-  String get statusMissed => 'Missed';
+  String get statusPending => 'Pending';
 
   @override
   String get statusToDo => 'To Do';
@@ -136,6 +136,15 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get myPlans => 'My Plans';
+
+  @override
+  String get myTasks => 'My Tasks';
+
+  @override
+  String get myPlan => 'My Plan';
+
+  @override
+  String get seeAll => 'See All';
 
   @override
   String get selectCategory => 'Select Category';
@@ -231,6 +240,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get somethingWentWrong => 'Something went wrong';
 
   @override
+  String get hello => 'Hello';
+
+  @override
+  String get toggleTheme => 'Toggle theme';
+
+  @override
+  String get logout => 'Log out';
+
+  @override
   String get subtasks => 'Subtasks';
 
   @override
@@ -246,11 +264,59 @@ class AppLocalizationsEn extends AppLocalizations {
   String get invalidEndDate => 'Invalid end date';
 
   @override
-  String get endDateBeforeStart => 'End date cannot be before start date';
+  String get endDateBeforeStartDate => 'End date cannot be before start date';
 
   @override
   String get addPlan => 'Add Plan';
 
   @override
   String get updatePlan => 'Update Plan';
+
+  @override
+  String get failedToLoadPlans => 'Failed to load plans. Please try again later.';
+
+  @override
+  String get noTime => 'No time';
+
+  @override
+  String get todaysProgress => "Today's Progress";
+
+  @override
+  String get tasks => 'Tasks';
+
+  @override
+  String get weeklyProgressTitle => '📊 Weekly Progress Analysis';
+
+  @override
+  String weeklyBestDayMessage(String bestDayName) => '🔥 Excellent consistency! Best day: $bestDayName';
+
+  @override
+  String get weeklyGoodEffortMessage => '💪 Good effort! Keep it up.';
+
+  @override
+  String get weeklyBackOnTrackMessage => "🚀 Let's get back on track next week!";
+
+  @override
+  String get complete => 'complete';
+
+  @override
+  String get general => 'General';
+
+  @override
+  String get timeFormat => 'hh:mm AM/PM';
+
+  @override
+  String get startTime => 'Start Time';
+
+  @override
+  String get endTime => 'End Time';
+
+  @override
+  String get endBeforeStart => 'End time cannot be before start time';
+
+  @override
+  String get enterTime => 'Enter the time';
+
+  @override
+  String get dateFormat => 'dd/MM/yyyy';
 }

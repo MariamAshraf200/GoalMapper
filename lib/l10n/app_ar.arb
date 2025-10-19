@@ -31,7 +31,7 @@
   "updateTaskDescription": "تحديث وصف المهمة",
 
   "taskDate": "تاريخ المهمة",
-  "datePlaceholder": "dd/mm/yyyy",
+  "datePlaceholder": "يوم/شهر/سنة",
 
   "addTaskButton": "إضافة مهمة",
   "updateTaskButton": "تحديث المهمة",
@@ -85,6 +85,81 @@
   "@planCompleted": {"description": "Label for plan status 'Completed'"},
 
   "planNotCompleted": "غير مكتملة",
-  "@planNotCompleted": {"description": "Label for plan status 'Not Completed'"}
+  "@planNotCompleted": {"description": "Label for plan status 'Not Completed'"},
+
+  "subtasks": "المهام الفرعية",
+  "@subtasks": { "description": "Label for subtasks section" },
+
+  "noSubtasksYet": "لا توجد مهام فرعية بعد.",
+  "@noSubtasksYet": { "description": "Message shown when there are no subtasks yet" },
+
+  "planStartDate": "تاريخ البدء",
+  "@planStartDate": { "description": "Label for plan start date field" },
+
+  "planEndDate": "تاريخ الانتهاء",
+  "@planEndDate": { "description": "Label for plan end date field" },
+
+  "invalidEndDate": "تاريخ انتهاء غير صالح",
+  "@invalidEndDate": { "description": "Validation text for invalid end date" },
+
+  "endDateBeforeStart": "لا يمكن أن يكون تاريخ الانتهاء قبل تاريخ البدء",
+  "@endDateBeforeStart": { "description": "Validation text when end date is before start date" },
+
+  "addPlan": "إضافة خطة",
+  "@addPlan": { "description": "Label for adding a plan" },
+
+  "updatePlan": "تحديث الخطة",
+  "@updatePlan": { "description": "Label for updating a plan" },
+
+  "hello": "مرحبا",
+  "@hello": { "description": "Greeting word used before a user's name (e.g. \"Hello John\")" },
+
+  "toggleTheme": "تبديل المظهر",
+  "@toggleTheme": { "description": "Label for toggling the app theme" },
+
+  "logout": "تسجيل الخروج",
+  "@logout": { "description": "Label for logging out / signing out" },
+
+  "somethingWentWrong": "حدث خطأ ما",
+  "@somethingWentWrong": { "description": "Generic error headline" },
+
+  "planAdded": "تمت إضافة الخطة بنجاح!",
+  "@planAdded": { "description": "Snackbar message when plan added" },
+
+  "tryAgain": "حاول مرة أخرى",
+  "@tryAgain": { "description": "Label for try again action" },
+
+  "addCategory": "إضافة فئة",
+  "@addCategory": { "description": "Label for adding a category" },
+
+  "add": "إضافة",
+  "@add": { " description": "Label for a generic add action" },
+
+  "addNew": "أضف جديد",
+  "@addNew": { "description": "Label for 'Add New'" },
+
+  "noTasksFound": "لا توجد مهام.",
+  "@noTasksFound": { "description": "Message shown when no tasks found" },
+
+  "complete": "مكتمل",
+  "@complete": {"description": "Label for completed percentage in plan card"},
+
+  "general": "عام",
+  "@general": { "description": "Default category name" },
+
+  "timeFormat": "س:د ص/م",
+  "@timeFormat": { "description": "Example/time format placeholder shown in time fields" },
+
+  "startTime": "وقت البدء",
+  "@startTime": { "description": "Label for start time field" },
+
+  "endTime": "نهاية",
+  "@endTime": { "description": "Label for end time field" },
+
+  "endBeforeStart": "الوقت النهاية تحت مقبلا البدء",
+  "@endBeforeStart": { "description": "Validation message when end is before start" },
+
+  "enterTime": "أدخل الوقت",
+  "@enterTime": { "description": "Validation hint when time field is empty" }
 
 }

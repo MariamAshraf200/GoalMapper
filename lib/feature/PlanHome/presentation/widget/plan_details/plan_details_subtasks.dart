@@ -12,7 +12,7 @@ class PlanDetailsSubtasks extends StatelessWidget {
   final PlanDetails plan;
   final void Function(BuildContext) onAddTask;
   final Widget Function(BuildContext, TaskPlan) subTaskCardBuilder;
-  const PlanDetailsSubtasks({Key? key, required this.plan, required this.onAddTask, required this.subTaskCardBuilder}) : super(key: key);
+  const PlanDetailsSubtasks({super.key, required this.plan, required this.onAddTask, required this.subTaskCardBuilder});
 
   @override
   Widget build(BuildContext context) {

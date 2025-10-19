@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:mapperapp/l10n/l10n_extension.dart';
+import '../../../taskHome/domain/entity/task_enum.dart';
 
 class TaskCard extends StatelessWidget {
   final String title;
   final String description;
   final String time;
-  final String priority;
+  final TaskPriority priority;
   final String status;
   final VoidCallback? onEnter;
 
@@ -51,13 +53,12 @@ class TaskCard extends StatelessWidget {
         decoration = TextDecoration.none;
         break;
       default:
-        borderColor = colorScheme.outline.withAlpha(50);
-        titleColor = colorScheme.onSurface;
-        descColor = colorScheme.onSurface;
-        timeColor = colorScheme.outline;
+        borderColor = colorScheme.surfaceContainerHighest;
+        titleColor = colorScheme.onSurfaceVariant;
+        descColor = colorScheme.onSurfaceVariant;
+        timeColor = colorScheme.onSurfaceVariant;
         decoration = TextDecoration.none;
     }
-
     return Stack(
       children: [
         Focus(
@@ -113,23 +114,15 @@ class TaskCard extends StatelessWidget {
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                         decoration: BoxDecoration(
-                          color: priority == "High"
-                              ? colorScheme.errorContainer
-                              : priority == "Medium"
-                              ? colorScheme.secondaryContainer
-                              : colorScheme.primaryContainer,
+                          color: priority.toPriorityColor(context).withAlpha(30),
                           borderRadius: BorderRadius.circular(14),
                         ),
                         child: Text(
-                          priority,
+                          priority.toPriorityLabel(context),
                           style: TextStyle(
                             fontSize: 13,
                             fontWeight: FontWeight.bold,
-                            color: priority == "High"
-                                ? colorScheme.error
-                                : priority == "Medium"
-                                ? colorScheme.secondary
-                                : colorScheme.primary,
+                            color: priority.toPriorityColor(context),
                           ),
                         ),
                       ),
@@ -153,7 +146,7 @@ class TaskCard extends StatelessWidget {
                       const SizedBox(width: 6),
                       Expanded(
                         child: Text(
-                          time.isNotEmpty ? time : "No time",
+                          time.isNotEmpty ? time : context.l10n.noTime,
                           style: TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.w500,
@@ -166,6 +159,7 @@ class TaskCard extends StatelessWidget {
                       ),
                     ],
                   ),
+
                 ],
               ),
             ),

@@ -43,7 +43,6 @@ class _PlanFormState extends State<PlanForm> with AutomaticKeepAliveClientMixin 
     if (widget.isUpdate && widget.initialPlan != null) {
       _planTitleController = TextEditingController(text: widget.initialPlan!.title);
       _planDescriptionController = TextEditingController(text: widget.initialPlan!.description);
-      // Use DateSortUtil to flexibly parse different date formats and handle 'N/A'
       _planStartDate = DateSortUtil.parseFlexibleDate(widget.initialPlan!.startDate);
       _planEndDate = DateSortUtil.parseFlexibleDate(widget.initialPlan!.endDate);
       _selectedCategory = widget.initialPlan!.category;
@@ -88,21 +87,21 @@ class _PlanFormState extends State<PlanForm> with AutomaticKeepAliveClientMixin 
             const SizedBox(height: 10.0),
             CustomTextField(
               isRequired: true,
-              outSideTitle: 'Plan Title',
+              outSideTitle: l10n.planTitle,
               borderRadius: 10,
-              labelText: widget.isUpdate ? 'Update your plan title' : 'Add your plan title',
+              labelText: widget.isUpdate ? l10n.updatePlanTitle : l10n.addPlanTitle,
               controller: _planTitleController,
               maxLength: 42,
               validator: (value) {
                 if (value.trim().isEmpty) {
-                  return 'Plan title is required';
+                  return l10n.planTitleRequired;
                 }
                 return null;
               },
             ),
             CustomTextField(
-              outSideTitle: 'Description',
-              labelText: widget.isUpdate ? 'Update your plan description' : 'Add your plan description',
+              outSideTitle: l10n.description,
+              labelText: widget.isUpdate ? l10n.updatePlanDescription : l10n.addPlanDescription,
               controller: _planDescriptionController,
               maxLines: 3,
               canBeNull: true,
@@ -121,8 +120,8 @@ class _PlanFormState extends State<PlanForm> with AutomaticKeepAliveClientMixin 
                 }
               },
               isRequired: true,
-              outSideTitle: "Plan Start Date",
-              labelText: 'dd/mm/yyyy',
+              outSideTitle: l10n.planStartDate,
+              labelText: l10n.dateFormat,
               suffixIcon: const Icon(Icons.date_range),
               initialDate: _planStartDate,
             ),
@@ -134,8 +133,8 @@ class _PlanFormState extends State<PlanForm> with AutomaticKeepAliveClientMixin 
                 });
               },
               isRequired: false,
-              outSideTitle: "Plan End Date",
-              labelText: 'dd/mm/yyyy',
+              outSideTitle: l10n.planEndDate,
+              labelText: l10n.dateFormat,
               suffixIcon: const Icon(Icons.date_range),
               initialDate: _planEndDate,
               firstDate: _planStartDate,
@@ -143,12 +142,11 @@ class _PlanFormState extends State<PlanForm> with AutomaticKeepAliveClientMixin 
                 if (value == null || value.trim().isEmpty) return null;
                 if (_planStartDate == null) return null;
                 final parsed = DateSortUtil.parseFlexibleDate(value);
-                if (parsed == null) return 'Invalid end date';
-                if (parsed.isBefore(_planStartDate!)) return 'End date cannot be before start date';
+                if (parsed == null) return l10n.invalidEndDate;
+                if (parsed.isBefore(_planStartDate!)) return l10n.endDateBeforeStartDate;
                 return null;
               },
             ),
-            // Use core logic wrapper which handles category loading, add and delete via CategoryBloc
             CategorySelectorWithLogic(
               selectedCategory: _selectedCategory,
               onCategorySelected: (selectedCategory) {
@@ -158,14 +156,12 @@ class _PlanFormState extends State<PlanForm> with AutomaticKeepAliveClientMixin 
               },
             ),
             const SizedBox(height: 16.0),
-            // Use core logic wrapper which maps TaskPriority enum and provides the UI
             PrioritySelectorWithLogic(
               selectedPriority: _selectedPriority,
               onPrioritySelected: (p) {
                 setState(() => _selectedPriority = p);
               },
             ),
-            // Image Picker for Plan Image
             if (widget.isUpdate && _pickedImage == null && widget.initialPlan?.image != null)
               Column(
                 children: [
@@ -196,7 +192,7 @@ class _PlanFormState extends State<PlanForm> with AutomaticKeepAliveClientMixin 
             // Save/Update Button
             LoadingElevatedButton(
               onPressed: _handleSubmit,
-              buttonText: widget.isUpdate ? 'Update Plan' : 'Add Plan',
+              buttonText: widget.isUpdate ? l10n.updatePlan : l10n.addPlan,
               icon: widget.isUpdate ? const Icon(Icons.update) : const Icon(Icons.add),
               showLoading: true,
             ),
@@ -210,13 +206,14 @@ class _PlanFormState extends State<PlanForm> with AutomaticKeepAliveClientMixin 
     if (!_formKey.currentState!.validate()) {
       return;
     }
-    // Provide localized strings inside this method; `l10n` used by snackbars below
     final l10n = AppLocalizations.of(context)!;
-    final formattedStartDate = DateFormat('dd/MM/yyyy').format(_planStartDate!);
+    final datePattern = l10n.dateFormat;
+    final formattedStartDate = _planStartDate != null
+        ? DateFormat(datePattern).format(_planStartDate!)
+        : l10n.noTime;
     final formattedEndDate = _planEndDate != null
-        ? DateFormat('dd/MM/yyyy').format(_planEndDate!)
-        : 'N/A';
-    // Dispatch form-level events; PlanBloc will build/merge PlanDetails and call usecases
+        ? DateFormat(datePattern).format(_planEndDate!)
+        : l10n.noTime;
     final imagePath = _pickedImage?.path;
 
     if (widget.isUpdate && widget.initialPlan != null) {
@@ -226,7 +223,7 @@ class _PlanFormState extends State<PlanForm> with AutomaticKeepAliveClientMixin 
         startDate: formattedStartDate,
         endDate: formattedEndDate,
         priority: _selectedPriority.toTaskPriorityString(),
-        category: _selectedCategory ?? 'General',
+        category: _selectedCategory ?? l10n.general,
         image: imagePath ?? widget.initialPlan!.image,
       );
 
@@ -241,7 +238,7 @@ class _PlanFormState extends State<PlanForm> with AutomaticKeepAliveClientMixin 
         startDate: formattedStartDate,
         endDate: formattedEndDate,
         priority: _selectedPriority.toTaskPriorityString(),
-        category: _selectedCategory ?? 'General',
+        category: _selectedCategory ?? l10n.general,
         status: 'Not Completed',
         image: imagePath,
       );

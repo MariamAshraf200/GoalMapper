@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:mapperapp/feature/taskHome/domain/entity/taskEntity.dart';
 import '../wedgit/task_card.dart';
 import 'package:mapperapp/l10n/app_localizations.dart';
+import 'package:mapperapp/feature/taskHome/domain/entity/task_enum.dart';
 
 class TaskList extends StatelessWidget {
 
@@ -25,7 +26,7 @@ class TaskList extends StatelessWidget {
               title: task.title,
               description: task.description,
               time: task.time,
-              priority: task.priority,
+              priority: TaskPriorityExtension.fromString(task.priority),
               status: task.status,
             );
           }).toList(),

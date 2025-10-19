@@ -25,9 +25,9 @@ class CategorySelectorWithLogic extends StatelessWidget {
     return BlocBuilder<CategoryBloc, CategoryState>(
       builder: (context, state) {
         final l10n = AppLocalizations.of(context)!;
-        List<String> names = ['General'];
+        List<String> names = [l10n.general];
         if (state is CategoryLoaded) {
-          names = state.categories.map((c) => c.categoryName).toList();
+          names = state.categories.map((c) => c.categoryName == 'General' ? l10n.general : c.categoryName).toList();
         }
 
         return CategorySelector(

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'time_field.dart';
+import 'package:mapperapp/l10n/l10n_extension.dart';
 
 class TimeRangeField extends StatefulWidget {
   const TimeRangeField({
@@ -51,8 +52,9 @@ class _TimeRangeFieldState extends State<TimeRangeField> {
   }
 
   void _handleEndTime(TimeOfDay selectedEnd) {
+    final l10n = context.l10n;
     if (_startTime != null && _isEndBeforeStart(_startTime!, selectedEnd)) {
-      setState(() => _endTimeError = 'End time cannot be before start time');
+      setState(() => _endTimeError = l10n.endBeforeStart);
     } else {
       setState(() {
         _endTime = selectedEnd;
@@ -64,6 +66,7 @@ class _TimeRangeFieldState extends State<TimeRangeField> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -74,8 +77,8 @@ class _TimeRangeFieldState extends State<TimeRangeField> {
             Flexible(
               fit: FlexFit.loose,
               child: TimeField(
-                labelText: "hh:mm AM/PM",
-                outSideTitle: "Start Time",
+                labelText: l10n.timeFormat,
+                outSideTitle: l10n.startTime,
                 initialTime: _startTime,
                 onTimeSelected: _handleStartTime,
                 isRequired: true, // لا يمكن تركه فارغًا
@@ -87,8 +90,8 @@ class _TimeRangeFieldState extends State<TimeRangeField> {
             Flexible(
               fit: FlexFit.loose,
               child: TimeField(
-                labelText: "hh:mm AM/PM",
-                outSideTitle: "End Time",
+                labelText: l10n.timeFormat,
+                outSideTitle: l10n.endTime,
                 initialTime: _endTime,
                 startTime: _startTime, // للمقارنة
                 onTimeSelected: _handleEndTime,

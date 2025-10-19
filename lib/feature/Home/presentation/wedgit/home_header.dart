@@ -4,6 +4,7 @@ import '../../../../core/theme/theme_mode_cubit.dart';
 import '../../../../core/i18n/language_cubit.dart';
 import '../../../auth/presentation/bloc/auth_bloc.dart';
 import '../../../auth/presentation/bloc/auth_event.dart';
+import '../../../../l10n/l10n_extension.dart';
 
 class HomeHeader extends StatelessWidget {
   const HomeHeader({super.key});
@@ -11,7 +12,7 @@ class HomeHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    final isArabic = context.watch<LanguageCubit>().state.languageCode == 'ar';
+    final l10n = context.l10n;
 
     return Container(
       width: double.infinity,
@@ -59,7 +60,7 @@ class HomeHeader extends StatelessWidget {
                       children: [
                         // Localized greeting (reactive)
                         Text(
-                          '${isArabic ? 'مرحبا' : 'Hello'} ${displayName.split(' ').first}',
+                          '${l10n.hello} ${displayName.split(' ').first}',
                           style: const TextStyle(
                             fontSize: 14,
                             color: Colors.white70,
@@ -96,6 +97,7 @@ class HomeHeader extends StatelessWidget {
   }
 
   Widget _buildPopupMenu(BuildContext context, ColorScheme colorScheme) {
+    final l10n = context.l10n;
     return PopupMenuButton<String>(
       icon: Icon(Icons.more_vert_sharp, color: colorScheme.onPrimary, size: 22),
       onSelected: (value) async {
@@ -122,7 +124,7 @@ class HomeHeader extends StatelessWidget {
               children: [
                 Icon(Icons.language, color: colorScheme.inverseSurface),
                 const SizedBox(width: 8),
-                Text(isArabic ? 'العربية' : 'English'),
+                Text(isArabic ? l10n.arabic : l10n.english),
               ],
             ),
           ),
@@ -133,7 +135,7 @@ class HomeHeader extends StatelessWidget {
               children: [
                 Icon(isDark ? Icons.dark_mode : Icons.light_mode, color: colorScheme.inverseSurface),
                 const SizedBox(width: 8),
-                Text(isArabic ? 'تبديل المظهر' : 'Toggle theme'),
+                Text(l10n.toggleTheme),
               ],
             ),
           ),
@@ -145,7 +147,7 @@ class HomeHeader extends StatelessWidget {
               children: [
                 const Icon(Icons.logout),
                 const SizedBox(width: 8),
-                Text(isArabic ? 'تسجيل الخروج' : 'Log out'),
+                Text(l10n.logout),
               ],
             ),
           ),

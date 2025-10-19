@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mapperapp/l10n/app_localizations.dart';
 import '../../../../core/util/custom_builders/navigate_to_screen.dart';
+import '../../../../core/util/widgets/custom_dilog.dart';
 import '../../domain/entities/plan_entity.dart';
+import '../screen/plan_details.dart';
+import '../screen/updatePlan.dart';
 import '../bloc/bloc.dart';
 import '../bloc/event.dart';
-import '../screen/plan_details.dart';
 
 class PlanItemCard extends StatefulWidget {
   final PlanDetails plan;
@@ -32,7 +34,7 @@ class _PlanItemCardState extends State<PlanItemCard> {
         color: Colors.red,
         child: Row(
           children: [
-            Icon(Icons.delete, color: Colors.white),
+            const Icon(Icons.delete, color: Colors.white),
             const SizedBox(width: 8),
             Text(l10n.deleteOperation,
                 style: const TextStyle(
@@ -56,37 +58,42 @@ class _PlanItemCardState extends State<PlanItemCard> {
         ),
       ),
       confirmDismiss: (direction) async {
-        if (direction == DismissDirection.startToEnd) {
-          // ✅ Delete
-          final shouldDelete = await showDialog<bool>(
-            context: context,
-            builder: (ctx) => AlertDialog(
-              title: Text(l10n.deletePlan),
-              content: Text(l10n.deletePlanDescription),
-              actions: [
-                TextButton(
-                    onPressed: () => Navigator.pop(ctx, false),
-                    child: Text(l10n.cancel)),
-                TextButton(
-                  onPressed: () => Navigator.pop(ctx, true),
-                  child: Text(l10n.deleteOperation,
-                      style: const TextStyle(color: Colors.red)),
-                ),
-              ],
-            ),
-          );
-          if (shouldDelete == true) {
-            BlocProvider.of<PlanBloc>(context).add(DeletePlanEvent(plan.id));
-            return true;
-          }
-          return false;
-        } else if (direction == DismissDirection.endToStart) {
+        final isLtr = Directionality.of(context) == TextDirection.ltr;
+
+        final physicalIsRightSwipe = (isLtr && direction == DismissDirection.startToEnd) || (!isLtr && direction == DismissDirection.endToStart);
+        final physicalIsLeftSwipe = (isLtr && direction == DismissDirection.endToStart) || (!isLtr && direction == DismissDirection.startToEnd);
+
+        if (physicalIsRightSwipe) {
           await navigateToScreenWithSlideTransition(
             context,
-            PlanDetailsScreen(plan: plan),
+            UpdatePlanScreen(plan: plan),
           );
           return false;
         }
+
+        if (physicalIsLeftSwipe) {
+          final confirmed = await showDialog<bool?>(
+            context: context,
+            builder: (ctx) {
+              return CustomDialog(
+                title: l10n.deletePlan,
+                description: l10n.deletePlanDescription,
+                operation: l10n.deleteOperation,
+                icon: Icons.delete,
+                color: Colors.red,
+                onCanceled: () => Navigator.of(ctx).pop(false),
+                onConfirmed: () => Navigator.of(ctx).pop(true),
+              );
+            },
+          );
+
+          if (confirmed == true) {
+            context.read<PlanBloc>().add(DeletePlanEvent(plan.id));
+            return true;
+          }
+          return false;
+        }
+
         return false;
       },
       child: InkWell(
@@ -98,7 +105,7 @@ class _PlanItemCardState extends State<PlanItemCard> {
           }
           navigateToScreenWithSlideTransition(
             context,
-            PlanDetailsScreen(plan: plan),
+            PlanDetailsScreen(id: plan.id),
           );
         },
         child: Card(
@@ -156,7 +163,6 @@ class _PlanItemCardState extends State<PlanItemCard> {
 
                 const SizedBox(height: 12),
 
-                // 🔹 Bottom row (date + status)
                 Row(
                   children: [
                     Icon(Icons.calendar_today,

@@ -203,6 +203,27 @@
   "@somethingWentWrong": { "description": "Generic error headline" },
 
   "noTasksFound": "No tasks found.",
-  "@noTasksFound": { "description": "Message shown when no tasks found" }
+  "@noTasksFound": { "description": "Message shown when no tasks found" },
+
+  "complete": "complete",
+  "@complete": {"description": "Label for completed percentage in plan card"},
+
+  "general": "General",
+  "@general": { "description": "Default category name" },
+
+  "timeFormat": "hh:mm AM/PM",
+  "@timeFormat": { "description": "Example/time format placeholder shown in time fields" },
+
+  "startTime": "Start Time",
+  "@startTime": { "description": "Label for start time field" },
+
+  "endTime": "End Time",
+  "@endTime": { "description": "Label for end time field" },
+
+  "endBeforeStart": "End time cannot be before start time",
+  "@endBeforeStart": { "description": "Validation message when end is before start" },
+
+  "enterTime": "Enter the time",
+  "@enterTime": { "description": "Validation hint when time field is empty" }
 
 }

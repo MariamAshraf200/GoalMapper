@@ -353,6 +353,24 @@ abstract class AppLocalizations {
   /// **'My Plans'**
   String get myPlans;
 
+  /// Header title used on the home screen for the user's tasks
+  ///
+  /// In en, this message translates to:
+  /// **'My Tasks'**
+  String get myTasks;
+
+  /// Section title for the user's plan area on the home screen
+  ///
+  /// In en, this message translates to:
+  /// **'My Plan'**
+  String get myPlan;
+
+  /// Label for the 'See All' button
+  ///
+  /// In en, this message translates to:
+  /// **'See All'**
+  String get seeAll;
+
   /// Hint text for selecting a category
   ///
   /// In en, this message translates to:
@@ -515,6 +533,42 @@ abstract class AppLocalizations {
   /// **'Category name'**
   String get categoryName;
 
+  /// Default category name
+  ///
+  /// In en, this message translates to:
+  /// **'General'**
+  String get general;
+
+  /// Example/time format placeholder shown in time fields
+  ///
+  /// In en, this message translates to:
+  /// **'hh:mm AM/PM'**
+  String get timeFormat;
+
+  /// Label for start time field
+  ///
+  /// In en, this message translates to:
+  /// **'Start Time'**
+  String get startTime;
+
+  /// Label for end time field
+  ///
+  /// In en, this message translates to:
+  /// **'End Time'**
+  String get endTime;
+
+  /// Validation message when end time is before start time
+  ///
+  /// In en, this message translates to:
+  /// **'End time cannot be before start time'**
+  String get endBeforeStart;
+
+  /// Validation hint when time field is empty
+  ///
+  /// In en, this message translates to:
+  /// **'Enter the time'**
+  String get enterTime;
+
   /// Welcome title on the auth screen
   ///
   /// In en, this message translates to:
@@ -538,6 +592,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Something went wrong'**
   String get somethingWentWrong;
+
+  /// Greeting word used before a user's name (e.g. "Hello John")
+  ///
+  /// In en, this message translates to:
+  /// **'Hello'**
+  String get hello;
+
+  /// Label for toggling the app theme
+  ///
+  /// In en, this message translates to:
+  /// **'Toggle theme'**
+  String get toggleTheme;
+
+  /// Label for logging out / signing out
+  ///
+  /// In en, this message translates to:
+  /// **'Log out'**
+  String get logout;
 
   /// Label for subtasks section
   ///
@@ -573,7 +645,7 @@ abstract class AppLocalizations {
   ///
   /// In en, this message translates to:
   /// **'End date cannot be before start date'**
-  String get endDateBeforeStart;
+  String get endDateBeforeStartDate;
 
   /// Label for adding a plan
   ///
@@ -586,6 +658,66 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Update Plan'**
   String get updatePlan;
+
+  /// No description provided for @failedToLoadPlans.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to load plans.'**
+  String get failedToLoadPlans;
+
+  /// No description provided for @noTime.
+  ///
+  /// In en, this message translates to:
+  /// **'No time'**
+  String get noTime;
+
+  /// No description provided for @todaysProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'Today's Progress'**
+  String get todaysProgress;
+
+  /// No description provided for @tasks.
+  ///
+  /// In en, this message translates to:
+  /// **'Tasks'**
+  String get tasks;
+
+  /// No description provided for @weeklyProgressTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Weekly Progress'**
+  String get weeklyProgressTitle;
+
+  /// No description provided for @weeklyGoodEffortMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Good effort this week!'**
+  String get weeklyGoodEffortMessage;
+
+  /// No description provided for @weeklyBackOnTrackMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'You are back on track this week!'**
+  String get weeklyBackOnTrackMessage;
+
+  /// No description provided for @weeklyBackOnTrackMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'You are back on track this week!'**
+  String get complete;
+
+  /// No description provided for @weeklyBestDayMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Your best day was {bestDayName}'**
+  String weeklyBestDayMessage(String bestDayName);
+
+  /// No description provided for @dateFormat.
+///
+/// In en, this message translates to:
+/// **'dd/MM/yyyy'**
+String get dateFormat;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

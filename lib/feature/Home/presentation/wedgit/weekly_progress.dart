@@ -4,13 +4,15 @@ import 'package:intl/intl.dart';
 import 'package:fl_chart/fl_chart.dart';
 import '../bloc/home_bloc.dart';
 import '../bloc/home_state.dart';
-import 'package:mapperapp/core/extensions/app_strings.dart';
+import 'package:mapperapp/l10n/l10n_extension.dart';
 
 class WeeklyProgressWidget extends StatelessWidget {
   const WeeklyProgressWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
+
     return BlocBuilder<HomeBloc, HomeState>(
       builder: (context, state) {
         if (state is! HomeLoaded) return const SizedBox.shrink();
@@ -27,7 +29,6 @@ class WeeklyProgressWidget extends StatelessWidget {
           margin: const EdgeInsets.only(top: 10, bottom: 8),
           decoration: BoxDecoration(
             gradient: LinearGradient(
-              // Use the app's ColorScheme for schema-driven colors
               colors: [colorScheme.surface, colorScheme.primary.withAlpha(15)],
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
@@ -45,7 +46,7 @@ class WeeklyProgressWidget extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                AppStrings.weeklyProgressTitle,
+                l10n.weeklyProgressTitle,
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
@@ -94,7 +95,8 @@ class WeeklyProgressWidget extends StatelessWidget {
                               return const SizedBox.shrink();
                             }
                             final day = days[index];
-                            final label = DateFormat('E').format(day);
+                            final locale = Localizations.localeOf(context).toString();
+                            final label = DateFormat('E', locale).format(day);
                             final isToday = index == todayIndex;
                             return Padding(
                               padding: const EdgeInsets.only(top: 4.0),
@@ -176,10 +178,10 @@ class WeeklyProgressWidget extends StatelessWidget {
 
               Text(
                 avgProgress > 0.7
-                    ? AppStrings.weeklyBestDayMessage(bestDayName)
+                    ? l10n.weeklyBestDayMessage(bestDayName)
                     : avgProgress > 0.4
-                    ? AppStrings.weeklyGoodEffortMessage
-                    : AppStrings.weeklyBackOnTrackMessage,
+                    ? l10n.weeklyGoodEffortMessage
+                    : l10n.weeklyBackOnTrackMessage,
                 style: TextStyle(
                   fontSize: 13,
                   color: colorScheme.onSurface.withAlpha(230),

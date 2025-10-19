@@ -1,12 +1,8 @@
-// ignore: unused_import
-import 'package:intl/intl.dart' as intl;
 import 'app_localizations.dart';
-
-// ignore_for_file: type=lint
 
 /// The translations for Arabic (`ar`).
 class AppLocalizationsAr extends AppLocalizations {
-  AppLocalizationsAr([String locale = 'ar']) : super(locale);
+  AppLocalizationsAr([super.locale = 'ar']);
 
   @override
   String get english => 'الإنجليزية';
@@ -24,7 +20,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get updateTask => 'تحديث المهمة';
 
   @override
-  String get selectPriority => 'اختر الأولوية';
+  String get selectPriority => ' الأولوية';
 
   @override
   String get selectStatus => 'اختر الحالة';
@@ -72,7 +68,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get taskDate => 'تاريخ المهمة';
 
   @override
-  String get datePlaceholder => 'dd/mm/yyyy';
+  String get datePlaceholder => 'يوم/شهر/سنة';
 
   @override
   String get addTaskButton => 'إضافة مهمة';
@@ -93,28 +89,16 @@ class AppLocalizationsAr extends AppLocalizations {
   String get taskNotEditable => 'هذه المهمة مكتملة أو فائتة ولا يمكن تعديلها.';
 
   @override
-  String get deleteTask => 'حذف المهمة';
+  String get weeklyProgressTitle => '📊 تحليل تقدم الأسبوع';
 
   @override
-  String get updateOperation => 'تحديث';
+  String weeklyBestDayMessage(String bestDayName) => '🔥 اتساق ممتاز! أفضل يوم: $bestDayName';
 
   @override
-  String get deleteOperation => 'حذف';
+  String get weeklyGoodEffortMessage => '💪 جهد جيد! استمر.';
 
   @override
-  String get taskMarkedPrefix => 'تم تمييز المهمة كـ';
-
-  @override
-  String get statusDone => 'مكتملة';
-
-  @override
-  String get statusPending => 'قيد الانتظار';
-
-  @override
-  String get statusMissed => 'فاتت';
-
-  @override
-  String get statusToDo => 'قيد العمل';
+  String get weeklyBackOnTrackMessage => '🚀 لنعد إلى المسار الصحيح الأسبوع القادم!';
 
   @override
   String get addSubtask => 'إضافة مهمة فرعية';
@@ -136,6 +120,15 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get myPlans => 'خططي';
+
+  @override
+  String get myTasks => 'مهامي';
+
+  @override
+  String get seeAll => 'عرض الكل';
+
+  @override
+  String get myPlan => 'خطتي';
 
   @override
   String get selectCategory => 'اختر الفئة';
@@ -171,7 +164,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get changePlanImage => 'تغيير صورة الخطة';
 
   @override
-  String get pickPlanImage => 'اخ��ر صورة الخطة';
+  String get pickPlanImage => 'اختر صورة الخطة';
 
   @override
   String get planUpdated => 'تم تحديث الخطة بنجاح!';
@@ -231,6 +224,15 @@ class AppLocalizationsAr extends AppLocalizations {
   String get somethingWentWrong => 'حدث خطأ ما';
 
   @override
+  String get hello => 'مرحبا';
+
+  @override
+  String get toggleTheme => 'تبديل المظهر';
+
+  @override
+  String get logout => 'تسجيل الخروج';
+
+  @override
   String get addPlan => 'إضافة خطة';
 
   @override
@@ -252,5 +254,65 @@ class AppLocalizationsAr extends AppLocalizations {
   String get invalidEndDate => 'تاريخ انتهاء غير صالح';
 
   @override
-  String get endDateBeforeStart => 'لا يمكن أن يكون تاريخ الانتهاء قبل تاريخ البدء';
+  String get endDateBeforeStartDate => 'لا يمكن أن يكون تاريخ الانتهاء قبل تاريخ البدء';
+
+  @override
+  String get failedToLoadPlans => 'فشل في تحميل الخطط. يرجى المحاولة مرة أخرى لاحقًا.';
+
+  @override
+  String get noTime => 'لا يوجد وقت';
+
+  @override
+  String get todaysProgress => "تقدم اليوم";
+
+  @override
+  String get tasks => 'مهام';
+
+  @override
+  String get deleteOperation => 'حذف';
+
+  @override
+  String get deleteTask => 'حذف المهمة';
+
+  @override
+  String get statusDone => 'مكتملة';
+
+  @override
+  String get statusMissed => 'فاتت';
+
+  @override
+  String get statusPending => 'قيد الانتظار';
+
+  @override
+  String get statusToDo => 'قيد العمل';
+
+  @override
+  String get taskMarkedPrefix => 'تم تمييز المهمة كـ';
+
+  @override
+  String get updateOperation => 'تحديث';
+
+  @override
+  String get complete => 'مكتمل';
+
+  @override
+  String get general => 'عام';
+
+  @override
+  String get timeFormat => 'د:س  ص/م';
+
+  @override
+  String get startTime => 'وقت البدء';
+
+  @override
+  String get endTime => 'نهاية';
+
+  @override
+  String get endBeforeStart => 'لا يمكن أن يكون وقت الانتهاء قبل وقت البدء';
+
+  @override
+  String get enterTime => 'أدخل الوقت';
+
+  @override
+  String get dateFormat => 'dd/MM/yyyy';
 }
