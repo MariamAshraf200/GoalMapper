@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:mapperapp/feature/auth/presentation/screen/auth_gate.dart';
 import 'core/theme/theme_mode_cubit.dart';
 import 'core/i18n/language_cubit.dart';
-import 'injection_imports.dart';
+import 'core/theme/palette_cubit.dart';
+import 'feature/auth/presentation/screen/auth_gate.dart';
 import 'global_bloc.dart';
 import 'l10n/app_localizations.dart';
+import 'core/theme/app_theme.dart';
 
 /// Create a global RouteObserver to monitor route changes.
 final RouteObserver<PageRoute> routeObserver = RouteObserver<PageRoute>();
@@ -18,9 +18,10 @@ class AppBootstrapper extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // ThemeModeCubit and LanguageCubit are provided at the top-level (main.dart)
+    // ThemeModeCubit, PaletteCubit and LanguageCubit are provided at the top-level (main.dart)
     final themeMode = context.watch<ThemeModeCubit>().state;
     final locale = context.watch<LanguageCubit>().state;
+    final palette = context.watch<PaletteCubit>().state;
 
     return GlobalBloc(
       builder: (context, child) {
@@ -29,24 +30,9 @@ class AppBootstrapper extends StatelessWidget {
           debugShowCheckedModeBanner: false,
           navigatorKey: navigatorKey,
           navigatorObservers: [routeObserver],
-          theme: ThemeData(
-            colorScheme: ColorScheme.fromSeed(seedColor: AppColors.defaultColor),
-            primaryColor: AppColors.defaultColor,
-          ),
-          darkTheme: ThemeData.dark().copyWith(
-            colorScheme: ColorScheme.fromSeed(
-              seedColor: AppColors.defaultColor,
-              brightness: Brightness.dark,
-            ),
-            primaryColor: AppColors.defaultColor,
-            appBarTheme: AppBarTheme(
-              systemOverlayStyle: SystemUiOverlayStyle(
-                statusBarColor: Colors.transparent,
-                statusBarIconBrightness: Brightness.light,
-                statusBarBrightness: Brightness.dark,
-              ),
-            ),
-          ),
+          // Build light/dark themes from the selected palette so theme updates at runtime.
+          theme: AppTheme.themeDataFor(palette, Brightness.light),
+          darkTheme: AppTheme.themeDataFor(palette, Brightness.dark),
           themeMode: themeMode,
           locale: locale,
           supportedLocales: const [Locale('en'), Locale('ar')],

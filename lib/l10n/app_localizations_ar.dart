@@ -1,8 +1,10 @@
+// ignore: unused_import
+import 'package:intl/intl.dart' as intl;
 import 'app_localizations.dart';
 
 /// The translations for Arabic (`ar`).
 class AppLocalizationsAr extends AppLocalizations {
-  AppLocalizationsAr([super.locale = 'ar']);
+  AppLocalizationsAr([String locale = 'ar']) : super(locale);
 
   @override
   String get english => 'الإنجليزية';
@@ -12,6 +14,24 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get close => 'إغلاق';
+
+  @override
+  String get chooseThemeColor => 'اختر لون السمة';
+
+  @override
+  String get palettePurple => 'بنفسجي';
+
+  @override
+  String get paletteBlue => 'أزرق';
+
+  @override
+  String get paletteGreen => 'أخضر';
+
+  @override
+  String get paletteRed => 'أحمر';
+
+  @override
+  String get paletteMix => 'مختلط';
 
   @override
   String get createNewTask => 'إنشاء مهمة جديدة';

@@ -1,14 +1,24 @@
 import 'package:flutter/material.dart';
 
 class AppColors {
-  static const Color defaultColor = Colors.blue; // blueGrey
-  //Color(0xff867cef);
-  // Color(0xFF1A5276);
-  static Color defaultBackgroundColor = Colors.grey.shade100;
-  static Color secondBackgroundColor = Colors.grey.shade300;
-  static Color basicColor = Colors.white;
-  static Color primaryColor = Colors.black;
-  // static Color ? additionalColor = Colors.grey[200];
-  // Make secondary color follow the defaultColor so the theme is consistent.
-  static Color secondaryColor = defaultColor;
+  // Primary brand color (purple)
+  static const Color primaryColor = Color(0xFF6A1B9A); // deep purple
+  // defaultColor kept as alias for backward compatibility
+  static const Color defaultColor = primaryColor;
+
+  // Secondary / accent
+  static const Color secondaryColor = Color(0xFF00BFA5); // teal
+  static const Color accentColor = Color(0xFFFFC107); // amber
+  static const Color dangerColor = Color(0xFFB00020);
+
+  // Backgrounds
+  static final Color defaultBackgroundColor = Color(0xFFF7F6FB); // very light purple tint
+  static final Color secondBackgroundColor = Colors.white;
+
+  // Surface / basic
+  static const Color basicColor = Colors.white;
+
+  // Text colors
+  static const Color textPrimary = Colors.black87;
+  static const Color textOnPrimary = Colors.white;
 }

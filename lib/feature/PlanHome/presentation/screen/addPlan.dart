@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mapperapp/l10n/app_localizations.dart';
+import '../../../../l10n/app_localizations.dart';
 import '../widget/plan_form.dart';
 
 class AddPlanScreen extends StatelessWidget {
@@ -10,36 +10,50 @@ class AddPlanScreen extends StatelessWidget {
     final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        title: Row(
+      body: SafeArea(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            IconButton(
-              tooltip: l10n.close,
-              icon: Icon(
-                Icons.close,
-                color: Colors.red[400],
-                size: 35,
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 6.0),
+              child: Row(
+                children: [
+                  IconButton(
+                    tooltip: l10n.close,
+                    icon: Icon(
+                      Icons.close,
+                      size: 30,
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
+                    onPressed: () => Navigator.of(context).pop(),
+                  ),
+                  const Spacer(),
+                  Text(
+                    l10n.createNewTask,
+                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                          color: Theme.of(context).colorScheme.primary,
+                          fontWeight: FontWeight.bold,
+                        ) ??
+                        TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: Theme.of(context).colorScheme.primary,
+                        ),
+                  ),
+                  const Spacer(),
+                  const SizedBox(width: 48),
+                ],
               ),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
             ),
-            const Spacer(),
-            Text(
-              l10n.createNewTask,
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: Theme.of(context).colorScheme.primary,
+
+            // Form
+            const Expanded(
+              child: PlanForm(
+                isUpdate: false,
               ),
             ),
-            const Spacer(),
           ],
         ),
-      ),
-      body: const PlanForm(
-        isUpdate: false,
       ),
     );
   }

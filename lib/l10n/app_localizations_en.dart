@@ -18,6 +18,24 @@ class AppLocalizationsEn extends AppLocalizations {
   String get close => 'Close';
 
   @override
+  String get chooseThemeColor => 'Choose theme color';
+
+  @override
+  String get palettePurple => 'Purple';
+
+  @override
+  String get paletteBlue => 'Blue';
+
+  @override
+  String get paletteGreen => 'Green';
+
+  @override
+  String get paletteRed => 'Red';
+
+  @override
+  String get paletteMix => 'Mix';
+
+  @override
   String get createNewTask => 'Create New Task';
 
   @override
