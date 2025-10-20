@@ -132,19 +132,20 @@ class TaskFilters extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Row(
       children: [
         Expanded(
           child: _FilterDropdown<String>(
-            icon: const Icon(Icons.filter_list, color: Colors.blue),
+            icon: Icon(Icons.filter_list, color: colorScheme.primary),
             value: selectedPriority,
             hint: context.l10n.selectPriority,
             items: [
               ...TaskPriority.values.map((p) => DropdownMenuItem(
                   value: p.toTaskPriorityString(),
-                  child: Text(p.toPriorityLabel(context)))),
+                  child: Text(p.toPriorityLabel(context),style: TextStyle(color:colorScheme.primary ),))),
               DropdownMenuItem(
-                  value: null, child: Text(context.l10n.allPriorities)),
+                  value: null, child: Text(context.l10n.allPriorities,style: TextStyle(color:colorScheme.primary ),)),
             ],
             onChanged: onPriorityChanged,
           ),
@@ -152,15 +153,15 @@ class TaskFilters extends StatelessWidget {
         const SizedBox(width: 16),
         Expanded(
           child: _FilterDropdown<String>(
-            icon: const Icon(Icons.task_alt, color: Colors.green),
+            icon: Icon(Icons.task_alt, color: colorScheme.primary),
             value: selectedStatus,
             hint: context.l10n.selectStatus,
             items: [
               ...TaskStatus.values.map((s) => DropdownMenuItem(
                   value: s.toTaskStatusString(),
-                  child: Text(s.localized(context)))),
+                  child: Text(s.localized(context),style:TextStyle(color: colorScheme.primary) ,))),
               DropdownMenuItem(
-                  value: null, child: Text(context.l10n.allStatuses)),
+                  value: null, child: Text(context.l10n.allStatuses,style:TextStyle(color: colorScheme.primary))),
             ],
             onChanged: onStatusChanged,
           ),
@@ -187,10 +188,12 @@ class _FilterDropdown<T> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(12),
-        boxShadow: [BoxShadow(color: Colors.grey.withAlpha(20), blurRadius: 5)],
+        // subtle shadow using theme onSurface with low opacity
+        boxShadow: [BoxShadow(color: colorScheme.onSurface.withAlpha((0.06 * 255).round()), blurRadius: 5)],
       ),
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       child: Row(
@@ -200,8 +203,10 @@ class _FilterDropdown<T> extends StatelessWidget {
           Expanded(
             child: DropdownButton<T>(
               value: value,
-              hint: Text(hint,
-                  style: const TextStyle(fontSize: 14, color: Colors.grey)),
+              hint: Text(
+                hint,
+                style: TextStyle(color: colorScheme.onSurface),
+              ),
               isExpanded: true,
               underline: const SizedBox(),
               items: items,
@@ -219,22 +224,23 @@ class TaskListSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final messageStyle = TextStyle(fontSize: 18, color: colorScheme.onSurface);
     return Expanded(
       child: BlocBuilder<TaskBloc, taskState.TaskState>(
         builder: (context, state) {
           if (state is taskState.TaskLoading) {
-            return const Center(child: CircularProgressIndicator());
+            return Center(child: CircularProgressIndicator(color: colorScheme.primary));
           } else if (state is taskState.TaskLoaded) {
             if (state.tasks.isEmpty) {
               return Center(
                   child: Text(context.l10n.noTasksMatchFilters,
-                      style: const TextStyle(fontSize: 18)));
+                      style: messageStyle));
             }
             return TaskItems(tasks: state.tasks);
           } else if (state is taskState.TaskError) {
             return Center(
-                child:
-                    Text(state.message, style: const TextStyle(fontSize: 18)));
+                child: Text(state.message, style: messageStyle));
           }
           return const SizedBox();
         },
@@ -242,3 +248,4 @@ class TaskListSection extends StatelessWidget {
     );
   }
 }
+

@@ -33,11 +33,13 @@ class _SignInView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final color = Theme.of(context).colorScheme;
+    final colorScheme = Theme.of(context).colorScheme;
+    // Use scaffoldBackgroundColor so the screen follows light/dark scaffold background
+    final scaffoldBg = Theme.of(context).scaffoldBackgroundColor;
     final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
-      backgroundColor: color.surface,
+      backgroundColor: scaffoldBg,
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -45,7 +47,7 @@ class _SignInView extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               const Spacer(),
-              Icon(Icons.lock_outline, size: 90, color: color.primary),
+              Icon(Icons.lock_outline, size: 90, color: colorScheme.primary),
               const SizedBox(height: 24),
               Text(
                 l10n.welcomeBack,
@@ -58,21 +60,20 @@ class _SignInView extends StatelessWidget {
               Text(
                 l10n.signInSecurely,
                 textAlign: TextAlign.center,
-                style: Theme.of(context)
-                    .textTheme
-                    .bodyMedium
-                    ?.copyWith(color: Colors.grey[700]),
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color: colorScheme.onSurfaceVariant,
+                    ),
               ),
               const Spacer(),
               ElevatedButton.icon(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: color.primary,
-                  foregroundColor: color.onPrimary,
+                  backgroundColor: colorScheme.primary,
+                  foregroundColor: colorScheme.onPrimary,
                   padding:
                   const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
-                    side: BorderSide(color: Colors.grey.shade300),
+                    side: BorderSide(color: colorScheme.outline),
                   ),
                   elevation: 2,
                 ),
@@ -80,7 +81,7 @@ class _SignInView extends StatelessWidget {
                     context.read<AuthBloc>().add(SignInEvent()),
                 icon: FaIcon(
                   FontAwesomeIcons.google,
-                  color: color.onPrimary,
+                  color: colorScheme.onPrimary,
                   size: 22,
                 ),
                 label: Text(
@@ -110,16 +111,17 @@ class _ErrorView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final color = Theme.of(context).colorScheme;
+    final colorScheme = Theme.of(context).colorScheme;
+    final scaffoldBg = Theme.of(context).scaffoldBackgroundColor;
     final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
-      backgroundColor: color.surface,
+      backgroundColor: scaffoldBg,
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.error_outline, color: color.error, size: 70),
+            Icon(Icons.error_outline, color: colorScheme.error, size: 70),
             const SizedBox(height: 16),
             Text(
               l10n.somethingWentWrong,
@@ -134,13 +136,16 @@ class _ErrorView extends StatelessWidget {
               child: Text(
                 message,
                 textAlign: TextAlign.center,
-                style: const TextStyle(color: Colors.grey),
+                style: TextStyle(color: colorScheme.onSurfaceVariant),
               ),
             ),
             const SizedBox(height: 20),
             ElevatedButton(
-              onPressed: () =>
-                  context.read<AuthBloc>().add(SignOutEvent()),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: colorScheme.primary,
+                foregroundColor: colorScheme.onPrimary,
+              ),
+              onPressed: () => context.read<AuthBloc>().add(SignOutEvent()),
               child: Text(l10n.tryAgain),
             ),
           ],
@@ -163,7 +168,7 @@ class _LoadingView extends StatelessWidget {
     final baseColor = colorScheme.surfaceContainerHighest;
     final highlightColor = colorScheme.surface;
     return Scaffold(
-      backgroundColor: colorScheme.surfaceContainerHighest,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: ShimmerLoading(
         baseColor: baseColor,
         highlightColor: highlightColor,

@@ -22,6 +22,8 @@ class PlanFiltersWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     final l10n = AppLocalizations.of(context)!;
+    // Reusable text style for dropdown items using the theme primary color.
+    final itemTextStyle = TextStyle(color: colorScheme.primary);
     return Row(
       children: [
         Expanded(
@@ -29,12 +31,15 @@ class PlanFiltersWidget extends StatelessWidget {
             builder: (context, state) {
               // Build items using canonical stored keys for `value` and localized labels for display.
               final items = <DropdownMenuItem<String>>[];
-              items.add(DropdownMenuItem<String>(value: null, child: Text(l10n.allCategories)));
+              items.add(DropdownMenuItem<String>(value: null, child: Text(l10n.allCategories, style: itemTextStyle)));
               if (state is CategoryLoaded) {
                 for (final c in state.categories) {
                   final canonical = c.categoryName.toLowerCase();
                   final display = canonical == 'general' ? l10n.general : c.categoryName;
-                  items.add(DropdownMenuItem<String>(value: canonical == 'general' ? 'general' : c.categoryName, child: Text(display)));
+                  items.add(DropdownMenuItem<String>(
+                    value: canonical == 'general' ? 'general' : c.categoryName,
+                    child: Text(display, style: itemTextStyle),
+                  ));
                 }
               }
 
@@ -55,11 +60,11 @@ class PlanFiltersWidget extends StatelessWidget {
             value: selectedStatus,
             hint: l10n.selectStatus,
             items: [
-              DropdownMenuItem<PlanStatus>(value: null, child: Text(l10n.allStatuses)),
+              DropdownMenuItem<PlanStatus>(value: null, child: Text(l10n.allStatuses, style: itemTextStyle)),
               ...PlanStatus.values.where((status) => status != PlanStatus.all).map(
                 (status) => DropdownMenuItem<PlanStatus>(
                   value: status,
-                  child: Text(status.localized(context)),
+                  child: Text(status.localized(context), style: itemTextStyle),
                 ),
               ),
             ],
