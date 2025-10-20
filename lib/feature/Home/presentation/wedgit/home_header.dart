@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/theme/theme_mode_cubit.dart';
+import '../../../../core/theme/palette_cubit.dart';
+import '../../../../core/theme/palettes.dart';
 import '../../../../core/i18n/language_cubit.dart';
 import '../../../auth/presentation/bloc/auth_bloc.dart';
 import '../../../auth/presentation/bloc/auth_event.dart';
@@ -111,12 +113,15 @@ class HomeHeader extends StatelessWidget {
         } else if (value == 'toggle_lang') {
           // Toggle language between English and Arabic
           await context.read<LanguageCubit>().toggle();
+        } else if (value == 'change_palette') {
+          _showPalettePicker(context, colorScheme);
         }
       },
       itemBuilder: (context) {
         final isDark = context.read<ThemeModeCubit>().state == ThemeMode.dark;
         final isArabic = context.read<LanguageCubit>().state.languageCode == 'ar';
         return [
+
           PopupMenuItem<String>(
             value: 'toggle_lang',
             child: Row(
@@ -125,6 +130,18 @@ class HomeHeader extends StatelessWidget {
                 Icon(Icons.language, color: colorScheme.inverseSurface),
                 const SizedBox(width: 8),
                 Text(isArabic ? l10n.arabic : l10n.english),
+              ],
+            ),
+          ),
+
+          PopupMenuItem<String>(
+            value: 'change_palette',
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Icon(Icons.palette, color: colorScheme.inverseSurface),
+                const SizedBox(width: 8),
+                Text(l10n.chooseThemeColor),
               ],
             ),
           ),
@@ -152,6 +169,57 @@ class HomeHeader extends StatelessWidget {
             ),
           ),
         ];
+      },
+    );
+  }
+
+  void _showPalettePicker(BuildContext context, ColorScheme colorScheme) {
+    final l10n = context.l10n;
+
+    final current = context.read<PaletteCubit>().state;
+    showModalBottomSheet<void>(
+      context: context,
+      builder: (ctx) {
+        return SafeArea(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(12.0),
+                child: Text(l10n.chooseThemeColor, style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: colorScheme.onSurface)),
+              ),
+              ...ThemePalette.values.map((p) {
+                final palette = kPalettes[p]!;
+                final colorNames = {
+                  'purple': l10n.palettePurple,
+                  'blue': l10n.paletteBlue,
+                  'green': l10n.paletteGreen,
+                  'red': l10n.paletteRed,
+                  'mix': l10n.paletteMix,
+                };
+
+                return ListTile(
+                  leading: Container(
+                    width: 36,
+                    height: 36,
+                    decoration: BoxDecoration(
+                      color: palette.primary,
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: Colors.black12),
+                    ),
+                  ),
+                  title: Text(colorNames[p.name] ?? p.name),
+                  trailing: p == current ? Icon(Icons.check, color: palette.secondary) : null,
+                  onTap: () async {
+                    await context.read<PaletteCubit>().setPalette(p);
+                    Navigator.of(ctx).pop();
+                  },
+                );
+              }).toList(),
+              const SizedBox(height: 8),
+            ],
+          ),
+        );
       },
     );
   }

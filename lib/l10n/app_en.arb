@@ -11,6 +11,19 @@
     "description": "Tooltip text for closing the screen"
   },
 
+  "chooseThemeColor": "Choose theme color",
+  "@chooseThemeColor": { "description": "Title for the theme color picker" },
+  "palettePurple": "Purple",
+  "@palettePurple": { "description": "Palette name: purple" },
+  "paletteBlue": "Blue",
+  "@paletteBlue": { "description": "Palette name: blue" },
+  "paletteGreen": "Green",
+  "@paletteGreen": { "description": "Palette name: green" },
+  "paletteRed": "Red",
+  "@paletteRed": { "description": "Palette name: red" },
+  "paletteMix": "Mix",
+  "@paletteMix": { "description": "Palette name: mix" },
+
   "createNewTask": "Create New Task",
   "@createNewTask": {
     "description": "Title for the Add Task screen"
@@ -224,6 +237,13 @@
   "@endBeforeStart": { "description": "Validation message when end is before start" },
 
   "enterTime": "Enter the time",
-  "@enterTime": { "description": "Validation hint when time field is empty" }
+  "@enterTime": { "description": "Validation hint when time field is empty" },
+
+  "hello": "Hello",
+  "@hello": { "description": "Greeting word used before a user's name (e.g. 'Hello John')" },
+  "toggleTheme": "Toggle theme",
+  "@toggleTheme": { "description": "Label for toggling the app theme" },
+  "logout": "Log out",
+  "@logout": { "description": "Label for logging out / signing out" }
 
 }

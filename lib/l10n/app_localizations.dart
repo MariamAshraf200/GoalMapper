@@ -113,6 +113,42 @@ abstract class AppLocalizations {
   /// **'Close'**
   String get close;
 
+  /// Title for the theme color picker
+  ///
+  /// In en, this message translates to:
+  /// **'Choose theme color'**
+  String get chooseThemeColor;
+
+  /// Palette name: purple
+  ///
+  /// In en, this message translates to:
+  /// **'Purple'**
+  String get palettePurple;
+
+  /// Palette name: blue
+  ///
+  /// In en, this message translates to:
+  /// **'Blue'**
+  String get paletteBlue;
+
+  /// Palette name: green
+  ///
+  /// In en, this message translates to:
+  /// **'Green'**
+  String get paletteGreen;
+
+  /// Palette name: red
+  ///
+  /// In en, this message translates to:
+  /// **'Red'**
+  String get paletteRed;
+
+  /// Palette name: mix
+  ///
+  /// In en, this message translates to:
+  /// **'Mix'**
+  String get paletteMix;
+
   /// Title for the Add Task screen
   ///
   /// In en, this message translates to:
@@ -257,17 +293,18 @@ abstract class AppLocalizations {
   /// **'Task updated successfully!'**
   String get taskUpdated;
 
+  /// Placeholder for deleting task description
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete this task?'**
+  String get deleteTaskDescription;
+
   /// Message shown when a task can't be edited (completed or missed)
   ///
   /// In en, this message translates to:
   /// **'This task is already completed or missed and cannot be changed.'**
   String get taskNotEditable;
 
-  /// Placeholder for deleting task description
-  ///
-  /// In en, this message translates to:
-  /// **'Delete your task description'**
-  String get deleteTaskDescription;
 
   /// Title for delete task dialog
   ///

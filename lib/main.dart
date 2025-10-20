@@ -5,6 +5,7 @@ import 'injection_container.dart';
 import 'app_bootstrapper.dart';
 import 'core/theme/theme_mode_cubit.dart';
 import 'core/i18n/language_cubit.dart';
+import 'core/theme/palette_cubit.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -19,6 +20,7 @@ Future<void> main() async {
     MultiBlocProvider(
       providers: [
         BlocProvider<ThemeModeCubit>(create: (_) => ThemeModeCubit()),
+        BlocProvider<PaletteCubit>(create: (_) => PaletteCubit()),
         BlocProvider<LanguageCubit>(create: (_) => LanguageCubit()),
       ],
       child: const AppBootstrapper(),
