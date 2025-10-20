@@ -10,6 +10,7 @@ import '../screen/auth_screen.dart';
 import 'auth_event.dart';
 
 abstract class AuthState {}
+
 class AuthInitial extends AuthState {}
 class AuthLoading extends AuthState {}
 class AuthSignedIn extends AuthState {
@@ -27,78 +28,72 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final SignOut signOut;
   final GetCurrentUser getCurrentUser;
 
-  AuthBloc({required this.signInWithGoogle, required this.signOut, required this.getCurrentUser}) : super(AuthInitial()) {
-    on<CheckSignInEvent>((event, emit) async {
-      emit(AuthLoading());
-      try {
-        final user = await getCurrentUser();
-        if (user != null) {
-          debugPrint('AuthBloc: emitting AuthSignedIn for user  ${user.name}');
-          emit(AuthSignedIn(user));
-        } else {
-          debugPrint('AuthBloc: emitting AuthSignedOut (user is null, navigating to AuthScreen)');
-          emit(AuthSignedOut());
-          final navigator = navigatorKey.currentState;
-          if (navigator != null) {
-            navigator.pushAndRemoveUntil(
-              MaterialPageRoute(builder: (context) => const AuthScreen()),
-              (route) => false,
-            );
-          }
-        }
-      } catch (e) {
-        if (e.toString().contains('Null check operator used on a null value')) {
-          debugPrint('AuthBloc: emitting AuthSignedOut (caught null check error in CheckSignInEvent)');
-          emit(AuthSignedOut());
-          final navigator = navigatorKey.currentState;
-          if (navigator != null) {
-            navigator.pushAndRemoveUntil(
-              MaterialPageRoute(builder: (context) => const AuthScreen()),
-              (route) => false,
-            );
-          }
-        } else {
-          debugPrint('AuthBloc: emitting AuthError $e');
-          emit(AuthError(e.toString()));
-        }
-      }
-    });
-    on<SignInEvent>((event, emit) async {
-      emit(AuthLoading());
-      try {
-        final user = await signInWithGoogle();
-        debugPrint('AuthBloc: signInWithGoogle returned user: ${user?.name}, email: ${user?.email}');
-        if (user != null) {
-          debugPrint('AuthBloc: emitting AuthSignedIn for user ${user.name}');
-          emit(AuthSignedIn(user));
-        } else {
-          debugPrint('AuthBloc: emitting AuthSignedOut (user is null)');
-          emit(AuthSignedOut());
-        }
-      } catch (e) {
-        debugPrint('AuthBloc: emitting AuthError $e');
-        emit(AuthError(e.toString()));
-      }
-    });
-    on<SignOutEvent>((event, emit) async {
-      emit(AuthLoading());
-      try {
-        await signOut();
-        debugPrint('AuthBloc: emitting AuthSignedOut after sign out');
-        emit(AuthSignedOut());
+  AuthBloc({
+    required this.signInWithGoogle,
+    required this.signOut,
+    required this.getCurrentUser,
+  }) : super(AuthInitial()) {
+    on<CheckSignInEvent>(_onCheckSignIn);
+    on<SignInEvent>(_onSignIn);
+    on<SignOutEvent>(_onSignOut);
+  }
 
-        // Navigate to AuthScreen after signing out
-        final navigator = navigatorKey.currentState;
-        if (navigator != null) {
-          navigator.pushAndRemoveUntil(
-            MaterialPageRoute(builder: (context) => const AuthScreen()),
-            (route) => false,
-          );
-        }
-      } catch (e) {
-        debugPrint('AuthBloc: emitting AuthError $e');
-        emit(AuthError(e.toString()));
+  Future<void> _onCheckSignIn(CheckSignInEvent event, Emitter<AuthState> emit) async {
+    emit(AuthLoading());
+    try {
+      final user = await getCurrentUser();
+      if (user != null) {
+        debugPrint('✅ AuthBloc: user already signed in → ${user.name}');
+        emit(AuthSignedIn(user));
+      } else {
+        debugPrint('🚪 AuthBloc: no user found → navigating to AuthScreen');
+        emit(AuthSignedOut());
+        _navigateToAuthScreen();
       }
-    });
+    } catch (e, s) {
+      debugPrint('❌ AuthBloc: CheckSignInEvent error → $e\n$s');
+      emit(AuthSignedOut());
+      _navigateToAuthScreen();
+    }
+  }
+
+  Future<void> _onSignIn(SignInEvent event, Emitter<AuthState> emit) async {
+    emit(AuthLoading());
+    try {
+      final user = await signInWithGoogle();
+      if (user != null) {
+        debugPrint('✅ AuthBloc: Google SignIn success → ${user.name}');
+        emit(AuthSignedIn(user));
+      } else {
+        debugPrint('🚫 AuthBloc: Google SignIn returned null');
+        emit(AuthSignedOut());
+      }
+    } catch (e, s) {
+      debugPrint('❌ AuthBloc: SignInEvent error → $e\n$s');
+      emit(AuthError('Sign in failed. Please try again.'));
+    }
+  }
+
+  Future<void> _onSignOut(SignOutEvent event, Emitter<AuthState> emit) async {
+    emit(AuthLoading());
+    try {
+      await signOut();
+      debugPrint('👋 AuthBloc: signed out successfully');
+      emit(AuthSignedOut());
+      _navigateToAuthScreen();
+    } catch (e, s) {
+      debugPrint('❌ AuthBloc: SignOutEvent error → $e\n$s');
+      emit(AuthError('Sign out failed.'));
+    }
+  }
+
+  void _navigateToAuthScreen() {
+    final navigator = navigatorKey.currentState;
+    if (navigator != null) {
+      navigator.pushAndRemoveUntil(
+        MaterialPageRoute(builder: (_) => const AuthScreen()),
+            (route) => false,
+      );
+    }
   }
 }
