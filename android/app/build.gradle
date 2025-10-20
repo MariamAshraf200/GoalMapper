@@ -5,6 +5,13 @@ plugins {
     id "dev.flutter.flutter-gradle-plugin"
 }
 
+// Load keystore properties if present (key.properties should NOT be committed to VCS)
+def keystorePropertiesFile = rootProject.file('key.properties')
+def keystoreProperties = new Properties()
+if (keystorePropertiesFile.exists()) {
+    keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+}
+
 android {
     namespace = "com.example.mapperapp"
     compileSdk = flutter.compileSdkVersion
@@ -29,11 +36,26 @@ android {
         versionName = flutter.versionName
     }
 
+    // signingConfigs: configure release signing from key.properties if available
+    signingConfigs {
+        release {
+            if (keystorePropertiesFile.exists()) {
+                storeFile file(keystoreProperties.getProperty('storeFile') ?: 'key.jks')
+                storePassword keystoreProperties.getProperty('storePassword')
+                keyAlias keystoreProperties.getProperty('keyAlias')
+                keyPassword keystoreProperties.getProperty('keyPassword')
+            } else {
+                // fallback: use debug signing (not for production)
+                signingConfig signingConfigs.debug
+            }
+        }
+    }
+
     buildTypes {
         release {
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig = signingConfigs.debug
+            // Use the configured release signing if provided, otherwise fallback to debug
+            signingConfig signingConfigs.release
+            // TODO: Add your own proguard / optimization options here
         }
     }
 }

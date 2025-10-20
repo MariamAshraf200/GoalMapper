@@ -43,3 +43,13 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Local developer and generated artifacts (safe to delete/recreate)
+.gradle/
+android/.gradle/
+**/build/
+
+# Local keystore and key properties (do NOT commit)
+android/key.jks
+android/key.properties
+key.jks.bak
