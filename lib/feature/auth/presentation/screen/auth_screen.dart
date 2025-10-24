@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:mapperapp/feature/Home/presentation/screen/homeScreen.dart';
-import 'package:mapperapp/core/widgets/skeletons.dart';
+import 'package:mapperapp/core/util/widgets/skeletons.dart';
 import '../bloc/auth_bloc.dart';
 import '../bloc/auth_event.dart';
 import 'package:mapperapp/l10n/app_localizations.dart';

@@ -1,5 +1,4 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'injection_container.dart';
 import 'injection_imports.dart';
 
 abstract class DisposableBloc {

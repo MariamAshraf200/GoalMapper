@@ -3,7 +3,7 @@ import '../../domain/entity/task_enum.dart';
 import '../../domain/repo_interface/repoTask.dart';
 import '../dataSource/abstract_data_scource.dart';
 import '../model/taskModel.dart';
-import 'package:mapperapp/core/util/time_sort_util.dart';
+import 'package:mapperapp/core/util/date_and_time/time_sort_util.dart';
 import 'package:mapperapp/core/extensions/error_messages.dart';
 
 class TaskRepositoryImpl implements TaskRepository {

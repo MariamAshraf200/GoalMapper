@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../../core/i18n/language_cubit.dart';
 import '../../../../core/theme/theme_mode_cubit.dart';
 import '../../../../core/theme/palette_cubit.dart';
 import '../../../../core/theme/palettes.dart';
-import '../../../../core/i18n/language_cubit.dart';
 import '../../../auth/presentation/bloc/auth_bloc.dart';
 import '../../../auth/presentation/bloc/auth_event.dart';
 import '../../../../l10n/l10n_extension.dart';

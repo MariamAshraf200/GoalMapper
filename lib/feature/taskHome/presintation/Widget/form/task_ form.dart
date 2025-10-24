@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../../../core/util/widgets/date_and_time/time_range_field.dart';
+import '../../../../../core/util/date_and_time/time_range_field.dart';
 import '../../../../../injection_imports.dart';
 import '../../../../../l10n/l10n_extension.dart';
 

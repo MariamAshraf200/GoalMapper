@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'core/theme/theme_mode_cubit.dart';
-import 'core/i18n/language_cubit.dart';
 import 'core/theme/palette_cubit.dart';
 import 'feature/auth/presentation/screen/auth_gate.dart';
 import 'global_bloc.dart';
 import 'l10n/app_localizations.dart';
 import 'core/theme/app_theme.dart';
+import 'core/i18n/language_cubit.dart';
 
 /// Create a global RouteObserver to monitor route changes.
 final RouteObserver<PageRoute> routeObserver = RouteObserver<PageRoute>();

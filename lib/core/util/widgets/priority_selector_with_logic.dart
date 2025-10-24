@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../feature/taskHome/domain/entity/task_enum.dart';
+import '../../../feature/taskHome/domain/entity/task_enum.dart';
 import 'priority_selector.dart';
 
 /// Core-level wrapper providing mapping between domain `TaskPriority` and

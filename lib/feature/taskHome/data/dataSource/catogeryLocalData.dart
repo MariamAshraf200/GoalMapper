@@ -1,5 +1,5 @@
 import 'package:hive/hive.dart';
-import '../../../../core/hiveServices.dart';
+import '../../../../core/network/hiveServices.dart';
 import '../model/categoryModel.dart';
 import 'abstract_data_scource.dart';
 

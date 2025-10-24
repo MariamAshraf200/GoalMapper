@@ -1,11 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'injection_container.dart';
-import 'app_bootstrapper.dart';
-import 'core/theme/theme_mode_cubit.dart';
-import 'core/i18n/language_cubit.dart';
-import 'core/theme/palette_cubit.dart';
+import 'injection_imports.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();

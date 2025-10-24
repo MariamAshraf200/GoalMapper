@@ -1,5 +1,5 @@
 import 'package:hive/hive.dart';
-import '../../../../core/hiveServices.dart';
+import '../../../../core/network/hiveServices.dart';
 import '../../domain/entities/plan_enums.dart';
 import '../../domain/entities/taskPlan.dart';
 import '../model/planModel.dart';

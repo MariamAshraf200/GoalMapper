@@ -1,7 +1,7 @@
 
 import 'package:intl/intl.dart';
 
-import '../../../../core/util/date_format_util.dart';
+import '../../../../core/util/date_and_time/date_format_util.dart';
 import '../../../taskHome/domain/entity/taskEntity.dart';
 import '../entity/week_progress.dart';
 

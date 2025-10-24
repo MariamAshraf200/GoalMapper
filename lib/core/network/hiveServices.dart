@@ -1,8 +1,8 @@
 import 'package:hive_flutter/hive_flutter.dart';
-import '../feature/PlanHome/data/model/planModel.dart';
-import '../feature/PlanHome/data/model/taskPlanAdapter.dart';
-import '../feature/taskHome/data/model/categoryModel.dart';
-import '../feature/taskHome/data/model/taskModel.dart';
+import '../../feature/PlanHome/data/model/planModel.dart';
+import '../../feature/PlanHome/data/model/taskPlanAdapter.dart';
+import '../../feature/taskHome/data/model/categoryModel.dart';
+import '../../feature/taskHome/data/model/taskModel.dart';
 
 class HiveService {
   static const String _taskBoxName = 'tasks';

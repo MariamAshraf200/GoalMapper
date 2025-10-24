@@ -1,10 +1,4 @@
 import 'package:get_it/get_it.dart';
-import 'feature/Home/domain/usecase/compute_weekly_progress_usecase.dart';
-import 'feature/Home/domain/usecase/update_daily_progress_usecase.dart';
-import 'feature/PlanHome/domain/repo_interface/repo_plan_interface.dart';
-import 'feature/PlanHome/domain/usecase/delet_task_plan.dart';
-import 'feature/PlanHome/domain/usecase/getAll_tasks_plan_usecase.dart';
-import 'feature/PlanHome/domain/usecase/update_task_status_plan.dart';
 import 'injection_imports.dart';
 
 final sl = GetIt.instance;
@@ -145,7 +139,7 @@ Future<void> init() async {
         deleteTaskAtPlanUseCase: sl<DeleteTaskAtPlanUseCase>(),
         updateTaskStatusPlanUseCase: sl<UpdateTaskStatusPlanUseCase>(),
       ));
-  } catch (e, stackTrace) {
+  } catch (e) {
     /*if (kDebugMode) {
       debugPrint("Error during DI initialization: $e");
     }

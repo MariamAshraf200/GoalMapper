@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../l10n/l10n_extension.dart';
+import '../../../l10n/l10n_extension.dart';
 
 /// A simple, reusable PrioritySelector that lives in `core`.
 ///

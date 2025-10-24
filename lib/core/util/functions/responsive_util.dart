@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:mapperapp/core/context_extensions.dart';
+import '../../extensions/context_extensions.dart';
+
 
 
 double calculateHorizontalPaddingFromScreenWidth(
