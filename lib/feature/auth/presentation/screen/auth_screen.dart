@@ -7,22 +7,33 @@ import '../bloc/auth_bloc.dart';
 import '../bloc/auth_event.dart';
 import 'package:mapperapp/l10n/app_localizations.dart';
 
+import '../bloc/auth_state.dart';
+
+
 class AuthScreen extends StatelessWidget {
   const AuthScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<AuthBloc, AuthState>(
+    return BlocConsumer<AuthBloc, AuthState>(
+      listener: (context, state) {
+        if (state is AuthSignedIn) {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (_) => const HomeScreen()),
+          );
+        }
+      },
       builder: (context, state) {
         if (state is AuthLoading) return const _LoadingView();
         if (state is AuthSignedOut) return const _SignInView();
-        if (state is AuthSignedIn) return HomeScreen();
         if (state is AuthError) return _ErrorView(message: state.message);
         return const _LoadingView();
       },
     );
   }
 }
+
 
 // ─────────────────────────────────────────────
 // 🔹 Sign In View

@@ -1,53 +1,32 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'injection_imports.dart';
 
 abstract class DisposableBloc {
-  void disposeValues();
+  Future<void> disposeValues();
 }
 
 class BlocDisposer implements DisposableBloc {
-  final BlocBase _bloc;
-  BlocDisposer(this._bloc);
+  final BlocBase bloc;
+  BlocDisposer(this.bloc);
 
   @override
-  void disposeValues() {
-    _bloc.close();
+  Future<void> disposeValues() async {
+    await bloc.close();
   }
 }
 
 class AppBlocs {
+  static final List<BlocBase> _activeBlocs = [];
 
-  static List<DisposableBloc> get allDisposableBlocs {
-    return  taskBlocs + categoryBlocs + planBlocs;
+  /// Register a bloc when it's created (usually inside GlobalBloc)
+  static void register(BlocBase bloc) {
+    _activeBlocs.add(bloc);
   }
 
-
-  static List<DisposableBloc> get taskBlocs {
-    return [
-      BlocDisposer(sl<TaskBloc>()),
-    ];
+  /// Dispose all active blocs safely
+  static Future<void> disposeAll() async {
+    for (final bloc in _activeBlocs) {
+      await bloc.close();
+    }
+    _activeBlocs.clear();
   }
-
-  static List<DisposableBloc> get categoryBlocs {
-    return [
-      BlocDisposer(sl<CategoryBloc>()),
-    ];
-  }
-
-  static List<DisposableBloc> get planBlocs {
-    return [
-      BlocDisposer(sl<PlanBloc>()),
-    ];
-  }
-}
-
-extension DisposeBlocs on List<DisposableBloc> {
-  void dispose() {
-    forEach((disposable) => disposable.disposeValues());
-  }
-}
-
-/// Convenience method to dispose all registered blocs.
-void disposeAllBlocs() {
-  AppBlocs.allDisposableBlocs.dispose();
 }

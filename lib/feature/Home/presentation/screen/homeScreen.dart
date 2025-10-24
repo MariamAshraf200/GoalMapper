@@ -9,7 +9,6 @@ import '../wedgit/home_header.dart';
 import '../wedgit/task_status_card.dart';
 import '../wedgit/weekly_progress.dart';
 import 'home_screen_form.dart';
-import 'package:mapperapp/app_bootstrapper.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -29,26 +28,6 @@ class _HomeScreenState extends State<HomeScreen> with RouteAware {
   }
 
   @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    final route = ModalRoute.of(context);
-    if (route is PageRoute) {
-      routeObserver.subscribe(this, route);
-    }
-  }
-
-  @override
-  void didPopNext() {
-    context.read<TaskBloc>().add(GetAllTasksEvent());
-  }
-
-  @override
-  void dispose() {
-    routeObserver.unsubscribe(this);
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: BlocBuilder<TaskBloc, taskState.TaskState>(
@@ -58,36 +37,31 @@ class _HomeScreenState extends State<HomeScreen> with RouteAware {
           } else if (state is taskState.TaskLoaded) {
             final tasks = state.tasks;
             final today = _viewDate;
-            final tasksForToday = tasks.where((task) => task.date == today).toList();
+            final tasksForToday =
+            tasks.where((task) => task.date == today).toList();
 
             final doneTasksCount = tasksForToday
                 .where((task) => task.status.trim().toLowerCase() == "done")
                 .length;
-
             final totalTasksCount = tasksForToday.length;
-
-            final taskCompletionPercentage =
-                totalTasksCount > 0 ? doneTasksCount / totalTasksCount : 0.0;
+            final taskCompletionPercentage = totalTasksCount > 0
+                ? doneTasksCount / totalTasksCount
+                : 0.0;
 
             return SingleChildScrollView(
               child: Column(
                 children: [
-                  // 🔹 New Header
-                  HomeHeader(),
-
-                  // 🔹 Stats card
+                  const HomeHeader(),
                   TaskStatsCard(
                     doneTasks: doneTasksCount,
                     totalTasks: totalTasksCount,
                     completionPercentage: taskCompletionPercentage,
                   ),
-
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10),
-                    child: const WeeklyProgressWidget(),
+                  const Padding(
+                    padding:
+                    EdgeInsets.symmetric(horizontal: 16.0, vertical: 10),
+                    child: WeeklyProgressWidget(),
                   ),
-
-                  // 🔹 Today’s tasks
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 15.0),
                     child: HomeScreenForm(tasks: tasksForToday),
@@ -98,7 +72,7 @@ class _HomeScreenState extends State<HomeScreen> with RouteAware {
           } else if (state is taskState.TaskError) {
             return Center(child: Text(state.message));
           }
-          return SizedBox.shrink();
+          return const SizedBox.shrink();
         },
       ),
       floatingActionButton: CustomFAB(context: context),

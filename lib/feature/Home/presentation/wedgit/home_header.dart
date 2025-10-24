@@ -7,6 +7,7 @@ import '../../../../core/theme/palettes.dart';
 import '../../../auth/presentation/bloc/auth_bloc.dart';
 import '../../../auth/presentation/bloc/auth_event.dart';
 import '../../../../l10n/l10n_extension.dart';
+import '../../../auth/presentation/bloc/auth_state.dart';
 
 class HomeHeader extends StatelessWidget {
   const HomeHeader({super.key});

@@ -8,27 +8,35 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   Future<UserEntity?> signInWithGoogle() async {
     final account = await _googleSignIn.signIn();
+    if (account == null) return null;
+
     return UserEntity(
-      id: account!.id,
+      id: account.id,
       name: account.displayName ?? '',
       email: account.email,
       photoUrl: account.photoUrl,
     );
   }
 
+
   @override
   Future<void> signOut() async {
+    await _googleSignIn.disconnect(); // دي تفصل الـ account من Google
     await _googleSignIn.signOut();
   }
+
 
   @override
   Future<UserEntity?> getCurrentUser() async {
     final account = await _googleSignIn.signInSilently();
+    if (account == null) return null;
     return UserEntity(
-      id: account!.id,
+      id: account.id,
       name: account.displayName ?? '',
       email: account.email,
       photoUrl: account.photoUrl,
     );
   }
+
+
 }

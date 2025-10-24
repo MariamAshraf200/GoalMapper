@@ -82,17 +82,17 @@ abstract class AppLocalizations {
   /// Additional delegates can be added by appending to this list in
   /// MaterialApp. This list does not have to be used at all if a custom list
   /// of delegates is preferred or required.
-  static const List<LocalizationsDelegate<dynamic>> localizationsDelegates = <LocalizationsDelegate<dynamic>>[
+  static const List<LocalizationsDelegate<dynamic>> localizationsDelegates = [
     delegate,
     GlobalMaterialLocalizations.delegate,
-    GlobalCupertinoLocalizations.delegate,
     GlobalWidgetsLocalizations.delegate,
+    GlobalCupertinoLocalizations.delegate,
   ];
 
   /// A list of this localizations delegate's supported locales.
-  static const List<Locale> supportedLocales = <Locale>[
+  static const List<Locale> supportedLocales = [
+    Locale('en'),
     Locale('ar'),
-    Locale('en')
   ];
 
   /// No description provided for @english.
@@ -785,6 +785,12 @@ abstract class AppLocalizations {
 /// In en, this message translates to:
 /// **'dd/MM/yyyy'**
 String get dateFormat;
+
+  /// Title of the application
+  ///
+  /// In en, this message translates to:
+  /// **'Task Management App'**
+  String get appTitle;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

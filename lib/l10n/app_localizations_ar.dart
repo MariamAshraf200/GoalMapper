@@ -351,4 +351,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String enterField(String field) => 'أدخل $field';
+
+  @override
+  String get appTitle => 'تراك تاسك ';
 }

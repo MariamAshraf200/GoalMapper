@@ -1,54 +1,58 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ThemeModeCubit extends Cubit<ThemeMode> {
-  static const _key = 'theme_mode';
+  static const _prefsKey = 'theme_mode';
+  late final SharedPreferences _prefs;
 
   ThemeModeCubit() : super(ThemeMode.system) {
-    loadThemeMode();
+    _init();
   }
 
-  Future<void> loadThemeMode() async {
+  Future<void> _init() async {
     try {
-      final prefs = await SharedPreferences.getInstance();
-      final value = prefs.getString(_key);
-      switch (value) {
-        case 'light':
-          emit(ThemeMode.light);
-          break;
-        case 'dark':
-          emit(ThemeMode.dark);
-          break;
-        default:
-          emit(ThemeMode.system);
-      }
-      // debug
-      // ignore: avoid_print
-      print('ThemeModeCubit: loaded theme mode: ${state.name}');
+      _prefs = await SharedPreferences.getInstance();
+      await _loadThemeMode();
     } catch (e) {
-      // ignore: avoid_print
-      print('ThemeModeCubit: failed to load theme mode: $e');
+      debugPrint('ThemeModeCubit: init failed: $e');
+      emit(ThemeMode.system);
+    }
+  }
+
+  Future<void> _loadThemeMode() async {
+    try {
+      final value = _prefs.getString(_prefsKey);
+      final mode = switch (value) {
+        'light' => ThemeMode.light,
+        'dark' => ThemeMode.dark,
+        _ => ThemeMode.system,
+      };
+      emit(mode);
+      debugPrint('ThemeModeCubit: loaded ${mode.name}');
+    } catch (e) {
+      debugPrint('ThemeModeCubit: failed to load theme mode: $e');
       emit(ThemeMode.system);
     }
   }
 
   Future<void> setThemeMode(ThemeMode mode) async {
     try {
-      final prefs = await SharedPreferences.getInstance();
-      final ok = await prefs.setString(_key, mode.name);
-      // debug
-      // ignore: avoid_print
-      print('ThemeModeCubit: saved theme mode -> ${mode.name} (ok=$ok)');
+      await _prefs.setString(_prefsKey, mode.name);
+      emit(mode);
+      debugPrint('ThemeModeCubit: set ${mode.name}');
     } catch (e) {
-      // ignore: avoid_print
-      print('ThemeModeCubit: failed to save theme mode: $e');
+      debugPrint('ThemeModeCubit: failed to save theme mode: $e');
     }
+  }
 
-    // emit after attempting to save so UI matches persisted state
-    emit(mode);
-    // debug
-    // ignore: avoid_print
-    print('ThemeModeCubit: emitted theme mode -> ${state.name}');
+  Future<void> toggle() async {
+    final newMode = switch (state) {
+      ThemeMode.light => ThemeMode.dark,
+      ThemeMode.dark => ThemeMode.light,
+      ThemeMode.system => ThemeMode.light, // start with light if system
+    };
+    await setThemeMode(newMode);
   }
 }

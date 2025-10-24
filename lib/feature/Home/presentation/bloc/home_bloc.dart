@@ -2,8 +2,7 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../taskHome/domain/entity/taskEntity.dart';
-import '../../../taskHome/presintation/bloc/taskBloc/bloc.dart';
-import '../../../taskHome/presintation/bloc/taskBloc/state.dart' as taskState;
+import '../../../taskHome/domain/usecse/task/getUsecase.dart';
 import '../../domain/entity/week_progress.dart';
 import '../../domain/usecase/compute_weekly_progress_usecase.dart';
 import '../../domain/usecase/update_daily_progress_usecase.dart';
@@ -11,38 +10,28 @@ import 'home_event.dart';
 import 'home_state.dart';
 
 class HomeBloc extends Bloc<HomeEvent, HomeState> {
-  final TaskBloc taskBloc;
+  final GetAllTasksUseCase getAllTasksUseCase;
   final ComputeWeeklyProgressUsecase computeWeeklyProgress;
   final UpdateDailyProgressUsecase updateDailyProgress;
-  late final StreamSubscription _taskSub;
 
   HomeBloc({
-    required this.taskBloc,
+    required this.getAllTasksUseCase,
     required this.computeWeeklyProgress,
     required this.updateDailyProgress,
   }) : super(HomeInitial()) {
     on<HomeStarted>(_onStarted);
     on<HomeTasksUpdated>(_onTasksUpdated);
-
-    _taskSub = taskBloc.stream.listen((s) {
-      if (s is taskState.TaskLoaded) add(HomeTasksUpdated(s.tasks));
-    });
-
-    // Seed if already loaded
-    final cur = taskBloc.state;
-    if (cur is taskState.TaskLoaded) add(HomeTasksUpdated(cur.tasks));
   }
 
   Future<void> _onStarted(HomeStarted event, Emitter<HomeState> emit) async {
-    final cur = taskBloc.state;
-    if (cur is taskState.TaskLoaded) {
-      _emitProgress(cur.tasks, emit, forceFullRecompute: true);
-    } else {
-      emit(HomeLoading());
-    }
+    emit(HomeLoading());
+    final result = await getAllTasksUseCase();
+    final tasks = result ;
+    _emitProgress(tasks, emit, forceFullRecompute: true);
   }
 
-  Future<void> _onTasksUpdated(HomeTasksUpdated event, Emitter<HomeState> emit) async {
+  Future<void> _onTasksUpdated(
+      HomeTasksUpdated event, Emitter<HomeState> emit) async {
     _emitProgress(event.tasks, emit);
   }
 
@@ -50,8 +39,8 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       {bool forceFullRecompute = false}) {
     final now = DateTime.now();
     final daysToSubtract = (now.weekday + 1) % 7;
-    final startOfWeek = DateTime(now.year, now.month, now.day)
-        .subtract(Duration(days: daysToSubtract));
+    final startOfWeek =
+    DateTime(now.year, now.month, now.day).subtract(Duration(days: daysToSubtract));
     final days = List.generate(7, (i) {
       final d = startOfWeek.add(Duration(days: i));
       return DateTime(d.year, d.month, d.day);
@@ -90,13 +79,5 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       bestDayName: fullProgress.bestDayName,
       todayIndex: fullProgress.todayIndex,
     ));
-  }
-
-
-
-  @override
-  Future<void> close() {
-    _taskSub.cancel();
-    return super.close();
   }
 }

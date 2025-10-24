@@ -3,26 +3,37 @@ import 'package:flutter/services.dart';
 import '../constants/app_colors.dart';
 import 'palettes.dart';
 
-// Helper to build ThemeData from a PaletteColors instance
 ThemeData _buildFromPalette(PaletteColors p, Brightness brightness) {
-  final cs = ColorScheme.fromSeed(seedColor: p.primary, brightness: brightness).copyWith(
+  final cs = ColorScheme.fromSeed(
+    seedColor: p.primary,
+    brightness: brightness,
+  ).copyWith(
     secondary: p.secondary,
     tertiary: p.accent,
     onPrimary: AppColors.textOnPrimary,
-    surface: AppColors.basicColor,
+    surface: p.background,
   );
 
   return ThemeData(
+    useMaterial3: true,
     brightness: brightness,
     colorScheme: cs,
     primaryColor: p.primary,
-    scaffoldBackgroundColor: (brightness == Brightness.light) ? p.background : Colors.black,
+    scaffoldBackgroundColor: brightness == Brightness.light ? p.background : Colors.black,
     appBarTheme: AppBarTheme(
       backgroundColor: p.primary,
       foregroundColor: AppColors.textOnPrimary,
       systemOverlayStyle: brightness == Brightness.light
-          ? const SystemUiOverlayStyle(statusBarColor: Colors.transparent, statusBarIconBrightness: Brightness.dark, statusBarBrightness: Brightness.light)
-          : const SystemUiOverlayStyle(statusBarColor: Colors.transparent, statusBarIconBrightness: Brightness.light, statusBarBrightness: Brightness.dark),
+          ? const SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: Brightness.dark,
+        statusBarBrightness: Brightness.light,
+      )
+          : const SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: Brightness.light,
+        statusBarBrightness: Brightness.dark,
+      ),
     ),
     floatingActionButtonTheme: FloatingActionButtonThemeData(
       backgroundColor: p.secondary,
@@ -32,10 +43,21 @@ ThemeData _buildFromPalette(PaletteColors p, Brightness brightness) {
       style: ElevatedButton.styleFrom(
         backgroundColor: p.primary,
         foregroundColor: AppColors.textOnPrimary,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppTheme.defaultRadius),
+        ),
       ),
     ),
-    cardColor: AppColors.basicColor,
+    textTheme: TextTheme(
+      bodyMedium: TextStyle(
+        color: brightness == Brightness.light ? Colors.black87 : Colors.white70,
+      ),
+      titleLarge: TextStyle(
+        fontWeight: FontWeight.bold,
+        color: p.primary,
+      ),
+    ),
+    cardColor: p.background,
     visualDensity: VisualDensity.adaptivePlatformDensity,
   );
 }
@@ -43,12 +65,15 @@ ThemeData _buildFromPalette(PaletteColors p, Brightness brightness) {
 class AppTheme {
   AppTheme._();
 
-  // Expose a seed color for consistent Material 3 color generation
+  static const defaultRadius = 8.0;
   static Color get seedColor => AppColors.primaryColor;
 
-  // Build theme dynamically from a chosen palette
   static ThemeData themeDataFor(ThemePalette palette, Brightness brightness) {
-    final p = kPalettes[palette] ?? kPalettes[ThemePalette.purple]!;
+    final p = palette.colors;
     return _buildFromPalette(p, brightness);
   }
+}
+
+extension ThemePaletteX on ThemePalette {
+  PaletteColors get colors => kPalettes[this] ?? kPalettes[ThemePalette.purple]!;
 }

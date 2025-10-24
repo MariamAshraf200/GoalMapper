@@ -1,27 +1,10 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter/material.dart';
-import '../../../../app_bootstrapper.dart';
-import '../../domain/entities/user_entity.dart';
 import '../../domain/usecases/get_current_user.dart';
 import '../../domain/usecases/sign_in_with_google.dart';
 import '../../domain/usecases/sign_out.dart';
-import '../screen/auth_screen.dart';
 import 'auth_event.dart';
-
-abstract class AuthState {}
-
-class AuthInitial extends AuthState {}
-class AuthLoading extends AuthState {}
-class AuthSignedIn extends AuthState {
-  final UserEntity user;
-  AuthSignedIn(this.user);
-}
-class AuthSignedOut extends AuthState {}
-class AuthError extends AuthState {
-  final String message;
-  AuthError(this.message);
-}
+import 'auth_state.dart';
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final SignInWithGoogle signInWithGoogle;
@@ -46,14 +29,12 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         debugPrint('✅ AuthBloc: user already signed in → ${user.name}');
         emit(AuthSignedIn(user));
       } else {
-        debugPrint('🚪 AuthBloc: no user found → navigating to AuthScreen');
+        debugPrint('🚪 AuthBloc: no user found');
         emit(AuthSignedOut());
-        _navigateToAuthScreen();
       }
     } catch (e, s) {
       debugPrint('❌ AuthBloc: CheckSignInEvent error → $e\n$s');
-      emit(AuthSignedOut());
-      _navigateToAuthScreen();
+      emit(AuthError('Failed to check sign-in status.'));
     }
   }
 
@@ -78,22 +59,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     emit(AuthLoading());
     try {
       await signOut();
-      debugPrint('👋 AuthBloc: signed out successfully');
       emit(AuthSignedOut());
-      _navigateToAuthScreen();
-    } catch (e, s) {
-      debugPrint('❌ AuthBloc: SignOutEvent error → $e\n$s');
+    } catch (e) {
       emit(AuthError('Sign out failed.'));
     }
   }
 
-  void _navigateToAuthScreen() {
-    final navigator = navigatorKey.currentState;
-    if (navigator != null) {
-      navigator.pushAndRemoveUntil(
-        MaterialPageRoute(builder: (_) => const AuthScreen()),
-            (route) => false,
-      );
-    }
-  }
 }

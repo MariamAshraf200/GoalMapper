@@ -353,4 +353,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get tomorrow => 'Tomorrow';
+
+  @override
+  String get appTitle => 'Task Tracker';
 }

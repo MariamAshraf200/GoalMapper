@@ -12,31 +12,39 @@ class GlobalBloc extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final repository = AuthRepositoryImpl();
     return MultiBlocProvider(
       providers: [
+        // ─────────────────────────────── AUTH ───────────────────────────────
         BlocProvider<AuthBloc>(
           create: (_) => AuthBloc(
-            signInWithGoogle: SignInWithGoogle(repository),
-            signOut: SignOut(repository),
-            getCurrentUser: GetCurrentUser(repository),
+            signInWithGoogle: sl<SignInWithGoogle>(),
+            signOut: sl<SignOut>(),
+            getCurrentUser: sl<GetCurrentUser>(),
           )..add(CheckSignInEvent()),
         ),
+
+        // ─────────────────────────────── TASK ───────────────────────────────
         BlocProvider<TaskBloc>(
-          create: (context) => sl<TaskBloc>(),
+          create: (_) => sl<TaskBloc>(),
         ),
+
+        // ─────────────────────────────── HOME ───────────────────────────────
         BlocProvider<HomeBloc>(
-          create: (context) => HomeBloc(
-            taskBloc: context.read<TaskBloc>(),
+          create: (_) => HomeBloc(
             computeWeeklyProgress: sl<ComputeWeeklyProgressUsecase>(),
             updateDailyProgress: sl<UpdateDailyProgressUsecase>(),
+             getAllTasksUseCase: sl<GetAllTasksUseCase>()
           )..add(HomeStarted()),
         ),
+
+        // ─────────────────────────────── CATEGORY ───────────────────────────────
         BlocProvider<CategoryBloc>(
-          create: (context) => sl<CategoryBloc>()..add(LoadCategoriesEvent()),
+          create: (_) => sl<CategoryBloc>()..add(LoadCategoriesEvent()),
         ),
+
+        // ─────────────────────────────── PLAN ───────────────────────────────
         BlocProvider<PlanBloc>(
-          create: (context) => sl<PlanBloc>()..add(GetAllPlansEvent()),
+          create: (_) => sl<PlanBloc>()..add(GetAllPlansEvent()),
         ),
       ],
       child: Builder(builder: (ctx) => builder(ctx, null)),
