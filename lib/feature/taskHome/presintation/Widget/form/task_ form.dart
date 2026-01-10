@@ -355,6 +355,7 @@ class _TaskFormState extends State<TaskForm>
     if (task.notification) {
       final exact = await TaskNotificationHelper.scheduleOrNotifyForTask(task);
       if (exact == false) {
+        // ignore: use_build_context_synchronously
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Exact alarms are not permitted on this device; scheduled an inexact notification.')),
         );

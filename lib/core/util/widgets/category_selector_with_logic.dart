@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../feature/taskHome/presintation/bloc/catogeryBloc/CatogeryBloc.dart';
-import '../../../feature/taskHome/presintation/bloc/catogeryBloc/Catogeryevent.dart';
-import '../../../feature/taskHome/presintation/bloc/catogeryBloc/Catogerystate.dart';
+import '../../../feature/taskHome/presintation/bloc/catogeryBloc/catogery_bloc.dart';
+import '../../../feature/taskHome/presintation/bloc/catogeryBloc/catogery_event.dart';
+import '../../../feature/taskHome/presintation/bloc/catogeryBloc/catogery_state.dart';
 import '../../../feature/taskHome/data/model/categoryModel.dart';
 import '../../../l10n/app_localizations.dart';
 import 'category_selector.dart';
@@ -62,6 +62,7 @@ class CategorySelectorWithLogic extends StatelessWidget {
             );
 
             if (result != null && result.isNotEmpty) {
+              // ignore: use_build_context_synchronously
               context.read<CategoryBloc>().add(AddCategoryEvent(categoryName: result));
             }
           },

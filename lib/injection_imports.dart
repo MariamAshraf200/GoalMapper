@@ -47,9 +47,9 @@ export 'feature/taskHome/domain/usecse/catogery/addCatogeriesUseCase.dart';
 export 'feature/taskHome/domain/usecse/catogery/getAllCategoriesUseCase.dart';
 export 'feature/taskHome/domain/usecse/catogery/DeleteCategoryUseCase.dart';
 export 'feature/taskHome/presintation/bloc/taskBloc/bloc.dart';
-export 'feature/taskHome/presintation/bloc/catogeryBloc/CatogeryBloc.dart';
-export 'feature/taskHome/presintation/bloc/catogeryBloc/Catogeryevent.dart';
-export 'feature/taskHome/presintation/bloc/catogeryBloc/Catogerystate.dart';
+export 'feature/taskHome/presintation/bloc/catogeryBloc/catogery_bloc.dart';
+export 'feature/taskHome/presintation/bloc/catogeryBloc/catogery_event.dart';
+export 'feature/taskHome/presintation/bloc/catogeryBloc/catogery_state.dart';
 export 'feature/taskHome/data/dataSource/abstract_data_scource.dart';
 export 'feature/taskHome/domain/entity/task_enum.dart';
 export 'feature/taskHome/domain/entity/taskEntity.dart';
@@ -81,7 +81,6 @@ export 'feature/Home/presentation/bloc/home_state.dart';
 export 'feature/PlanHome/presentation/screen/PlanTrack.dart';
 
 // Core
-export 'core/network/hiveServices.dart';
 export 'core/extensions/failure.dart';
 export 'core/extensions/context_extensions.dart';
 
@@ -93,7 +92,7 @@ export 'core/constants/date_and_time_form.dart';
 export 'core/extensions/error_messages.dart';
 
 // Core - utilities/widgets
-export 'core/util/widgets/custom_FAB.dart';
+export 'core/util/widgets/custom_fab.dart';
 export 'core/util/functions/string_manipulations_and_search.dart';
 export 'core/util/widgets/custom_text_field.dart';
 export 'core/util/date_and_time/date_filed.dart';

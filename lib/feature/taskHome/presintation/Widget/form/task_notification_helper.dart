@@ -21,6 +21,7 @@ class TaskNotificationHelper {
       debugPrint("❌ Error: $e");
       return null;
     }
+    return null;
   }
 
   static DateTime? _parseTaskDate(TaskDetails task) {

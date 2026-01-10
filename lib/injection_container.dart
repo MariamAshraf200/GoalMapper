@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:get_it/get_it.dart';
+import 'core/network/hive_services.dart';
 import 'feature/PlanHome/data/dataSource/abstractLocalDataSource.dart';
 import 'feature/auth/domain/repositories/auth_repository.dart';
 import 'injection_imports.dart';

@@ -82,8 +82,5 @@ String converTolowerCamelCaseStyle(String string) {
 }
 
 extension on String {
-  Set<String> toSet() => {for (int i = 0; i < length; i++) substring(i, i + 1)};
 
-  List<String> toList() =>
-      [for (int i = 0; i < length; i++) substring(i, i + 1)];
 }

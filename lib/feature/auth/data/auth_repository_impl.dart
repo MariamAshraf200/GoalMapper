@@ -12,7 +12,7 @@ class AuthRepositoryImpl implements AuthRepository {
 
     return UserEntity(
       id: account.id,
-      name: account.displayName ?? '',
+      name: account.displayName ?? ' ',
       email: account.email,
       photoUrl: account.photoUrl,
     );

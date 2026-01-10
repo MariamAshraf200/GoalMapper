@@ -55,7 +55,7 @@ class HomeHeader extends StatelessWidget {
 // Small sub-widgets extracted for readability.
 
 class _GreetingSection extends StatelessWidget {
-  const _GreetingSection({Key? key}) : super(key: key);
+  const _GreetingSection();
 
   @override
   Widget build(BuildContext context) {
@@ -116,7 +116,7 @@ class _GreetingSection extends StatelessWidget {
 }
 
 class _NotificationsButton extends StatelessWidget {
-  const _NotificationsButton({super.key});
+  const _NotificationsButton();
 
   @override
   Widget build(BuildContext context) {
@@ -187,7 +187,7 @@ class _NotificationsButton extends StatelessWidget {
 class _HeaderPopupMenu extends StatelessWidget {
   final ColorScheme colorScheme;
 
-  const _HeaderPopupMenu({super.key, required this.colorScheme});
+  const _HeaderPopupMenu({required this.colorScheme});
 
   @override
   Widget build(BuildContext context) {
@@ -303,10 +303,11 @@ void _showPalettePicker(BuildContext context, ColorScheme colorScheme) {
                 trailing: p == current ? Icon(Icons.check, color: palette.secondary) : null,
                 onTap: () async {
                   await context.read<PaletteCubit>().setPalette(p);
+                  // ignore: use_build_context_synchronously
                   Navigator.of(ctx).pop();
                 },
               );
-            }).toList(),
+            }),
             const SizedBox(height: 8),
           ],
         ),
