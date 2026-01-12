@@ -1,6 +1,5 @@
 import 'package:StepDone/l10n/l10n_extension.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 
 import '../../../../l10n/app_localizations.dart';
 

@@ -5,7 +5,7 @@ class NotificationHeader extends StatelessWidget {
   final int count;
   final String? title;
 
-  const NotificationHeader({Key? key, required this.count, this.title}) : super(key: key);
+  const NotificationHeader({super.key, required this.count, this.title});
 
   @override
   Widget build(BuildContext context) {

@@ -5,7 +5,7 @@ import '../../../../core/util/date_and_time/date_format_util.dart';
 import '../cubit/reminder_cubit.dart';
 
 class AddReminderSheet extends StatefulWidget {
-  const AddReminderSheet({Key? key}) : super(key: key);
+  const AddReminderSheet({super.key});
 
   @override
   State<AddReminderSheet> createState() => _AddReminderSheetState();
